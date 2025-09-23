@@ -16,37 +16,35 @@ from typing import List, Dict
 
 
 def q_runoff_m3s(C: float, i_mmhr: float, A_km2: float) -> float:
-    """Compute runoff/discharge using a Rational-Method style formula.
+    """
+    Calculate runoff (Q) in cubic meters per second (m³/s).
 
-    Q = 0.278 * C * i * A
+    Formula:
+        Q = 0.278 * C * i * A
 
-    where:
-    - Q is discharge in m^3/s
-    - C is the runoff coefficient [0..1]
-    - i is rainfall intensity in mm/hr
-    - A is catchment area in km^2
+    Parameters:
+        C (float): Runoff coefficient (dimensionless, between 0 and 1).
+        i_mmhr (float): Rainfall intensity (mm/hr).
+        A_km2 (float): Catchment area (km²).
 
-    Returns
-    -------
-    float
-        Discharge in cubic meters per second (m^3/s).
+    Returns:
+        float: Runoff in m³/s.
     """
     return 0.278 * C * i_mmhr * A_km2
 
 def risk_from_loading(L: float, k: float = 8.0) -> float:
-    """Map capacity loading L to a risk score in [0, 1] via a sigmoid.
+    """
+    Calculate flood risk using a logistic function.
 
-    Parameters
-    ----------
-    L : float
-        Capacity loading ratio (Q / Qcap). Values > 1 imply exceedance.
-    k : float, default 8.0
-        Steepness parameter for the logistic curve.
+    Formula:
+        R = 1 / (1 + exp(-k * (L - 1)))
 
-    Returns
-    -------
-    float
-        Risk proxy in [0, 1], close to 0 when L << 1 and near 1 when L >> 1.
+    Parameters:
+        L (float): Load factor (Q / Qcap).
+        k (float): Steepness of the risk curve (default = 8.0).
+
+    Returns:
+        float: Risk value between 0 and 1.
     """
     return 1.0 / (1.0 + exp(-k * (L - 1.0)))
 
@@ -57,31 +55,23 @@ def simulate_catchment(
     A_km2: float,
     Qcap_m3s: float,
 ) -> Dict:
-    """Simulate runoff and risk for a single catchment time series.
+    """
+    Simulate runoff and flood risk for a time series of rainfall.
 
-    Inputs must be aligned in time: `rain_mmhr[i]` corresponds to
-    `timestamps_utc[i]`.
+    Parameters:
+        rain_mmhr (List[float]): List of rainfall intensities (mm/hr).
+        timestamps_utc (List[str]): List of timestamps (ISO 8601 format).
+        C (float): Runoff coefficient.
+        A_km2 (float): Catchment area (km²).
+        Qcap_m3s (float): Drainage system capacity (m³/s).
 
-    Parameters
-    ----------
-    rain_mmhr : List[float]
-        Rainfall intensities (mm/hr) per timestamp.
-    timestamps_utc : List[str]
-        ISO 8601 timestamps in UTC (with 'Z' suffix).
-    C : float
-        Runoff coefficient [0..1].
-    A_km2 : float
-        Catchment area in km^2 (> 0).
-    Qcap_m3s : float
-        Downstream capacity in m^3/s (> 0). If 0, set a very large loading.
-
-    Returns
-    -------
-    Dict
-        A JSON-serializable dictionary with:
-        - "series": list of dicts for each timestamp containing:
-            {"t": str, "i": float, "Qrunoff": float, "L": float, "R": float}
-        - "max_risk": float, maximum risk across the series.
+    Returns:
+        Dict:{
+            A JSON-serializable dictionary with:
+            - "series": list of dicts for each timestamp containing:
+                {"t": str, "i": float, "Qrunoff": float, "L": float, "R": float}
+            - "max_risk": float, maximum risk across the series.
+        }
     """
     series = []
     max_r = 0.0
@@ -101,3 +91,35 @@ def simulate_catchment(
             "R": round(R, 3)
         })
     return {"series": series, "max_risk": round(max_r, 3)}
+
+if __name__ == "__main__":
+    # ========== Example 1: Single calculation ==========
+    C = 0.6          # Runoff coefficient
+    i_mmhr = 8       # Rainfall intensity (mm/hr)
+    A_km2 = 10       # Catchment area (km²)
+    Qcap_m3s = 100   # Capacity (m³/s)
+
+    # Runoff calculation
+    Q = q_runoff_m3s(C, i_mmhr, A_km2)
+
+    # Load factor (Q relative to capacity)
+    L = Q / Qcap_m3s
+
+    # Risk value
+    R = risk_from_loading(L)
+
+    print("Runoff Q:", Q, "m³/s")
+    print("Load L:", L)
+    print("Risk R:", R)
+
+    # ========== Example 2: Simulation over multiple hours ==========
+    results = simulate_catchment(
+        rain_mmhr=[5, 10, 20],   # Rainfall intensities
+        timestamps_utc=["2025-09-22T00:00Z", "2025-09-22T01:00Z", "2025-09-22T02:00Z"],
+        C=0.6,
+        A_km2=10,
+        Qcap_m3s=15
+    )
+
+    print("Simulation Results:")
+    print(results)
