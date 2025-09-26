@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0.12
+    container_name: urban_flooding_mongo
+    restart: always
+    ports:
+      - "27017:27017"  
+    environment:
+      MONGO_INITDB_DATABASE: urban_flooding_dt
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - urban_flooding_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  urban_flooding_network:
+    driver: bridge

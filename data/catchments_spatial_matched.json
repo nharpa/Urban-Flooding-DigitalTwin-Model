@@ -1,0 +1,1460 @@
+[
+  {
+    "catchment_id": "WcwWint",
+    "name": "WcwWint",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 51,
+    "total_pipe_length_m": 865.94,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.818672,
+        "lat": -31.970728
+      },
+      "bounds": {
+        "min_lon": 115.817732,
+        "min_lat": -31.975639,
+        "max_lon": 115.819612,
+        "max_lat": -31.965818
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.849,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmWill",
+    "name": "WcmWill",
+    "C": 0.6,
+    "Qcap_m3s": 73.323,
+    "pipe_count": 463,
+    "total_pipe_length_m": 7684.22,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.857015,
+        "lat": -31.955361
+      },
+      "bounds": {
+        "min_lon": 115.853341,
+        "min_lat": -31.959094,
+        "max_lon": 115.860689,
+        "max_lat": -31.951629
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.953,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmWelw",
+    "name": "WcmWelw",
+    "C": 0.6,
+    "Qcap_m3s": 50.57,
+    "pipe_count": 366,
+    "total_pipe_length_m": 6913.09,
+    "max_pipe_diameter_mm": 1020,
+    "location": {
+      "center": {
+        "lon": 115.844444,
+        "lat": -31.949297
+      },
+      "bounds": {
+        "min_lon": 115.838861,
+        "min_lat": -31.952974,
+        "max_lon": 115.850027,
+        "max_lat": -31.94562
+      }
+    },
+    "A_km2": 10.38,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.799,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmWele",
+    "name": "WcmWele",
+    "C": 0.6,
+    "Qcap_m3s": 75.174,
+    "pipe_count": 124,
+    "total_pipe_length_m": 2500.38,
+    "max_pipe_diameter_mm": 950,
+    "location": {
+      "center": {
+        "lon": 115.85115,
+        "lat": -31.949619
+      },
+      "bounds": {
+        "min_lon": 115.849128,
+        "min_lat": -31.951437,
+        "max_lon": 115.853172,
+        "max_lat": -31.947802
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.793,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmSuth",
+    "name": "WcmSuth",
+    "C": 0.6,
+    "Qcap_m3s": 0.316,
+    "pipe_count": 16,
+    "total_pipe_length_m": 254.93,
+    "max_pipe_diameter_mm": 525,
+    "location": {
+      "center": {
+        "lon": 115.84735,
+        "lat": -31.943854
+      },
+      "bounds": {
+        "min_lon": 115.846763,
+        "min_lat": -31.944365,
+        "max_lon": 115.847938,
+        "max_lat": -31.943342
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.822,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmSpri",
+    "name": "WcmSpri",
+    "C": 0.6,
+    "Qcap_m3s": 5.2,
+    "pipe_count": 329,
+    "total_pipe_length_m": 5666.77,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.851683,
+        "lat": -31.953258
+      },
+      "bounds": {
+        "min_lon": 115.848853,
+        "min_lat": -31.955607,
+        "max_lon": 115.854512,
+        "max_lat": -31.950909
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.904,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmRaps",
+    "name": "WcmRaps",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 137,
+    "total_pipe_length_m": 2691.84,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.843583,
+        "lat": -31.945252
+      },
+      "bounds": {
+        "min_lon": 115.840013,
+        "min_lat": -31.946814,
+        "max_lon": 115.847153,
+        "max_lat": -31.94369
+      }
+    },
+    "A_km2": 10.38,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.817,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmRapn",
+    "name": "WcmRapn",
+    "C": 0.6,
+    "Qcap_m3s": 1.294,
+    "pipe_count": 60,
+    "total_pipe_length_m": 1384.52,
+    "max_pipe_diameter_mm": 910,
+    "location": {
+      "center": {
+        "lon": 115.846086,
+        "lat": -31.944198
+      },
+      "bounds": {
+        "min_lon": 115.843613,
+        "min_lat": -31.946158,
+        "max_lon": 115.848559,
+        "max_lat": -31.942238
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.817,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcmConv",
+    "name": "WcmConv",
+    "C": 0.6,
+    "Qcap_m3s": 19.915,
+    "pipe_count": 13,
+    "total_pipe_length_m": 443.81,
+    "max_pipe_diameter_mm": 1340,
+    "location": {
+      "center": {
+        "lon": 115.855122,
+        "lat": -31.957068
+      },
+      "bounds": {
+        "min_lon": 115.85442,
+        "min_lat": -31.957748,
+        "max_lon": 115.855823,
+        "max_lat": -31.956387
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.938,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WclVict",
+    "name": "WclVict",
+    "C": 0.6,
+    "Qcap_m3s": 205.493,
+    "pipe_count": 306,
+    "total_pipe_length_m": 5396.48,
+    "max_pipe_diameter_mm": 1200,
+    "location": {
+      "center": {
+        "lon": 115.865428,
+        "lat": -31.958062
+      },
+      "bounds": {
+        "min_lon": 115.860347,
+        "min_lat": -31.961263,
+        "max_lon": 115.870508,
+        "max_lat": -31.95486
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.962,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WclTerr",
+    "name": "WclTerr",
+    "C": 0.6,
+    "Qcap_m3s": 1.717,
+    "pipe_count": 49,
+    "total_pipe_length_m": 1136.63,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.873505,
+        "lat": -31.962751
+      },
+      "bounds": {
+        "min_lon": 115.871381,
+        "min_lat": -31.963842,
+        "max_lon": 115.875629,
+        "max_lat": -31.961661
+      }
+    },
+    "A_km2": 20070.17,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.928,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WclHill",
+    "name": "WclHill",
+    "C": 0.6,
+    "Qcap_m3s": 56.303,
+    "pipe_count": 148,
+    "total_pipe_length_m": 7998.6,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.868235,
+        "lat": -31.959037
+      },
+      "bounds": {
+        "min_lon": 115.865377,
+        "min_lat": -31.962337,
+        "max_lon": 115.871093,
+        "max_lat": -31.955738
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.935,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WclBenn",
+    "name": "WclBenn",
+    "C": 0.6,
+    "Qcap_m3s": 15.01,
+    "pipe_count": 65,
+    "total_pipe_length_m": 1373.83,
+    "max_pipe_diameter_mm": 675,
+    "location": {
+      "center": {
+        "lon": 115.870451,
+        "lat": -31.960581
+      },
+      "bounds": {
+        "min_lon": 115.868836,
+        "min_lat": -31.962982,
+        "max_lon": 115.872066,
+        "max_lat": -31.958181
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.913,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WclAdel",
+    "name": "WclAdel",
+    "C": 0.6,
+    "Qcap_m3s": 15.249,
+    "pipe_count": 68,
+    "total_pipe_length_m": 1292.98,
+    "max_pipe_diameter_mm": 525,
+    "location": {
+      "center": {
+        "lon": 115.873973,
+        "lat": -31.960728
+      },
+      "bounds": {
+        "min_lon": 115.87177,
+        "min_lat": -31.961749,
+        "max_lon": 115.876177,
+        "max_lat": -31.959708
+      }
+    },
+    "A_km2": 20070.17,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.915,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccWell",
+    "name": "WccWell",
+    "C": 0.6,
+    "Qcap_m3s": 2.3,
+    "pipe_count": 335,
+    "total_pipe_length_m": 4754.94,
+    "max_pipe_diameter_mm": 1050,
+    "location": {
+      "center": {
+        "lon": 115.854386,
+        "lat": -31.950193
+      },
+      "bounds": {
+        "min_lon": 115.850664,
+        "min_lat": -31.952994,
+        "max_lon": 115.858107,
+        "max_lat": -31.947392
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.791,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccStir",
+    "name": "WccStir",
+    "C": 0.6,
+    "Qcap_m3s": 0.749,
+    "pipe_count": 86,
+    "total_pipe_length_m": 1668.04,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.863854,
+        "lat": -31.949075
+      },
+      "bounds": {
+        "min_lon": 115.86212,
+        "min_lat": -31.9507,
+        "max_lon": 115.865589,
+        "max_lat": -31.947449
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.79,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccRoya",
+    "name": "WccRoya",
+    "C": 0.6,
+    "Qcap_m3s": 38.447,
+    "pipe_count": 209,
+    "total_pipe_length_m": 4642.69,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.869271,
+        "lat": -31.953599
+      },
+      "bounds": {
+        "min_lon": 115.865101,
+        "min_lat": -31.956109,
+        "max_lon": 115.873441,
+        "max_lat": -31.951089
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.925,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccRoee",
+    "name": "WccRoee",
+    "C": 0.6,
+    "Qcap_m3s": 322.823,
+    "pipe_count": 944,
+    "total_pipe_length_m": 16617.83,
+    "max_pipe_diameter_mm": 1600,
+    "location": {
+      "center": {
+        "lon": 115.858184,
+        "lat": -31.950205
+      },
+      "bounds": {
+        "min_lon": 115.850143,
+        "min_lat": -31.95566,
+        "max_lon": 115.866225,
+        "max_lat": -31.944751
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.79,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccNash",
+    "name": "WccNash",
+    "C": 0.6,
+    "Qcap_m3s": 32.117,
+    "pipe_count": 20,
+    "total_pipe_length_m": 403.69,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.866025,
+        "lat": -31.95028
+      },
+      "bounds": {
+        "min_lon": 115.865148,
+        "min_lat": -31.950993,
+        "max_lon": 115.866902,
+        "max_lat": -31.949568
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.929,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccMurr",
+    "name": "WccMurr",
+    "C": 0.6,
+    "Qcap_m3s": 7.955,
+    "pipe_count": 67,
+    "total_pipe_length_m": 936.43,
+    "max_pipe_diameter_mm": 450,
+    "location": {
+      "center": {
+        "lon": 115.853758,
+        "lat": -31.950756
+      },
+      "bounds": {
+        "min_lon": 115.852336,
+        "min_lat": -31.951709,
+        "max_lon": 115.855181,
+        "max_lat": -31.949803
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.91,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccHenr",
+    "name": "WccHenr",
+    "C": 0.6,
+    "Qcap_m3s": 1.34,
+    "pipe_count": 30,
+    "total_pipe_length_m": 505.17,
+    "max_pipe_diameter_mm": 375,
+    "location": {
+      "center": {
+        "lon": 115.87476,
+        "lat": -31.951717
+      },
+      "bounds": {
+        "min_lon": 115.873665,
+        "min_lat": -31.952161,
+        "max_lon": 115.875855,
+        "max_lat": -31.951273
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.878,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccFiel",
+    "name": "WccFiel",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 54,
+    "total_pipe_length_m": 935.49,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.874424,
+        "lat": -31.951162
+      },
+      "bounds": {
+        "min_lon": 115.872753,
+        "min_lat": -31.952325,
+        "max_lon": 115.876096,
+        "max_lat": -31.949998
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.879,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccEpar",
+    "name": "WccEpar",
+    "C": 0.6,
+    "Qcap_m3s": 17.183,
+    "pipe_count": 53,
+    "total_pipe_length_m": 883.87,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.877067,
+        "lat": -31.95134
+      },
+      "bounds": {
+        "min_lon": 115.875855,
+        "min_lat": -31.952137,
+        "max_lon": 115.878279,
+        "max_lat": -31.950542
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.86,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WccAber",
+    "name": "WccAber",
+    "C": 0.6,
+    "Qcap_m3s": 0.419,
+    "pipe_count": 25,
+    "total_pipe_length_m": 506.56,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.866715,
+        "lat": -31.949602
+      },
+      "bounds": {
+        "min_lon": 115.865092,
+        "min_lat": -31.950588,
+        "max_lon": 115.868338,
+        "max_lat": -31.948616
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.92,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "VinNewc",
+    "name": "VinNewc",
+    "C": 0.6,
+    "Qcap_m3s": 32.379,
+    "pipe_count": 152,
+    "total_pipe_length_m": 1815.83,
+    "max_pipe_diameter_mm": 760,
+    "location": {
+      "center": {
+        "lon": 115.855447,
+        "lat": -31.944584
+      },
+      "bounds": {
+        "min_lon": 115.853998,
+        "min_lat": -31.946111,
+        "max_lon": 115.856897,
+        "max_lat": -31.943056
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.828,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "VinLake",
+    "name": "VinLake",
+    "C": 0.6,
+    "Qcap_m3s": 38.4,
+    "pipe_count": 114,
+    "total_pipe_length_m": 1461.25,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.859009,
+        "lat": -31.945511
+      },
+      "bounds": {
+        "min_lon": 115.857146,
+        "min_lat": -31.946551,
+        "max_lon": 115.860872,
+        "max_lat": -31.944472
+      }
+    },
+    "A_km2": 16.26,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.82,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SubThom",
+    "name": "SubThom",
+    "C": 0.6,
+    "Qcap_m3s": 0.27,
+    "pipe_count": 45,
+    "total_pipe_length_m": 1810.23,
+    "max_pipe_diameter_mm": 450,
+    "location": {
+      "center": {
+        "lon": 115.826395,
+        "lat": -31.956756
+      },
+      "bounds": {
+        "min_lon": 115.819928,
+        "min_lat": -31.962177,
+        "max_lon": 115.832861,
+        "max_lat": -31.951336
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.827,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SubRich",
+    "name": "SubRich",
+    "C": 0.6,
+    "Qcap_m3s": 23.936,
+    "pipe_count": 142,
+    "total_pipe_length_m": 2998.17,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.839792,
+        "lat": -31.9504
+      },
+      "bounds": {
+        "min_lon": 115.836328,
+        "min_lat": -31.953541,
+        "max_lon": 115.843257,
+        "max_lat": -31.947258
+      }
+    },
+    "A_km2": 10.38,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.82,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SubKing",
+    "name": "SubKing",
+    "C": 0.6,
+    "Qcap_m3s": 29.409,
+    "pipe_count": 68,
+    "total_pipe_length_m": 1520.59,
+    "max_pipe_diameter_mm": 575,
+    "location": {
+      "center": {
+        "lon": 115.83547,
+        "lat": -31.950114
+      },
+      "bounds": {
+        "min_lon": 115.833662,
+        "min_lat": -31.95179,
+        "max_lon": 115.837278,
+        "max_lat": -31.948438
+      }
+    },
+    "A_km2": 10.38,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.843,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SrsVict",
+    "name": "SrsVict",
+    "C": 0.6,
+    "Qcap_m3s": 11.942,
+    "pipe_count": 70,
+    "total_pipe_length_m": 1308.42,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.863017,
+        "lat": -31.95964
+      },
+      "bounds": {
+        "min_lon": 115.861418,
+        "min_lat": -31.960809,
+        "max_lon": 115.864616,
+        "max_lat": -31.958472
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.969,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SrsMbay",
+    "name": "SrsMbay",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 198,
+    "total_pipe_length_m": 3278.58,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.83435,
+        "lat": -31.966405
+      },
+      "bounds": {
+        "min_lon": 115.822012,
+        "min_lat": -31.975179,
+        "max_lon": 115.846689,
+        "max_lat": -31.957631
+      }
+    },
+    "A_km2": 21.89,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.714,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SrsFras",
+    "name": "SrsFras",
+    "C": 0.6,
+    "Qcap_m3s": 6.706,
+    "pipe_count": 227,
+    "total_pipe_length_m": 4361.97,
+    "max_pipe_diameter_mm": 1500,
+    "location": {
+      "center": {
+        "lon": 115.878024,
+        "lat": -31.96286
+      },
+      "bounds": {
+        "min_lon": 115.872394,
+        "min_lat": -31.967688,
+        "max_lon": 115.883654,
+        "max_lat": -31.958033
+      }
+    },
+    "A_km2": 20070.17,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.835,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SrsBarr",
+    "name": "SrsBarr",
+    "C": 0.6,
+    "Qcap_m3s": 0.521,
+    "pipe_count": 114,
+    "total_pipe_length_m": 2079.8,
+    "max_pipe_diameter_mm": 640,
+    "location": {
+      "center": {
+        "lon": 115.859753,
+        "lat": -31.958646
+      },
+      "bounds": {
+        "min_lon": 115.858217,
+        "min_lat": -31.959844,
+        "max_lon": 115.861288,
+        "max_lat": -31.957449
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.973,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SreVicg",
+    "name": "SreVicg",
+    "C": 0.6,
+    "Qcap_m3s": 0.408,
+    "pipe_count": 77,
+    "total_pipe_length_m": 1481.61,
+    "max_pipe_diameter_mm": 525,
+    "location": {
+      "center": {
+        "lon": 115.880708,
+        "lat": -31.953445
+      },
+      "bounds": {
+        "min_lon": 115.878914,
+        "min_lat": -31.954352,
+        "max_lon": 115.882502,
+        "max_lat": -31.952537
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.86,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SreRway",
+    "name": "SreRway",
+    "C": 0.6,
+    "Qcap_m3s": 24.726,
+    "pipe_count": 86,
+    "total_pipe_length_m": 2016.05,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.877816,
+        "lat": -31.949228
+      },
+      "bounds": {
+        "min_lon": 115.875715,
+        "min_lat": -31.950078,
+        "max_lon": 115.879917,
+        "max_lat": -31.948378
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.863,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SreNels",
+    "name": "SreNels",
+    "C": 0.6,
+    "Qcap_m3s": 133.786,
+    "pipe_count": 100,
+    "total_pipe_length_m": 1910.69,
+    "max_pipe_diameter_mm": 1060,
+    "location": {
+      "center": {
+        "lon": 115.879843,
+        "lat": -31.957547
+      },
+      "bounds": {
+        "min_lon": 115.876025,
+        "min_lat": -31.960099,
+        "max_lon": 115.883662,
+        "max_lat": -31.954996
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.833,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "SreBrow",
+    "name": "SreBrow",
+    "C": 0.6,
+    "Qcap_m3s": 1.971,
+    "pipe_count": 5,
+    "total_pipe_length_m": 123.83,
+    "max_pipe_diameter_mm": 300,
+    "location": {
+      "center": {
+        "lon": 115.881536,
+        "lat": -31.950808
+      },
+      "bounds": {
+        "min_lon": 115.881114,
+        "min_lat": -31.950954,
+        "max_lon": 115.881957,
+        "max_lat": -31.950661
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.878,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "NedWint",
+    "name": "NedWint",
+    "C": 0.6,
+    "Qcap_m3s": 0.092,
+    "pipe_count": 11,
+    "total_pipe_length_m": 378.13,
+    "max_pipe_diameter_mm": 300,
+    "location": {
+      "center": {
+        "lon": 115.818739,
+        "lat": -31.964283
+      },
+      "bounds": {
+        "min_lon": 115.818071,
+        "min_lat": -31.965632,
+        "max_lon": 115.819407,
+        "max_lat": -31.962933
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.875,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "MrdMtsb",
+    "name": "MrdMtsb",
+    "C": 0.6,
+    "Qcap_m3s": 1.717,
+    "pipe_count": 95,
+    "total_pipe_length_m": 1921.87,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.847453,
+        "lat": -31.958785
+      },
+      "bounds": {
+        "min_lon": 115.845522,
+        "min_lat": -31.962454,
+        "max_lon": 115.849385,
+        "max_lat": -31.955116
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.874,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "MrdMout",
+    "name": "MrdMout",
+    "C": 0.6,
+    "Qcap_m3s": 0.375,
+    "pipe_count": 59,
+    "total_pipe_length_m": 881.39,
+    "max_pipe_diameter_mm": 525,
+    "location": {
+      "center": {
+        "lon": 115.846861,
+        "lat": -31.954509
+      },
+      "bounds": {
+        "min_lon": 115.845299,
+        "min_lat": -31.9552,
+        "max_lon": 115.848423,
+        "max_lat": -31.953817
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.869,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "MrdLoft",
+    "name": "MrdLoft",
+    "C": 0.6,
+    "Qcap_m3s": 0.201,
+    "pipe_count": 19,
+    "total_pipe_length_m": 402.87,
+    "max_pipe_diameter_mm": 450,
+    "location": {
+      "center": {
+        "lon": 115.843112,
+        "lat": -31.942989
+      },
+      "bounds": {
+        "min_lon": 115.842548,
+        "min_lat": -31.943852,
+        "max_lon": 115.843676,
+        "max_lat": -31.942125
+      }
+    },
+    "A_km2": 10.38,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.825,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "CovMard",
+    "name": "CovMard",
+    "C": 0.6,
+    "Qcap_m3s": 4.019,
+    "pipe_count": 35,
+    "total_pipe_length_m": 911.06,
+    "max_pipe_diameter_mm": 375,
+    "location": {
+      "center": {
+        "lon": 115.880095,
+        "lat": -31.949904
+      },
+      "bounds": {
+        "min_lon": 115.879138,
+        "min_lat": -31.951307,
+        "max_lon": 115.881051,
+        "max_lat": -31.948502
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.875,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "CovHaig",
+    "name": "CovHaig",
+    "C": 0.6,
+    "Qcap_m3s": 20.748,
+    "pipe_count": 119,
+    "total_pipe_length_m": 2018.68,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.87906,
+        "lat": -31.952809
+      },
+      "bounds": {
+        "min_lon": 115.877952,
+        "min_lat": -31.95461,
+        "max_lon": 115.880168,
+        "max_lat": -31.951007
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.855,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "CovBenn",
+    "name": "CovBenn",
+    "C": 0.6,
+    "Qcap_m3s": 25.56,
+    "pipe_count": 320,
+    "total_pipe_length_m": 5723.31,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.87401,
+        "lat": -31.954824
+      },
+      "bounds": {
+        "min_lon": 115.870143,
+        "min_lat": -31.95761,
+        "max_lon": 115.877877,
+        "max_lat": -31.952039
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.89,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "XxxXxxx",
+    "name": "XxxXxxx",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 87,
+    "total_pipe_length_m": 2109.12,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.849986,
+        "lat": -31.959023
+      },
+      "bounds": {
+        "min_lon": 115.817712,
+        "min_lat": -31.975254,
+        "max_lon": 115.88226,
+        "max_lat": -31.942791
+      }
+    },
+    "A_km2": 12.92,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.28,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "CovJewe",
+    "name": "CovJewe",
+    "C": 0.6,
+    "Qcap_m3s": 19.599,
+    "pipe_count": 14,
+    "total_pipe_length_m": 201.32,
+    "max_pipe_diameter_mm": 900,
+    "location": {
+      "center": {
+        "lon": 115.879944,
+        "lat": -31.951492
+      },
+      "bounds": {
+        "min_lon": 115.879681,
+        "min_lat": -31.951883,
+        "max_lon": 115.880207,
+        "max_lat": -31.951101
+      }
+    },
+    "A_km2": 18.93,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.866,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": " ",
+    "name": " ",
+    "C": 0.6,
+    "Qcap_m3s": 0.166,
+    "pipe_count": 138,
+    "total_pipe_length_m": 744.29,
+    "max_pipe_diameter_mm": 375,
+    "location": {
+      "center": {
+        "lon": 115.839492,
+        "lat": -31.96026
+      },
+      "bounds": {
+        "min_lon": 115.816175,
+        "min_lat": -31.973581,
+        "max_lon": 115.862808,
+        "max_lat": -31.946938
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.407,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcrHack",
+    "name": "WcrHack",
+    "C": 0.6,
+    "Qcap_m3s": 2.079,
+    "pipe_count": 44,
+    "total_pipe_length_m": 1049.48,
+    "max_pipe_diameter_mm": 1050,
+    "location": {
+      "center": {
+        "lon": 115.820038,
+        "lat": -31.981949
+      },
+      "bounds": {
+        "min_lon": 115.818633,
+        "min_lat": -31.986718,
+        "max_lon": 115.821443,
+        "max_lat": -31.97718
+      }
+    },
+    "A_km2": 20653.87,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.865,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcwPark",
+    "name": "WcwPark",
+    "C": 0.6,
+    "Qcap_m3s": 1.056,
+    "pipe_count": 126,
+    "total_pipe_length_m": 2399.35,
+    "max_pipe_diameter_mm": 750,
+    "location": {
+      "center": {
+        "lon": 115.815581,
+        "lat": -31.972624
+      },
+      "bounds": {
+        "min_lon": 115.813376,
+        "min_lat": -31.974698,
+        "max_lon": 115.817787,
+        "max_lat": -31.970551
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.854,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcrFair",
+    "name": "WcrFair",
+    "C": 0.6,
+    "Qcap_m3s": 0.583,
+    "pipe_count": 69,
+    "total_pipe_length_m": 901.19,
+    "max_pipe_diameter_mm": 600,
+    "location": {
+      "center": {
+        "lon": 115.815354,
+        "lat": -31.982061
+      },
+      "bounds": {
+        "min_lon": 115.814082,
+        "min_lat": -31.987013,
+        "max_lon": 115.816627,
+        "max_lat": -31.97711
+      }
+    },
+    "A_km2": 20653.87,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.878,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "NedAber",
+    "name": "NedAber",
+    "C": 0.6,
+    "Qcap_m3s": 0.583,
+    "pipe_count": 6,
+    "total_pipe_length_m": 245.83,
+    "max_pipe_diameter_mm": 600,
+    "location": {
+      "center": {
+        "lon": 115.815232,
+        "lat": -31.964646
+      },
+      "bounds": {
+        "min_lon": 115.814278,
+        "min_lat": -31.964909,
+        "max_lon": 115.816185,
+        "max_lat": -31.964383
+      }
+    },
+    "A_km2": 19.52,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "_Coastal",
+    "match_score": 0.898,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcrTave",
+    "name": "WcrTave",
+    "C": 0.6,
+    "Qcap_m3s": 0.95,
+    "pipe_count": 24,
+    "total_pipe_length_m": 1031.68,
+    "max_pipe_diameter_mm": 1050,
+    "location": {
+      "center": {
+        "lon": 115.816576,
+        "lat": -31.98793
+      },
+      "bounds": {
+        "min_lon": 115.814487,
+        "min_lat": -31.989404,
+        "max_lon": 115.818665,
+        "max_lat": -31.986457
+      }
+    },
+    "A_km2": 20653.87,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.92,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcrPway",
+    "name": "WcrPway",
+    "C": 0.6,
+    "Qcap_m3s": 0.166,
+    "pipe_count": 19,
+    "total_pipe_length_m": 490.4,
+    "max_pipe_diameter_mm": 375,
+    "location": {
+      "center": {
+        "lon": 115.817988,
+        "lat": -31.984683
+      },
+      "bounds": {
+        "min_lon": 115.817849,
+        "min_lat": -31.986571,
+        "max_lon": 115.818127,
+        "max_lat": -31.982796
+      }
+    },
+    "A_km2": 20653.87,
+    "basin_name": "Swan Coastal",
+    "area_type": "Estuary",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.891,
+    "match_type": "overlap"
+  },
+  {
+    "catchment_id": "WcwStir",
+    "name": "WcwStir",
+    "C": 0.6,
+    "Qcap_m3s": 0.117,
+    "pipe_count": 25,
+    "total_pipe_length_m": 267.31,
+    "max_pipe_diameter_mm": 375,
+    "location": {
+      "center": {
+        "lon": 115.815644,
+        "lat": -31.976529
+      },
+      "bounds": {
+        "min_lon": 115.813563,
+        "min_lat": -31.977412,
+        "max_lon": 115.817724,
+        "max_lat": -31.975645
+      }
+    },
+    "A_km2": 21.89,
+    "basin_name": "Swan Coastal",
+    "area_type": "Other Catchment",
+    "matched_catchment": "SwanAvon_Lower Swan",
+    "match_score": 0.84,
+    "match_type": "overlap"
+  }
+]

@@ -1,3 +1,17 @@
-fastapi
-pydantic
-uvicorn
+## Core database driver
+pymongo==4.8.0
+
+## Numerical utilities (array operations, averaging for pipe capacity heuristics)
+numpy>=1.26,<3
+
+## HTTP client for weather API ingestion
+requests>=2.31,<3
+
+## Timezone handling for timestamp normalization
+pytz>=2023.3
+
+## Environment variable support (.env loading)
+python-dotenv>=1.0,<2
+
+## Testing (optional for development)
+pytest>=7,<9
