@@ -293,8 +293,8 @@ Request Body:
 
 ```json
 {
-  "longitude": 115.857,
-  "latitude": -31.9553,
+  "lon": 115.857,
+  "lat": -31.9553,
   "rainfall_event_id": "design_10yr"
 }
 ```

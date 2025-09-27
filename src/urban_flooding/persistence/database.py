@@ -60,18 +60,18 @@ class FloodingDatabase:
             if field not in catchment_data:
                 raise ValueError(f"Missing required field: {field}")
         if "created_at" not in catchment_data:
-            catchment_data["created_at"] = datetime.utcnow()
-        catchment_data["updated_at"] = datetime.utcnow()
+            catchment_data["created_at"] = datetime.now()
+        catchment_data["updated_at"] = datetime.now()
         self.catchments.replace_one(
             {"catchment_id": catchment_data["catchment_id"]}, catchment_data, upsert=True)
         return catchment_data["catchment_id"]
 
     def save_catchment(self, catchment_id: str, name: str, C: float, A_km2: float, Qcap_m3s: float, **kwargs) -> str:
         doc = {"catchment_id": catchment_id, "name": name, "C": C,
-               "A_km2": A_km2, "Qcap_m3s": Qcap_m3s, "updated_at": datetime.utcnow()}
+               "A_km2": A_km2, "Qcap_m3s": Qcap_m3s, "updated_at": datetime.now()}
         existing = self.catchments.find_one({"catchment_id": catchment_id})
         doc["created_at"] = existing.get(
-            "created_at", datetime.utcnow()) if existing else datetime.utcnow()
+            "created_at", datetime.now()) if existing else datetime.now()
         for k, v in kwargs.items():
             if v is not None:
                 doc[k] = v
@@ -107,7 +107,7 @@ class FloodingDatabase:
 
     def save_simulation(self, simulation_id: str, catchment_id: str, rain_mmhr: List[float], timestamps_utc: List[str], C: float, A_km2: float, Qcap_m3s: float, series: List[Dict], max_risk: float, k: float = 8.0, **kwargs) -> str:
         doc = {"simulation_id": simulation_id, "catchment_id": catchment_id, "rain_mmhr": rain_mmhr, "timestamps_utc": timestamps_utc,
-               "C": C, "A_km2": A_km2, "Qcap_m3s": Qcap_m3s, "k": k, "series": series, "max_risk": max_risk, "created_at": datetime.utcnow()}
+               "C": C, "A_km2": A_km2, "Qcap_m3s": Qcap_m3s, "k": k, "series": series, "max_risk": max_risk, "created_at": datetime.now()}
         for k2, v in kwargs.items():
             if v is not None:
                 doc[k2] = v
@@ -142,14 +142,14 @@ class FloodingDatabase:
 
     def get_simulations_by_date_range(self, days_back: int = 7, limit: int = 100) -> List[Dict]:
         from datetime import timedelta
-        cutoff_date = datetime.utcnow() - timedelta(days=days_back)
+        cutoff_date = datetime.now() - timedelta(days=days_back)
         cursor = self.simulations.find({"created_at": {"$gte": cutoff_date}}, {
                                        "_id": 0}).sort("created_at", DESCENDING).limit(limit)
         return list(cursor)
 
     def save_rainfall_event(self, event_id: str, name: str, rain_mmhr: List[float], timestamps_utc: List[str], **kwargs) -> str:
         doc = {"event_id": event_id, "name": name, "rain_mmhr": rain_mmhr,
-               "timestamps_utc": timestamps_utc, "created_at": datetime.utcnow()}
+               "timestamps_utc": timestamps_utc, "created_at": datetime.now()}
         if rain_mmhr:
             doc["total_rainfall_mm"] = sum(rain_mmhr)
             doc["peak_intensity_mmhr"] = max(rain_mmhr)
@@ -184,7 +184,7 @@ class FloodingDatabase:
         """Create a new issue report and return its business key issue_id."""
         from uuid import uuid4
         issue_id = f"ISSUE_{uuid4().hex[:10]}"
-        now = datetime.utcnow()
+        now = datetime.now()
         doc = {
             "issue_id": issue_id,
             "issue_type": issue_type,

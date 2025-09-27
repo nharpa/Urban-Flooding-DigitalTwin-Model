@@ -27,12 +27,16 @@ router = APIRouter()
 
 
 class PointRiskRequest(BaseModel):
-    lon: float = Field(..., ge=-180, le=180,
-                       description="Longitude in WGS84")
-    lat: float = Field(..., ge=-90, le=90,
-                       description="Latitude in WGS84")
+    lon: float = Field(
+        ..., ge=-180, le=180, description="Longitude in WGS84"
+    )
+    lat: float = Field(
+        ..., ge=-90, le=90, description="Latitude in WGS84"
+    )
     rainfall_event_id: Optional[str] = Field(
-        None, description="Optional rainfall event id; defaults to 'design_10yr' if not provided")
+        None,
+        description="Optional rainfall event id; defaults to 'design_10yr' if not provided",
+    )
 
 
 class PointRiskResponse(BaseModel):
@@ -58,33 +62,67 @@ def _risk_level(value: float) -> str:
     return "very_low"
 
 
+def _select_catchment_for_point(lon: float, lat: float, catchments: list[dict]) -> dict:
+    """Return the most appropriate catchment for a given point.
+
+    Logic:
+    1. Iterate through provided `catchments` and collect those whose location.bounds
+       encloses the (lon, lat) point. Bounds must provide min/max for lon & lat.
+    2. If multiple candidates are found, choose the one with the smallest `A_km2`
+       (heuristic assuming tighter bounds more specific catchment).
+    3. Raise HTTPException(404) if no candidates are found.
+
+    Parameters
+    ----------
+    lon : float
+        Longitude in WGS84.
+    lat : float
+        Latitude in WGS84.
+    catchments : list[dict]
+        Catchment records as returned by `FloodingDatabase.list_catchments()`.
+
+    Returns
+    -------
+    dict
+        Selected catchment dictionary.
+    """
+    candidates: list[dict] = []
+    for c in catchments:
+        loc = c.get("location") or {}
+        bounds = (loc.get("bounds") or {}) if isinstance(loc, dict) else {}
+        try:
+            min_lon = bounds.get("min_lon")
+            max_lon = bounds.get("max_lon")
+            min_lat = bounds.get("min_lat")
+            max_lat = bounds.get("max_lat")
+            if None in (min_lon, max_lon, min_lat, max_lat):
+                continue  # incomplete bounds, skip
+            if min_lon <= lon <= max_lon and min_lat <= lat <= max_lat:
+                candidates.append(c)
+        except Exception:
+            # Defensive: skip malformed catchment records
+            continue
+    if not candidates:
+
+        raise HTTPException(
+            status_code=404, detail="No catchment found for provided point")
+    print(candidates)
+    candidates.sort(key=lambda x: x.get("A_km2", float("inf")))
+    print(
+        f"Selected catchment {candidates[0]['catchment_id']} for point ({lon}, {lat})")
+    return candidates[0]
+
+
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(req: PointRiskRequest):
     db = FloodingDatabase()
     lon = float(req.lon)
     lat = float(req.lat)
-    candidates = []
-    for c in db.list_catchments():
-        loc = c.get("location") or {}
-        bounds = loc.get("bounds") or {}
-        try:
-            if (
-                bounds.get("min_lon") is not None
-                and bounds.get("max_lon") is not None
-                and bounds.get("min_lat") is not None
-                and bounds.get("max_lat") is not None
-                and bounds["min_lon"] <= lon <= bounds["max_lon"]
-                and bounds["min_lat"] <= lat <= bounds["max_lat"]
-            ):
-                candidates.append(c)
-        except Exception:
-            continue
-    if not candidates:
-        raise HTTPException(
-            status_code=404, detail="No catchment found for provided point")
-    # Choose smallest area as heuristic (tighter bounds more likely correct)
-    candidates.sort(key=lambda x: x.get("A_km2", 1e9))
-    catchment = candidates[0]
+
+    print(f"Computing risk for point ({lon}, {lat})")
+    catchment = _select_catchment_for_point(
+        lon=lon, lat=lat, catchments=db.list_catchments()
+    )
     event_id = req.rainfall_event_id or "design_10yr"
     event = db.get_rainfall_event(event_id)
     if not event:

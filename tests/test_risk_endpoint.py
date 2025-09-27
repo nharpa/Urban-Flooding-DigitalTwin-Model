@@ -55,7 +55,7 @@ def test_point_risk_endpoint(monkeypatch):
 
     app = create_app()
     client = TestClient(app)
-    payload = {"longitude": 115.5, "latitude": -31.5}
+    payload = {"lon": 115.81, "lat": -31.87}
     resp = client.post("/api/v1/risk/point", json=payload)
     assert resp.status_code == 200, resp.text
     data = resp.json()
@@ -76,5 +76,5 @@ def test_point_risk_not_found(monkeypatch):
     app = create_app()
     client = TestClient(app)
     resp = client.post("/api/v1/risk/point",
-                       json={"longitude": 0, "latitude": 0})
+                       json={"lon": 0, "lat": 0})
     assert resp.status_code == 404
