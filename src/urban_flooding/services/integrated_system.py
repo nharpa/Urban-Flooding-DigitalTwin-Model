@@ -21,9 +21,7 @@ import pytz
 from urban_flooding.persistence.database import FloodingDatabase
 from urban_flooding.domain.simulation import simulate_catchment
 from urban_flooding.ingestion.weather_client import WeatherAPIClient
-
-# Spatial / design rainfall utilities will be migrated next; to avoid a cyclic
-# dependency we import lazily inside the method where needed.
+from urban_flooding.ingestion.spatial_import import load_spatial_data, import_spatial_catchments, create_design_rainfall_events
 
 
 class IntegratedFloodSystem:
@@ -36,11 +34,7 @@ class IntegratedFloodSystem:
 
     # ------------------------- Initialization / Seeding --------------------- #
     def setup_initial_data(self) -> bool:
-        from import_spatial_to_mongodb import (  # legacy module still shimmed
-            load_spatial_data,
-            import_spatial_catchments,
-            create_design_rainfall_events,
-        )
+
         print("\n" + "=" * 70)
         print("System Initialization")
         print("=" * 70)
@@ -64,7 +58,7 @@ class IntegratedFloodSystem:
         print("\nFetching real-time weather data...")
         weather_data = self.weather_client.fetch_weather_data()
         if not weather_data:
-            print("   ❌ Unable to fetch weather data")
+            print("Unable to fetch weather data")
             return None
         try:
             rainfall_event = self.weather_client.create_rainfall_event_from_api(
@@ -75,7 +69,7 @@ class IntegratedFloodSystem:
             if save_to_db:
                 self.db.save_rainfall_event(**rainfall_event)
                 print(
-                    f"   ✓ Saved rainfall event: {rainfall_event['event_id']}")
+                    f"   Saved rainfall event: {rainfall_event['event_id']}")
             print(
                 f"   Total rainfall: {rainfall_event['total_rainfall_mm']} mm")
             print(
@@ -83,7 +77,7 @@ class IntegratedFloodSystem:
             print(f"   Duration: {rainfall_event['duration_hours']} hours")
             return rainfall_event
         except Exception as e:  # pragma: no cover - defensive
-            print(f"   ❌ Failed to process weather data: {e}")
+            print(f"Failed to process weather data: {e}")
             return None
 
     # --------------------- Comprehensive Risk Assessment -------------------- #
@@ -110,7 +104,7 @@ class IntegratedFloodSystem:
             if rainfall_event:
                 print(f"Using historical event: {rainfall_event['name']}")
         if not rainfall_event:
-            print("❌ No available rainfall events")
+            print("No available rainfall events")
             return []
         print(
             f"\nSelecting top {top_n} potentially high-risk catchment areas...")

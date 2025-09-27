@@ -20,9 +20,10 @@ Notes
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import List
-from dt.model import simulate_catchment
+from urban_flooding.domain.simulation import simulate_catchment
 
 router = APIRouter()
+
 
 class SimRequest(BaseModel):
     """Request body schema for the simulation endpoint.
@@ -47,15 +48,18 @@ class SimRequest(BaseModel):
     # Catchment / scenario identifier
     catchment_id: str = Field(..., examples=["perth_cbd_c1"])
     # Rainfall intensities [mm/hr]; length must match `timestamps_utc`
-    rain_mm_per_hr: List[float] = Field(..., min_items=1, examples=[[5,12,28,50,35,10]])
+    rain_mm_per_hr: List[float] = Field(..., min_items=1, examples=[
+                                        [5, 12, 28, 50, 35, 10]])
     # ISO 8601 UTC timestamps ("Z"); e.g., "2025-09-15T00:00Z"
-    timestamps_utc: List[str] = Field(..., min_items=1, examples=[["2025-09-15T00:00Z","2025-09-15T01:00Z"]])
+    timestamps_utc: List[str] = Field(..., min_items=1, examples=[
+                                      ["2025-09-15T00:00Z", "2025-09-15T01:00Z"]])
     # Runoff coefficient [0..1]
     C: float = Field(..., ge=0, le=1, examples=[0.85])
     # Catchment area [km^2]
     A_km2: float = Field(..., gt=0, examples=[1.4])
     # Downstream capacity [m^3/s]
     Qcap_m3s: float = Field(..., gt=0, examples=[3.2])
+
 
 @router.post("/simulate")
 def simulate(req: SimRequest):

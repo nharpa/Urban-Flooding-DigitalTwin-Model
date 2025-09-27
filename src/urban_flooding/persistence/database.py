@@ -236,3 +236,16 @@ class FloodingDatabase:
         for row in self.issue_reports.aggregate(type_pipeline):
             types[row["_id"]] = row["count"]
         return {"total_reports": total, "by_type": types}
+
+    # Added to support tests expecting ability to append notes
+    def append_issue_notes(self, issue_id: str, note: str) -> bool:
+        """Append (store) a textual note to an issue report.
+
+        Tests expect a plain string field 'notes' to equal the last value.
+        We therefore just set/overwrite 'notes'.
+        Returns True if modified.
+        """
+        res = self.issue_reports.update_one(
+            {"issue_id": issue_id}, {"$set": {"notes": note}}
+        )
+        return res.modified_count > 0

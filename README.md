@@ -270,6 +270,88 @@ Schema (simplified current form):
 }
 ```
 
+---
+
+## 12. FastAPI Service & New Point Risk Endpoint
+
+The project now includes a FastAPI application (see `main.py`) exposing simulation and risk services.
+
+Base URL (default dev run): `http://localhost:8000/api/v1`
+
+### Existing Endpoint
+
+POST `/simulate`
+Runs a bespoke simulation for arbitrary rainfall time series and parameters. (See automatic docs at `/docs` for schema.)
+
+### New Endpoint: Point-Based Catchment Risk
+
+POST `/risk/point`
+
+Purpose: Given a geographic coordinate (lon/lat), identify the catchment whose stored bounding box contains the point, run a simulation with a specified (or default) rainfall event, and return its risk metrics.
+
+Request Body:
+
+```json
+{
+  "longitude": 115.857,
+  "latitude": -31.9553,
+  "rainfall_event_id": "design_10yr"
+}
+```
+
+If `rainfall_event_id` is omitted the service falls back to `design_10yr`, or the first available rainfall event if that one does not exist.
+
+Successful Response Example:
+
+```json
+{
+  "catchment_id": "WcmWill",
+  "catchment_name": "WcmWill",
+  "rainfall_event_id": "design_10yr",
+  "max_risk": 0.742,
+  "risk_level": "high",
+  "parameters": { "C": 0.6, "A_km2": 12.92, "Qcap_m3s": 73.323 },
+  "max_risk_time": "2025-09-25T03:00:00Z",
+  "max_risk_point": {
+    "t": "2025-09-25T03:00:00Z",
+    "i": 30.0,
+    "Qrunoff": 64.6,
+    "L": 0.881,
+    "R": 0.742
+  }
+}
+```
+
+Error (no catchment match):
+
+```json
+{
+  "detail": "No catchment found for provided point"
+}
+```
+
+### How It Works Internally
+
+1. Loads all catchments (Mongo) and filters those whose stored bounding box (`location.bounds`) contains the point.
+2. Chooses the smallest-area candidate if multiple.
+3. Retrieves the rainfall event.
+4. Runs `simulate_catchment` using the catchment's hydraulic parameters.
+5. Computes a categorical risk level from the continuous `max_risk`.
+
+### Running the API
+
+```powershell
+uvicorn main:app --reload --port 8000
+```
+
+Visit interactive docs at: `http://localhost:8000/docs`
+
+### Notes & Future Enhancements
+
+- Bounding box containment is a proxy; replace with real polygon point-in-polygon once geometries are stored.
+- Consider caching catchments in-memory to avoid per-request full scans (trivial for current dataset size).
+- Add optional parameter to return full series or summary only (currently only peak info returned; full internal series is accessible via code changes if needed).
+
 Key points:
 
 - `location` is GeoJSON Point → enables geospatial `$near` queries.
