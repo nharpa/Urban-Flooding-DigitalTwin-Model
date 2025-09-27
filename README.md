@@ -248,7 +248,66 @@ Adjusts runoff coefficient `C` by interpreted land-use hints (urban/residential/
 
 ---
 
-## 11. Minimal Programmatic Example (New Imports)
+## 11. Issue Reporting (Crowdsourced Field Input)
+
+An integrated issue reporting collection allows field / citizen users to submit flood related problems (e.g. flooded road, blocked drain) with geolocation, photos, and optional notes. The lifecycle/status workflow was intentionally simplified (no status or priority fields) to keep ingestion lightweight; enrichment or triage can be layered externally later if needed.
+
+Schema (simplified current form):
+
+```json
+{
+  "issue_id": "ISSUE_ab12cd34ef",
+  "issue_type": "Flooded road",
+  "description": "Water over curb near Oak Ave.",
+  "location": { "type": "Point", "coordinates": [115.8614, -31.95224] },
+  "user": {
+    "uid": "firebase123",
+    "display_name": "Jane",
+    "email": "jane@example.com"
+  },
+  "photo_urls": ["https://.../img1.jpg"],
+  "created_at": "2025-09-27T08:12:00Z"
+}
+```
+
+Key points:
+
+- `location` is GeoJSON Point → enables geospatial `$near` queries.
+- `issue_id` is a generated business key (distinct from Mongo `_id`).
+- Optional free‑form `notes` can be appended / replaced.
+
+CLI Commands (current set):
+
+```powershell
+# Create a report
+python -m urban_flooding.cli issue-create --type "Flooded road" --description "Water over curb" --lat -31.95 --lon 115.86 --uid user123 --notes "Observed after storm cell"
+
+# List recent reports
+python -m urban_flooding.cli issue-list --limit 10
+
+# Filter by type or user
+python -m urban_flooding.cli issue-list --type "Flooded road"
+python -m urban_flooding.cli issue-list --uid user123
+
+# Proximity search (meters)
+python -m urban_flooding.cli issue-near --lat -31.95 --lon 115.86 --radius 2000
+
+# Aggregate statistics (count + by_type breakdown)
+python -m urban_flooding.cli issue-stats
+```
+
+Limitations / future enhancements:
+
+- Reintroduce lifecycle (e.g. open / triaged / resolved) if operational workflow emerges.
+- Add controlled vocab or enumeration for `issue_type` (currently free-form validated in downstream logic only).
+- Support media attachment metadata (size, mime, checksum) and archival policies.
+- Optional linkage to nearest catchment for contextual analytics.
+
+Geospatial queries use a 2dsphere index on the GeoJSON `location` field.
+
+---
+
+## 12. Minimal Programmatic Example (New Imports)
 
 ```python
 from urban_flooding.persistence.database import FloodingDatabase
@@ -269,7 +328,7 @@ print(result['max_risk'])
 
 ---
 
-## 12. Testing / Validation
+## 13. Testing / Validation
 
 Pytest unit tests cover hydrology & simulation edge cases:
 
@@ -293,7 +352,7 @@ Additional future test targets:
 
 ---
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 | Issue                   | Likely Cause                              | Fix                                                 |
 | ----------------------- | ----------------------------------------- | --------------------------------------------------- |
@@ -304,12 +363,12 @@ Additional future test targets:
 
 ---
 
-## 14. Disclaimer
+## 15. Disclaimer
 
 This code is illustrative and not a replacement for detailed hydrodynamic modeling or regulatory flood studies.
 
 ---
 
-## 15. License
+## 16. License
 
 Specify license here (e.g., MIT) – currently unspecified.

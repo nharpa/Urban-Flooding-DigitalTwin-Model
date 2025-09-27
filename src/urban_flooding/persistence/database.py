@@ -23,6 +23,7 @@ class FloodingDatabase:
         self.catchments: Collection = self.db["catchments"]
         self.simulations: Collection = self.db["simulations"]
         self.rainfall_events: Collection = self.db["rainfall_events"]
+        self.issue_reports: Collection = self.db["issue_reports"]
         self._create_indexes()
 
     def _create_indexes(self):
@@ -43,6 +44,15 @@ class FloodingDatabase:
         self.rainfall_events.create_index("event_id", unique=True)
         self.rainfall_events.create_index("event_type")
         self.rainfall_events.create_index("return_period_years")
+        # Issue reports indexes
+        try:
+            self.issue_reports.create_index("issue_id", unique=True)
+            self.issue_reports.create_index("issue_type")
+            self.issue_reports.create_index("user.uid")
+            # 2dsphere index for GeoJSON point
+            self.issue_reports.create_index([("location", "2dsphere")])
+        except Exception as e:  # pragma: no cover
+            print(f"Issue reports index creation error: {e}")
 
     def save_catchment_full(self, catchment_data: Dict) -> str:
         required_fields = ["catchment_id", "name", "C", "A_km2", "Qcap_m3s"]
@@ -168,3 +178,61 @@ class FloodingDatabase:
 
     def close(self):
         self.client.close()
+
+    # ---------------- Issue Reports -----------------
+    def create_issue_report(self, issue_type: str, description: str, latitude: float, longitude: float, user_uid: str, display_name: str = None, email: str = None, photo_urls: List[str] | None = None, notes: str | None = None) -> str:
+        """Create a new issue report and return its business key issue_id."""
+        from uuid import uuid4
+        issue_id = f"ISSUE_{uuid4().hex[:10]}"
+        now = datetime.utcnow()
+        doc = {
+            "issue_id": issue_id,
+            "issue_type": issue_type,
+            "description": description,
+            "location": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
+            "user": {"uid": user_uid, "display_name": display_name, "email": email},
+            "photo_urls": photo_urls or [],
+            "created_at": now,
+        }
+        self.issue_reports.insert_one(doc)
+        return issue_id
+
+    def get_issue_report(self, issue_id: str) -> Optional[Dict]:
+        doc = self.issue_reports.find_one({"issue_id": issue_id}, {"_id": 0})
+        return doc
+
+    def list_issue_reports(self, issue_type: str | None = None, user_uid: str | None = None, limit: int = 50, skip: int = 0) -> List[Dict]:
+        query: Dict = {}
+        if issue_type:
+            query["issue_type"] = issue_type
+        if user_uid:
+            query["user.uid"] = user_uid
+        cursor = self.issue_reports.find(query, {"_id": 0}).sort(
+            "created_at", DESCENDING).skip(skip).limit(limit)
+        return list(cursor)
+
+    def find_issue_reports_near(self, longitude: float, latitude: float, radius_meters: int = 1000, limit: int = 50) -> List[Dict]:
+        query = {
+            "location": {
+                "$near": {
+                    "$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
+                    "$maxDistance": int(radius_meters)
+                }
+            }
+        }
+        cursor = self.issue_reports.find(query, {"_id": 0}).limit(limit)
+        return list(cursor)
+
+    def add_issue_photos(self, issue_id: str, photo_urls: List[str]) -> bool:
+        res = self.issue_reports.update_one(
+            {"issue_id": issue_id}, {"$push": {"photo_urls": {"$each": photo_urls}}})
+        return res.modified_count > 0
+
+    def issue_report_statistics(self) -> Dict:
+        total = self.issue_reports.count_documents({})
+        type_pipeline = [
+            {"$group": {"_id": "$issue_type", "count": {"$sum": 1}}}]
+        types: Dict[str, int] = {}
+        for row in self.issue_reports.aggregate(type_pipeline):
+            types[row["_id"]] = row["count"]
+        return {"total_reports": total, "by_type": types}

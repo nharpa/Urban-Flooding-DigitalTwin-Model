@@ -31,6 +31,51 @@ RAINFALL_EVENT_SCHEMA = {
     }
 }
 
+# New: Issue reporting schema (GeoJSON point for location, business key issue_id)
+ISSUE_REPORT_SCHEMA = {
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": [
+            "issue_id",
+            "issue_type",
+            "description",
+            "location",
+            "user",
+            "created_at"
+        ],
+        "properties": {
+            "_id": {"bsonType": "objectId"},
+            "issue_id": {"bsonType": "string"},
+            "issue_type": {"bsonType": "string"},
+            "description": {"bsonType": "string"},
+            "location": {
+                "bsonType": "object",
+                "required": ["type", "coordinates"],
+                "properties": {
+                    "type": {"enum": ["Point"]},
+                    "coordinates": {
+                        "bsonType": "array",
+                        "items": [{"bsonType": "double"}, {"bsonType": "double"}],
+                        "minItems": 2,
+                        "maxItems": 2
+                    }
+                }
+            },
+            "user": {
+                "bsonType": "object",
+                "required": ["uid"],
+                "properties": {
+                    "uid": {"bsonType": "string"},
+                    "display_name": {"bsonType": ["string", "null"]},
+                    "email": {"bsonType": ["string", "null"]}
+                }
+            },
+            "photo_urls": {"bsonType": ["array"], "items": {"bsonType": "string"}},
+            "created_at": {"bsonType": "date"},
+        }
+    }
+}
+
 
 def create_collections_with_validation(db):
     existing = db.list_collection_names()
@@ -48,6 +93,10 @@ def create_collections_with_validation(db):
     else:
         db.command("collMod", "rainfall_events",
                    validator=RAINFALL_EVENT_SCHEMA)
+    if "issue_reports" not in existing:
+        db.create_collection("issue_reports", validator=ISSUE_REPORT_SCHEMA)
+    else:
+        db.command("collMod", "issue_reports", validator=ISSUE_REPORT_SCHEMA)
 
 
 def create_geospatial_indexes(db):
