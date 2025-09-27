@@ -4,7 +4,8 @@ from urban_flooding.domain.hydrology import q_runoff_m3s, risk_from_loading
 
 def test_q_runoff_basic():
     # Q = 0.278 * C * i * A
-    assert q_runoff_m3s(0.7, 20.0, 1.5) == pytest.approx(0.278 * 0.7 * 20.0 * 1.5)
+    assert q_runoff_m3s(0.7, 20.0, 1.5) == pytest.approx(
+        0.278 * 0.7 * 20.0 * 1.5)
 
 
 def test_risk_midpoint():

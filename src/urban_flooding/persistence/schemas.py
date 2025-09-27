@@ -31,6 +31,7 @@ RAINFALL_EVENT_SCHEMA = {
     }
 }
 
+
 def create_collections_with_validation(db):
     existing = db.list_collection_names()
     if "catchments" not in existing:
@@ -42,9 +43,12 @@ def create_collections_with_validation(db):
     else:
         db.command("collMod", "simulations", validator=SIMULATION_SCHEMA)
     if "rainfall_events" not in existing:
-        db.create_collection("rainfall_events", validator=RAINFALL_EVENT_SCHEMA)
+        db.create_collection(
+            "rainfall_events", validator=RAINFALL_EVENT_SCHEMA)
     else:
-        db.command("collMod", "rainfall_events", validator=RAINFALL_EVENT_SCHEMA)
+        db.command("collMod", "rainfall_events",
+                   validator=RAINFALL_EVENT_SCHEMA)
+
 
 def create_geospatial_indexes(db):
     db.catchments.create_index([

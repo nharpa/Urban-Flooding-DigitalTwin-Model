@@ -47,8 +47,10 @@ class IntegratedFloodSystem:
         try:
             print("\n1. Importing spatially matched catchment area data...")
             catchments_data = load_spatial_data()
-            imported, updated, skipped = import_spatial_catchments(catchments_data, self.db)
-            print(f"   ✓ Import complete: Added/new {imported}, Updated {updated}, Skipped {skipped}")
+            imported, updated, skipped = import_spatial_catchments(
+                catchments_data, self.db)
+            print(
+                f"   ✓ Import complete: Added/new {imported}, Updated {updated}, Skipped {skipped}")
         except FileNotFoundError:
             print("   ⚠️  Spatial data file not found")
             return False
@@ -72,9 +74,12 @@ class IntegratedFloodSystem:
             )
             if save_to_db:
                 self.db.save_rainfall_event(**rainfall_event)
-                print(f"   ✓ Saved rainfall event: {rainfall_event['event_id']}")
-            print(f"   Total rainfall: {rainfall_event['total_rainfall_mm']} mm")
-            print(f"   Peak intensity: {rainfall_event['peak_intensity_mmhr']} mm/hr")
+                print(
+                    f"   ✓ Saved rainfall event: {rainfall_event['event_id']}")
+            print(
+                f"   Total rainfall: {rainfall_event['total_rainfall_mm']} mm")
+            print(
+                f"   Peak intensity: {rainfall_event['peak_intensity_mmhr']} mm/hr")
             print(f"   Duration: {rainfall_event['duration_hours']} hours")
             return rainfall_event
         except Exception as e:  # pragma: no cover - defensive
@@ -107,11 +112,13 @@ class IntegratedFloodSystem:
         if not rainfall_event:
             print("❌ No available rainfall events")
             return []
-        print(f"\nSelecting top {top_n} potentially high-risk catchment areas...")
+        print(
+            f"\nSelecting top {top_n} potentially high-risk catchment areas...")
         all_catchments = self.db.list_catchments()
         for c in all_catchments:
             c["risk_score"] = (c["C"] * c["A_km2"]) / max(c["Qcap_m3s"], 0.1)
-        catchments = sorted(all_catchments, key=lambda x: x["risk_score"], reverse=True)[:top_n]
+        catchments = sorted(
+            all_catchments, key=lambda x: x["risk_score"], reverse=True)[:top_n]
         print(f"   Selected {len(catchments)} catchment areas for evaluation")
         results: List[Dict] = []
         print("\nRunning flooding simulations...")
@@ -174,7 +181,8 @@ class IntegratedFloodSystem:
             if i % 5 == 0:
                 print(f"   Completed {i}/{len(catchments)} catchment areas")
         results.sort(key=lambda x: x["max_risk"], reverse=True)
-        print(f"\n✓ Completed risk assessment for {len(results)} catchment areas")
+        print(
+            f"\n✓ Completed risk assessment for {len(results)} catchment areas")
         return results
 
     # --------------------------- Alert Dashboard ---------------------------- #
@@ -205,13 +213,18 @@ class IntegratedFloodSystem:
         if emergency_alerts:
             dashboard.append("[🚨 Emergency Warning/Alert Areas]")
             for alert in emergency_alerts[:5]:
-                dashboard.append(f"\n{alert['risk_emoji']} {alert['catchment_name']}")
+                dashboard.append(
+                    f"\n{alert['risk_emoji']} {alert['catchment_name']}")
                 dashboard.append(f"   Risk value: {alert['max_risk']:.3f}")
-                dashboard.append(f"   Area: {alert['parameters']['A_km2']:.2f} km²")
-                dashboard.append(f"   Capacity: {alert['parameters']['Qcap_m3s']:.1f} m³/s")
+                dashboard.append(
+                    f"   Area: {alert['parameters']['A_km2']:.2f} km²")
+                dashboard.append(
+                    f"   Capacity: {alert['parameters']['Qcap_m3s']:.1f} m³/s")
                 if alert['max_risk_data']:
-                    dashboard.append(f"   Peak load: {alert['max_risk_data']['L']:.1%}")
-                    dashboard.append(f"   Peak runoff: {alert['max_risk_data']['Qrunoff']:.1f} m³/s")
+                    dashboard.append(
+                        f"   Peak load: {alert['max_risk_data']['L']:.1%}")
+                    dashboard.append(
+                        f"   Peak runoff: {alert['max_risk_data']['Qrunoff']:.1f} m³/s")
                 if alert['location'] and alert['location'].get('center'):
                     center = alert['location']['center']
                     dashboard.append(
@@ -220,7 +233,8 @@ class IntegratedFloodSystem:
         else:
             dashboard.append("[✓ No Emergency Warnings/Alerts]")
             dashboard.append("Currently no very high risk areas")
-        high_risk_areas = [r for r in risk_results if 0.6 <= r["max_risk"] < 0.8]
+        high_risk_areas = [
+            r for r in risk_results if 0.6 <= r["max_risk"] < 0.8]
         if high_risk_areas:
             dashboard.append("\n[⚠️ Key Focus Areas]")
             for area in high_risk_areas[:3]:
@@ -258,7 +272,8 @@ class IntegratedFloodSystem:
         try:
             while max_iterations is None or iteration < max_iterations:
                 iteration += 1
-                print(f"\n[Iteration {iteration}] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(
+                    f"\n[Iteration {iteration}] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                 print("-" * 50)
                 rainfall_event = self.fetch_current_weather(save_to_db=True)
                 if rainfall_event:
@@ -274,17 +289,21 @@ class IntegratedFloodSystem:
                             top_n=10,
                         )
                         if risk_results:
-                            high_risk_count = sum(1 for r in risk_results if r['max_risk'] >= 0.6)
+                            high_risk_count = sum(
+                                1 for r in risk_results if r['max_risk'] >= 0.6)
                             if high_risk_count > 0:
-                                print(f"   ⚠️ Found {high_risk_count} high-risk areas!")
-                                dashboard = self.generate_alert_dashboard(risk_results)
+                                print(
+                                    f"   ⚠️ Found {high_risk_count} high-risk areas!")
+                                dashboard = self.generate_alert_dashboard(
+                                    risk_results)
                                 print(dashboard)
                     else:
                         print("   ✓ Currently no rainfall, system normal")
                 else:
                     print("   ⚠️ Unable to fetch weather data")
                 if max_iterations is None or iteration < max_iterations:
-                    print(f"\nWaiting {interval_minutes} minutes for next monitoring...")
+                    print(
+                        f"\nWaiting {interval_minutes} minutes for next monitoring...")
                     import time
                     time.sleep(interval_minutes * 60)
         except KeyboardInterrupt:  # pragma: no cover
@@ -304,7 +323,8 @@ class IntegratedFloodSystem:
             if "metadata" in event and "api_fetch_time" in event["metadata"]:
                 try:
                     event_time = datetime.fromisoformat(
-                        event["metadata"]["api_fetch_time"].replace("Z", "+00:00")
+                        event["metadata"]["api_fetch_time"].replace(
+                            "Z", "+00:00")
                     )
                     if event_time > cutoff_date:
                         recent_events.append(event)
@@ -312,15 +332,19 @@ class IntegratedFloodSystem:
                     pass
         print(f"\nFound {len(recent_events)} recent rainfall events")
         if recent_events:
-            total_rainfall = sum(e.get("total_rainfall_mm", 0) for e in recent_events)
-            max_intensity = max((e.get("peak_intensity_mmhr", 0) for e in recent_events), default=0)
-            avg_rainfall = total_rainfall / len(recent_events) if recent_events else 0
+            total_rainfall = sum(e.get("total_rainfall_mm", 0)
+                                 for e in recent_events)
+            max_intensity = max((e.get("peak_intensity_mmhr", 0)
+                                for e in recent_events), default=0)
+            avg_rainfall = total_rainfall / \
+                len(recent_events) if recent_events else 0
             print(f"Total cumulative rainfall: {total_rainfall:.1f} mm")
             print(f"Average rainfall: {avg_rainfall:.1f} mm")
             print(f"Maximum rainfall intensity: {max_intensity:.1f} mm/hr")
             recent_sims = self.db.get_simulations_by_date_range(days_back)
             if recent_sims:
-                high_risk_sims = [s for s in recent_sims if s["max_risk"] >= 0.6]
+                high_risk_sims = [
+                    s for s in recent_sims if s["max_risk"] >= 0.6]
                 print(f"\nRisk simulation statistics:")
                 print(f"  Total simulations: {len(recent_sims)}")
                 print(f"  High-risk events: {len(high_risk_sims)}")
@@ -339,7 +363,8 @@ def demo():  # Minimal interactive demo replacement for legacy main()
     try:
         system.setup_initial_data()
         rainfall_event = system.fetch_current_weather(save_to_db=True)
-        results = system.run_comprehensive_risk_assessment(rainfall_event=rainfall_event, top_n=10)
+        results = system.run_comprehensive_risk_assessment(
+            rainfall_event=rainfall_event, top_n=10)
         if results:
             print(system.generate_alert_dashboard(results))
         system.analyze_historical_trends(days_back=7)

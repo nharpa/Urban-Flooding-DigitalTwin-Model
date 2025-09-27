@@ -7,16 +7,22 @@ import pytz
 import requests
 from dotenv import load_dotenv
 
+
 class WeatherAPIClient:
     """Wrapper for weather data retrieval + rainfall event conversion."""
+
     def __init__(self, api_url: Optional[str] = None, api_token: Optional[str] = None, default_lat: float = None, default_lon: float = None):
         load_dotenv()
-        self.api_url = api_url or os.getenv("WEATHER_API_URL", "http://localhost:8000/api/v1/weather")
+        self.api_url = api_url or os.getenv(
+            "WEATHER_API_URL", "http://localhost:8000/api/v1/weather")
         self.api_token = api_token or os.getenv("WEATHER_API_TOKEN")
         if not self.api_token:
-            raise ValueError("WEATHER_API_TOKEN not set. Provide via .env or constructor.")
-        self.default_lat = default_lat if default_lat is not None else float(os.getenv("DEFAULT_LAT", -31.95))
-        self.default_lon = default_lon if default_lon is not None else float(os.getenv("DEFAULT_LON", 115.86))
+            raise ValueError(
+                "WEATHER_API_TOKEN not set. Provide via .env or constructor.")
+        self.default_lat = default_lat if default_lat is not None else float(
+            os.getenv("DEFAULT_LAT", -31.95))
+        self.default_lon = default_lon if default_lon is not None else float(
+            os.getenv("DEFAULT_LON", 115.86))
         self.perth_tz = pytz.timezone('Australia/Perth')
 
     def fetch_weather_data(self, lat: Optional[float] = None, lon: Optional[float] = None) -> Optional[Dict]:
@@ -24,10 +30,13 @@ class WeatherAPIClient:
             lat = self.default_lat
         if lon is None:
             lon = self.default_lon
-        headers = {"Authorization": f"Bearer {self.api_token}", "Content-Type": "application/json"}
+        headers = {"Authorization": f"Bearer {self.api_token}",
+                   "Content-Type": "application/json"}
         data = {"lat": lat, "lon": lon}
         try:
-            response = requests.post(self.api_url, json=data, headers=headers, timeout=30)
+            print(self.api_url)
+            response = requests.post(
+                self.api_url, json=data, headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -38,8 +47,11 @@ class WeatherAPIClient:
         if not weather_data or "data" not in weather_data:
             return [], [], {}
         observations = weather_data["data"].get("observations", [])
-        rain_mmhr = []; timestamps_utc = []; timestamps_local = []
-        sorted_obs = sorted(observations, key=lambda x: x["local_date_time_full"])
+        rain_mmhr = []
+        timestamps_utc = []
+        timestamps_local = []
+        sorted_obs = sorted(
+            observations, key=lambda x: x["local_date_time_full"])
         for obs in sorted_obs:
             rain_value = float(obs.get("rain_trace", "0.0"))
             rain_mmhr.append(rain_value * 2)
@@ -53,11 +65,13 @@ class WeatherAPIClient:
         peak_intensity = max(rain_mmhr) if rain_mmhr else 0
         duration_hours = len(rain_mmhr) * 0.5 if rain_mmhr else 0
         station_info = weather_data["data"].get("station_info", {})
-        stats = {"total_rainfall_mm": round(total_rainfall, 2), "peak_intensity_mmhr": round(peak_intensity, 2), "duration_hours": duration_hours, "station_name": station_info.get("name", "Unknown"), "station_id": station_info.get("station_id", ""), "location": {"lat": station_info.get("lat", -31.95), "lon": station_info.get("lon", 115.86)}, "start_time_local": timestamps_local[0] if timestamps_local else "", "end_time_local": timestamps_local[-1] if timestamps_local else "", "observation_count": len(observations)}
+        stats = {"total_rainfall_mm": round(total_rainfall, 2), "peak_intensity_mmhr": round(peak_intensity, 2), "duration_hours": duration_hours, "station_name": station_info.get("name", "Unknown"), "station_id": station_info.get("station_id", ""), "location": {
+            "lat": station_info.get("lat", -31.95), "lon": station_info.get("lon", 115.86)}, "start_time_local": timestamps_local[0] if timestamps_local else "", "end_time_local": timestamps_local[-1] if timestamps_local else "", "observation_count": len(observations)}
         return rain_mmhr, timestamps_utc, stats
 
     def create_rainfall_event_from_api(self, weather_data: Dict, event_name: str = None, event_type: str = "historical") -> Dict:
-        rain_mmhr, timestamps_utc, stats = self.extract_rainfall_series(weather_data)
+        rain_mmhr, timestamps_utc, stats = self.extract_rainfall_series(
+            weather_data)
         if not rain_mmhr:
             raise ValueError("No valid rainfall data found")
         event_id = f"weather_api_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
