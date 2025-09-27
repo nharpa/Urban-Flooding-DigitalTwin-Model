@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
 import numpy as np
@@ -310,12 +311,36 @@ def save_results(data: List[Dict], output_file: str):
 
 
 def main():  # pragma: no cover - convenience script
-    pipes_file = "INF_DRN_PIPES__PV_-8890311221817093938.geojson"
-    catchments_file = "Hydrographic_Catchments_Subcatchments_DWER_030_WA_GDA2020_Public.geojson"
-    output_file = "catchments_spatial_matched.json"
+    """Run full spatial conversion pipeline.
+
+    Fixes applied:
+    - Use the repository root /data directory for inputs & output
+    - Output filename expected by user: catchment_spatial_matched.json (singular)
+    - Add graceful error messages if source files are missing
+    """
+    # Determine project root as 3 levels up from this file ( .../urban_flooding_digitaltwin )
+    project_root = Path(__file__).resolve().parents[3]
+    data_dir = project_root / "data"
+    pipes_file = data_dir / "INF_DRN_PIPES__PV_-8890311221817093938.geojson"
+    catchments_file = data_dir / \
+        "Hydrographic_Catchments_Subcatchments_DWER_030_WA_GDA2020_Public.geojson"
+    # User expectation (question) used singular form; keep legacy plural as fallback.
+    output_file = data_dir / "catchments_spatial_matched.json"
+
     print("Starting GeoJSON conversion based on spatial location...")
+    print(f"Data directory: {data_dir}")
+
+    # Validate input existence
+    missing = [p for p in [pipes_file, catchments_file] if not p.exists()]
+    if missing:
+        print("ERROR: Missing required input file(s):")
+        for m in missing:
+            print(f" - {m}")
+        print("Aborting.")
+        return []
+
     print("\n1. Processing drainage pipe network data...")
-    subcatchment_pipes = aggregate_pipes_with_location(pipes_file)
+    subcatchment_pipes = aggregate_pipes_with_location(str(pipes_file))
     print(f"   Found {len(subcatchment_pipes)} subcatchment pipe networks")
     for i, (subcatch, info) in enumerate(list(subcatchment_pipes.items())[:3]):
         print(f"\n   Example {i+1}: {subcatch}")
@@ -326,16 +351,20 @@ def main():  # pragma: no cover - convenience script
         print("     - Boundary: [{:.4f}, {:.4f}] - [{:.4f}, {:.4f}]".format(
             info['bounds']['min_lon'], info['bounds']['min_lat'], info['bounds']['max_lon'], info['bounds']['max_lat']
         ))
+
     print("\n2. Processing catchment area geometry data...")
-    catchment_areas = extract_catchments_with_geometry(catchments_file)
+    catchment_areas = extract_catchments_with_geometry(str(catchments_file))
     print(
         f"   Found {len(catchment_areas)} catchment areas (total {len(catchment_areas)} with valid area)")
+
     print("\n3. Executing spatial matching...")
     matched_data = spatial_match_catchments(
         subcatchment_pipes, catchment_areas)
     print(f"   Created {len(matched_data)} matching records")
+
     print("\n4. Saving results...")
-    save_results(matched_data, output_file)
+    save_results(matched_data, str(output_file))
+
     print("\n=== Conversion Statistics ===")
     print(f"Total catchment areas: {len(matched_data)}")
     overlap_count = sum(1 for c in matched_data if c.get(
@@ -355,6 +384,7 @@ def main():  # pragma: no cover - convenience script
             max_score = np.max(match_scores)
             print(f"Average match score: {avg_score:.3f}")
             print(f"Highest match score: {max_score:.3f}")
+
     print("\nTop 5 matching results:")
     for i, record in enumerate(matched_data[:5]):
         print(f"\n{i+1}. {record['name']}:")
@@ -375,6 +405,10 @@ def main():  # pragma: no cover - convenience script
         else:
             print("   - Not matched (area estimated)")
     return matched_data
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()
 
 
 __all__ = [

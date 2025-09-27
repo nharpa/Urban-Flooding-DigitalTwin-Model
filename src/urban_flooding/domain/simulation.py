@@ -2,7 +2,6 @@
 from typing import List, Dict
 from .hydrology import q_runoff_m3s, risk_from_loading
 
-__all__ = ["simulate_catchment"]
 
 def simulate_catchment(
     rain_mmhr: List[float],
@@ -19,5 +18,6 @@ def simulate_catchment(
         L = Q / Qcap_m3s if Qcap_m3s > 0 else 1e6
         R = risk_from_loading(L)
         max_r = max(max_r, R)
-        series.append({"t": t, "i": i, "Qrunoff": round(Q, 3), "L": round(L, 3), "R": round(R, 3)})
+        series.append({"t": t, "i": i, "Qrunoff": round(
+            Q, 3), "L": round(L, 3), "R": round(R, 3)})
     return {"series": series, "max_risk": round(max_r, 3)}

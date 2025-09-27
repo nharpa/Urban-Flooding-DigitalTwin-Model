@@ -20,7 +20,7 @@ Notes
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import List
-from urban_flooding.domain.simulation import simulate_catchment
+from src.urban_flooding.domain.simulation import simulate_catchment
 
 router = APIRouter()
 

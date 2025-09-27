@@ -20,17 +20,17 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from urban_flooding.persistence.database import FloodingDatabase
-from urban_flooding.domain.simulation import simulate_catchment
+from src.urban_flooding.persistence.database import FloodingDatabase
+from src.urban_flooding.domain.simulation import simulate_catchment
 
 router = APIRouter()
 
 
 class PointRiskRequest(BaseModel):
-    longitude: float = Field(..., ge=-180, le=180,
-                             description="Longitude in WGS84")
-    latitude: float = Field(..., ge=-90, le=90,
-                            description="Latitude in WGS84")
+    lon: float = Field(..., ge=-180, le=180,
+                       description="Longitude in WGS84")
+    lat: float = Field(..., ge=-90, le=90,
+                       description="Latitude in WGS84")
     rainfall_event_id: Optional[str] = Field(
         None, description="Optional rainfall event id; defaults to 'design_10yr' if not provided")
 
@@ -60,11 +60,9 @@ def _risk_level(value: float) -> str:
 
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(req: PointRiskRequest):
-    db = FloodingDatabase()  # In future could inject / reuse
-    # 1. Find candidate catchments by bounding box check.
-    #    Since we only store bounds, filter in Python after fetching those whose bounds contain the point.
-    lon = float(req.longitude)
-    lat = float(req.latitude)
+    db = FloodingDatabase()
+    lon = float(req.lon)
+    lat = float(req.lat)
     candidates = []
     for c in db.list_catchments():
         loc = c.get("location") or {}
