@@ -31,6 +31,33 @@ from urban_flooding.domain.simulation import simulate_catchment
 # ---------------- Issue Reports Command Handlers -----------------
 
 
+def _cmd_init_db(_: argparse.Namespace) -> int:
+    """Initialize MongoDB collections with schema validation and indexes.
+
+    Safe to run multiple times: existing collections are modified (collMod) to
+    ensure validators stay current. Provides a fast explicit setup step after
+    bringing MongoDB online via docker-compose.
+    """
+    try:
+        db = FloodingDatabase()
+        # Touch the primary collections explicitly so that any lazy index
+        # creation side-effects surface. The constructor already creates them.
+        coll_names = [
+            db.catchments.full_name,
+            db.rainfall_events.full_name,
+            db.simulations.full_name,
+            db.issue_reports.full_name,
+        ]
+        print("Initialized MongoDB collections:")
+        for name in coll_names:
+            print(f" - {name}")
+        db.close()
+        return 0
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"Database initialization failed: {exc}")
+        return 1
+
+
 def _cmd_issue_create(args: argparse.Namespace) -> int:
     db = FloodingDatabase()
     try:
@@ -242,6 +269,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_sim.add_argument("--steps", type=int, default=5,
                        help="Number of time steps")
     p_sim.set_defaults(func=_cmd_simulate_simple)
+
+    p_init = sub.add_parser(
+        "init-db", help="Create MongoDB collections & indexes (idempotent)")
+    p_init.set_defaults(func=_cmd_init_db)
 
     # Issue reports group
     p_issue = sub.add_parser("issue-create", help="Create a new issue report")

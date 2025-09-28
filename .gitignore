@@ -18,3 +18,7 @@ venv/
 
 # pytest
 .pytest_cache/
+
+# Do not commit the data dir to protect non-public data
+data/ 
+

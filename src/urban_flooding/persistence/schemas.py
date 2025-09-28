@@ -11,6 +11,14 @@ CATCHMENT_SCHEMA = {
             "C": {"bsonType": "double", "minimum": 0.0, "maximum": 1.0},
             "A_km2": {"bsonType": "double", "minimum": 0.0},
             "Qcap_m3s": {"bsonType": "double", "minimum": 0.0},
+            # Optional preserved geometry (GeoJSON Polygon / MultiPolygon)
+            "geometry": {
+                "bsonType": ["object", "null"],
+                "properties": {
+                    "type": {"enum": ["Polygon", "MultiPolygon"]},
+                    "coordinates": {"bsonType": "array"}
+                }
+            },
         }
     }
 }
@@ -70,7 +78,6 @@ ISSUE_REPORT_SCHEMA = {
                     "email": {"bsonType": ["string", "null"]}
                 }
             },
-            "photo_urls": {"bsonType": ["array"], "items": {"bsonType": "string"}},
             "created_at": {"bsonType": "date"},
         }
     }
@@ -100,9 +107,13 @@ def create_collections_with_validation(db):
 
 
 def create_geospatial_indexes(db):
-    db.catchments.create_index([
-        ("location.bounds.min_lon", 1),
-        ("location.bounds.min_lat", 1),
-        ("location.bounds.max_lon", 1),
-        ("location.bounds.max_lat", 1),
-    ])
+    """Create geospatial indexes.
+
+    Legacy bounding-box scalar indexes removed. If geometry is present as
+    GeoJSON Polygon/MultiPolygon, create a 2dsphere index to enable spatial
+    queries (e.g. future point-in-polygon pipelines).
+    """
+    try:
+        db.catchments.create_index([("geometry", "2dsphere")])
+    except Exception as e:  # pragma: no cover
+        print(f"Warning: could not create 2dsphere index on geometry: {e}")
