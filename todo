@@ -20,6 +20,15 @@ Intergration to frontend
 
 - Allow front end to query flood risk for device location based on rainfall observations, rainfall forecast, pre-determined rainfall events (10 year, 100 year etc..) and custom rainfall event
 
+**Deployment Workflows**
+
+1. Dockerfile to configure mongoDB
+2. init_db.py to apply schema and innitalise the database config
+3. geojson_converter.py this generates the catchments_spatial_matched.json - this can probabally be done once and deployed with the codebase.
+4. spatial_import.py imports rainfall events and spatial data into mongodb
+
+**TODO**
+
 **Digital Twin**
 Review geojson_converter to confirm new geojson matching working
 Rebuild database with new catchment structure
@@ -35,10 +44,3 @@ Should we deploy mongoDB in container? Yes
 Digital Twin service and api deployed in venv on VPS
 
 Update README and ensure code comments coverage
-
-**Deployment Workflows**
-
-1. Dockerfile to configure mongoDB
-2. init_db.py to apply schema and innitalise the database config
-3. geojson_converter.py this generates the catchments_spatial_matched.json - this can probabally be done once and deployed with the codebase.
-4. spatial_import.py imports rainfall events and spatial data into mongodb

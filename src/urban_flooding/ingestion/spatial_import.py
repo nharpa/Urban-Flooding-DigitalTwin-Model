@@ -15,13 +15,42 @@ import uuid
 from datetime import datetime
 from typing import List, Tuple, Sequence
 
-from urban_flooding.persistence.database import FloodingDatabase
-from urban_flooding.domain.simulation import simulate_catchment
+"""Note on running this module directly:
+This project uses a classic `src/` layout. When you execute this file via
+    `python src/urban_flooding/ingestion/spatial_import.py`
+the interpreter places the module's directory (the `ingestion` folder) on
+`sys.path`, but NOT the `src` directory. That means absolute imports like
+`urban_flooding.persistence.database` will fail with ModuleNotFoundError.
+
+Preferred invocation (from project root):
+    PowerShell
+        $env:PYTHONPATH = (Resolve-Path ./src)
+        py -m urban_flooding.ingestion.spatial_import
+
+As a convenience, a fallback below will attempt to add the `src` directory
+automatically if direct execution is detected. This keeps normal package
+imports clean while still allowing ad‑hoc execution for data seeding.
+"""
+
+try:  # First try normal package import (works when PYTHONPATH includes ./src or installed editable)
+    from urban_flooding.persistence.database import FloodingDatabase
+    from urban_flooding.domain.simulation import simulate_catchment
+except ModuleNotFoundError:  # pragma: no cover - only triggers in direct script execution scenario
+    import sys
+    from pathlib import Path
+    _src_candidate = Path(__file__).resolve().parents[2]  # .../project/src
+    if (_src_candidate / 'urban_flooding').exists():
+        sys.path.insert(0, str(_src_candidate))
+        from urban_flooding.persistence.database import FloodingDatabase  # type: ignore
+        from urban_flooding.domain.simulation import simulate_catchment  # type: ignore
+    else:
+        # Re-raise if structure unexpected
+        raise
 
 # ----------------------------- Data Loading -------------------------------- #
 
 
-def load_spatial_data(json_file: str = "catchments_spatial_matched.json") -> list:
+def load_spatial_data(json_file: str = "data/catchments_spatial_matched.json") -> list:
     with open(json_file, 'r') as f:
         return json.load(f)
 
@@ -283,3 +312,6 @@ __all__ = [
     'load_spatial_data', 'import_spatial_catchments', 'create_design_rainfall_events',
     'run_risk_assessment', 'generate_spatial_risk_report', 'main'
 ]
+
+if __name__ == '__main__':  # pragma: no cover
+    main()
