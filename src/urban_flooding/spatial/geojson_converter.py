@@ -1,11 +1,35 @@
 """Spatial GeoJSON conversion & heuristic matching pipeline.
 
-Migrated from legacy `geojson_converter_spatial.py`.
-Provides functions to:
-- Aggregate pipe network features
-- Extract catchment polygon attributes
-- Perform heuristic spatial matching (overlap / nearest / estimated)
-- Save intermediate results
+This module encapsulates a light‑weight spatial processing workflow that:
+
+1. Aggregates raw pipe network features (capacity, length, diameters) by
+     reported ``SUBCATCHMENT`` identifier while deriving simple spatial
+     bounding boxes (no heavy GIS dependency required).
+2. Extracts attributes and geometry envelopes from catchment polygons.
+3. Performs a heuristic matching between pipe clusters (as proxy sub‑catchments)
+     and formal catchment areas using:
+     - Axis-aligned bounding box overlap ratio (primary)
+     - Center point proximity (fallback)
+     - Area estimation heuristic when no plausible match is found.
+4. Serialises the enriched / matched records to JSON for downstream hydrology
+     or simulation components.
+
+Design notes / assumptions:
+* We purposely avoid external geospatial libraries (e.g. shapely, geopandas)
+    to keep the dependency footprint minimal for quick experimentation.
+* All geometric reasoning is performed using crude bounding boxes; this keeps
+    computations O(N×M) but trivially fast for modest datasets.
+* Distances are treated in (lon, lat) degrees with an approximate conversion
+    (111 km per degree) where needed—acceptable for small regional extents.
+* Pipe hydraulic capacity is estimated with the Manning formula under the
+    assumption of full flow circular sections (simplified engineering proxy).
+
+Potential future enhancements (not implemented here):
+* Replace bounding-box overlap with polygon intersection area for higher
+    fidelity (would require a geometry engine dependency).
+* Introduce spatial indexing (R-tree) for scalability.
+* Calibrate runoff coefficients (``C``) via land-use classification dataset.
+* Add unit conversions & CRS awareness if multi-region data is ingested.
 """
 from __future__ import annotations
 
@@ -19,11 +43,112 @@ import numpy as np
 # ----------------------------- Pipe Hydraulics ----------------------------- #
 
 
-def calculate_pipe_capacity(diameter_mm: float, slope: float, material: str = "RC") -> float:
-    manning_n = {
-        "RC": 0.013, "CP": 0.013, "VC": 0.011, "PVC": 0.010,
-        "PE": 0.010, "HDPE": 0.010, "CI": 0.014, "STEEL": 0.012,
-    }.get(material, 0.013)
+def calculate_pipe_grade(inv_us: Optional[float], inv_ds: Optional[float], length_m: Optional[float]) -> Optional[float]:
+    """Compute pipe grade (percent) from invert levels and length.
+
+    Grade (%) = (Upstream Invert - Downstream Invert) / Length * 100
+
+    Assumptions & Rules:
+    * Positive grade implies flow from upstream (higher invert) to downstream (lower invert).
+    * If any input is missing / non-numeric / length <= 0 -> return ``None`` (caller applies fallback).
+    * Extremely small lengths (< 0.01 m) are treated as invalid to avoid division spikes.
+    * Negative or zero computed grade is coerced to a small nominal positive slope (0.1%) when
+      hydraulics require a slope (the capacity function later normalises). We still return the
+      nominal value to keep downstream logic simple and explicit.
+
+    Parameters
+    ----------
+    inv_us : float | None
+        Upstream invert level (m AHD or local datum).
+    inv_ds : float | None
+        Downstream invert level (m AHD or local datum).
+    length_m : float | None
+        Pipe segment length in metres.
+
+    Returns
+    -------
+    float | None
+        Grade as a percentage (e.g. 1.5 => 1.5%), or ``None`` if cannot be derived.
+    """
+    try:
+        if inv_us is None or inv_ds is None or length_m is None:
+            return None
+        length = float(length_m)
+        if length <= 0.01:  # guard against division by tiny lengths
+            return None
+        rise = float(inv_us) - float(inv_ds)
+        grade_pct = (rise / length) * 100.0
+        # If grade is zero / negative, return a nominal minimal slope (0.1%)
+        if grade_pct <= 0:
+            return 0.1
+        # Cap unrealistic large slopes (> 50%) which may indicate data issues
+        if grade_pct > 50:
+            return 50.0
+        return grade_pct
+    except (TypeError, ValueError):
+        return None
+
+
+DEFAULT_MANNING_N = 0.013
+_PIPE_MANNING_CACHE: Dict[str, float] = {}
+
+
+def load_pipe_materials(refresh: bool = False) -> Dict[str, float]:
+    """Load pipe material Manning n values from ``data/pipe_materials.json``.
+
+    The JSON structure is expected to be ``{ code: { "manning_n": <number|null>, ... }, ... }``.
+    Results are cached at module scope for efficiency. ``refresh=True`` forces a reload.
+
+    Returns
+    -------
+    Dict[str, float]
+        Mapping of material code -> Manning n (only codes with numeric values retained).
+    """
+    global _PIPE_MANNING_CACHE
+    if _PIPE_MANNING_CACHE and not refresh:
+        return _PIPE_MANNING_CACHE
+    # Resolve repository root (same logic depth as main()) and locate data file
+    project_root = Path(__file__).resolve().parents[3]
+    materials_path = project_root / "data" / "pipe_materials.json"
+    mapping: Dict[str, float] = {}
+    try:
+        with open(materials_path, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+        for code, meta in raw.items():
+            n_val = meta.get("manning_n")
+            if isinstance(n_val, (int, float)) and n_val > 0:
+                mapping[code.upper()] = float(n_val)
+    except FileNotFoundError:
+        # Silent fallback – function using this mapping will revert to DEFAULT_MANNING_N
+        mapping = {}
+    _PIPE_MANNING_CACHE = mapping
+    return mapping
+
+
+def calculate_pipe_capacity(diameter_mm: float, slope: float, material: str = "RC", materials: Optional[Dict[str, float]] = None) -> float:
+    """Estimate pipe full-flow capacity (m^3/s) using simplified Manning formula.
+
+    Parameters
+    ----------
+    diameter_mm : float
+        Internal diameter of the pipe in millimetres.
+    slope : float
+        Longitudinal grade (percent). A sentinel / invalid slope (-499.5 or <= 0)
+        is coerced to a nominal minimum (0.001) to avoid zero velocity.
+    material : str, default "RC"
+        Material code used to look up Manning roughness from ``pipe_materials.json``.
+    materials : Dict[str, float], optional
+        Pre-loaded mapping of material codes to Manning n for efficiency. If not provided,
+        the JSON file is loaded lazily & cached.
+
+    Returns
+    -------
+    float
+        Approximate discharge capacity in cubic metres per second.
+    """
+    if materials is None:
+        materials = load_pipe_materials()
+    manning_n = materials.get(material.upper(), DEFAULT_MANNING_N)
     diameter_m = diameter_mm / 1000.0
     radius_m = diameter_m / 2.0
     area = math.pi * radius_m ** 2
@@ -41,6 +166,11 @@ def calculate_pipe_capacity(diameter_mm: float, slope: float, material: str = "R
 
 
 def get_polygon_bounds(geometry: Dict) -> Optional[Tuple[float, float, float, float]]:
+    """Return axis-aligned bounding box (min_lon, min_lat, max_lon, max_lat).
+
+    Works for GeoJSON ``Polygon`` and ``MultiPolygon`` geometries. Returns
+    ``None`` if no coordinates are present.
+    """
     all_coords = []
     if geometry['type'] == 'Polygon':
         all_coords.extend(geometry['coordinates'][0])
@@ -55,6 +185,11 @@ def get_polygon_bounds(geometry: Dict) -> Optional[Tuple[float, float, float, fl
 
 
 def get_polygon_center(geometry: Dict) -> Optional[Tuple[float, float]]:
+    """Return geometric center as midpoint of bounding box.
+
+    This is a crude centroid approximation adequate for matching heuristics.
+    Returns ``None`` if bounds are unavailable.
+    """
     bounds = get_polygon_bounds(geometry)
     if bounds:
         min_lon, min_lat, max_lon, max_lat = bounds
@@ -62,35 +197,8 @@ def get_polygon_center(geometry: Dict) -> Optional[Tuple[float, float]]:
     return None
 
 
-def get_polygon_area_km2(geometry: Dict) -> float:
-    if geometry['type'] not in ['Polygon', 'MultiPolygon']:
-        return 0
-
-    def polygon_area(coords):
-        if len(coords) < 3:
-            return 0
-        earth_radius_km = 6371.0
-        area = 0.0
-        for i in range(len(coords)):
-            j = (i + 1) % len(coords)
-            lat1, lon1 = coords[i][1], coords[i][0]
-            lat2, lon2 = coords[j][1], coords[j][0]
-            lat1 = math.radians(lat1)
-            lat2 = math.radians(lat2)
-            lon1 = math.radians(lon1)
-            lon2 = math.radians(lon2)
-            area += (lon2 - lon1) * (2 + math.sin(lat1) + math.sin(lat2))
-        return abs(area) * earth_radius_km * earth_radius_km / 2.0
-    total_area = 0
-    if geometry['type'] == 'Polygon':
-        total_area = polygon_area(geometry['coordinates'][0])
-    elif geometry['type'] == 'MultiPolygon':
-        for polygon in geometry['coordinates']:
-            total_area += polygon_area(polygon[0])
-    return total_area
-
-
 def point_in_polygon(point: Tuple[float, float], polygon_bounds: Tuple[float, float, float, float]) -> bool:
+    """Test if a (lon, lat) point lies within a precomputed bounding box."""
     if not polygon_bounds:
         return False
     lon, lat = point
@@ -101,22 +209,49 @@ def point_in_polygon(point: Tuple[float, float], polygon_bounds: Tuple[float, fl
 
 
 def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
+    """Aggregate pipe features by SUBCATCHMENT.
+
+    Produces per-subcatchment summary statistics including:
+    * Pipe count, total length, average & maximum diameter
+    * Sum capacity of up to the three largest diameter pipes (proxy capacity)
+    * Derived bounding box & center point from all segment coordinates
+
+    Parameters
+    ----------
+    pipes_file : str
+        Path to a GeoJSON-like file containing ``features`` with ``geometry``
+        (LineString coordinates) and ``properties`` including hydraulic fields.
+
+    Returns
+    -------
+    Dict[str, Dict]
+        Mapping of subcatchment id to aggregated attributes.
+    """
     with open(pipes_file, 'r') as f:
         pipes_data = json.load(f)
+    # Load material Manning values once for all pipes
+    materials_lookup = load_pipe_materials()
     subcatchment_data = defaultdict(lambda: {
         'pipes': [], 'all_coordinates': [],
         'bounds': {'min_lon': 180, 'min_lat': 90, 'max_lon': -180, 'max_lat': -90}
     })
     for feature in pipes_data['features']:
-        props = feature['properties']
-        geom = feature['geometry']
+        # Defensive parsing of expected GeoJSON structure
+        props = feature.get('properties', {})
+        geom = feature.get('geometry', {})
         subcatchment = props.get('SUBCATCHMENT', 'Unknown')
-        diameter = props.get('DIAMETER', 0)
-        length = props.get('PIPE_LENGTH', 0)
-        grade = props.get('GRADE', 0)
-        material = props.get('MATERIAL', 'RC')
-        if diameter > 0 and length > 0:
-            capacity = calculate_pipe_capacity(diameter, grade, material)
+        # Support multiple possible key variants for diameter & length
+        diameter = props.get('Feat_Diam') or 0
+        length = props.get('Feat_Len') or 0
+        inv_us = props.get('Inv_Lvl_US')
+        inv_ds = props.get('Inv_Lvl_DS')
+        derived_grade = calculate_pipe_grade(inv_us, inv_ds, length)
+        grade = derived_grade if derived_grade is not None else 0
+        material = props.get('Feat_Mat', None)
+        if diameter and length and diameter > 0 and length > 0 and material:
+            # Estimate pipe capacity (m^3/s)
+            capacity = calculate_pipe_capacity(
+                diameter, grade, material, materials_lookup)
             coords = geom.get('coordinates', [])
             if coords:
                 valid_coords = []
@@ -146,6 +281,7 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
         if not pipes:
             continue
         total_length = sum(p['length'] for p in pipes)
+        # Consider the largest three pipes representative of effective capacity
         main_pipes = sorted(
             pipes, key=lambda x: x['diameter'], reverse=True)[:3]
         main_capacity = sum(p['capacity'] for p in main_pipes)
@@ -170,6 +306,12 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
 
 
 def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
+    """Load catchment polygons and derive simplified attributes.
+
+    Area priority order: provided properties ``catch_norm`` or ``catch_full``;
+    if absent / invalid, approximate from geometry.
+    Each feature receives a synthetic unique id to avoid collisions.
+    """
     with open(catchments_file, 'r') as f:
         catchments_data = json.load(f)
     catchment_dict = {}
@@ -178,9 +320,7 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
         geom = feature['geometry']
         catch_name = props.get('catch_name', 'Unknown')
         unique_id = f"{catch_name}_{idx}"
-        area_km2 = props.get('catch_norm', 0) or props.get('catch_full', 0)
-        if area_km2 <= 0:
-            area_km2 = get_polygon_area_km2(geom)
+        area_km2 = props.get('catch_flod', 0)
         bounds = get_polygon_bounds(geom)
         center = get_polygon_center(geom)
         if area_km2 > 0 and bounds:
@@ -203,10 +343,41 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
 
 
 def calculate_distance(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
+    """Return planar distance in degrees between two (lon, lat) points.
+
+    Note: Caller applies conversion to kilometres when required.
+    """
     return math.sqrt((lon2 - lon1)**2 + (lat2 - lat1)**2)
 
 
 def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, default_C: float = 0.6) -> List[Dict]:
+    """Heuristically match aggregated pipe clusters to catchment polygons.
+
+    Matching Strategy (in priority order):
+    1. Overlap score: bounding box intersection ratio scaled by inverse distance.
+       (``score = (overlap / pipe_box_area) * 1/(1 + 10*dist)``)
+    2. Nearest center: if no overlap match above a minimal score threshold and
+       distance < 0.1 degrees (~11 km).
+    3. Estimation fallback: derive an approximate area from pipe bounding box
+       dimensions & network length when no plausible candidate exists.
+
+    Runoff coefficient (``C``) adjustments are heuristically applied using
+    simple land-use cues in the matched catchment's ``type`` / ``management``.
+
+    Parameters
+    ----------
+    subcatchment_pipes : Dict
+        Output of :func:`aggregate_pipes_with_location`.
+    catchment_areas : Dict
+        Output of :func:`extract_catchments_with_geometry`.
+    default_C : float, default 0.6
+        Baseline runoff coefficient used when no land-use refinement applies.
+
+    Returns
+    -------
+    List[Dict]
+        Per-subcatchment records enriched with area / match metadata.
+    """
     combined_catchments = []
     for subcatch_id, pipe_info in subcatchment_pipes.items():
         catchment_record = {
@@ -237,32 +408,38 @@ def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, de
                 area_info['bounds']['min_lon'], area_info['bounds']['min_lat'],
                 area_info['bounds']['max_lon'], area_info['bounds']['max_lat']
             )
+            # Compute overlap extents along each axis (in degrees)
             lon_overlap = min(pipe_info['bounds']['max_lon'], area_info['bounds']['max_lon']) - max(
                 pipe_info['bounds']['min_lon'], area_info['bounds']['min_lon'])
             lat_overlap = min(pipe_info['bounds']['max_lat'], area_info['bounds']['max_lat']) - max(
                 pipe_info['bounds']['min_lat'], area_info['bounds']['min_lat'])
             if lon_overlap > 0 and lat_overlap > 0:
+                # Basic rectangle intersection area (degree^2, relative only)
                 overlap_area = lon_overlap * lat_overlap
                 pipe_area = (pipe_info['bounds']['max_lon'] - pipe_info['bounds']['min_lon']) * (
                     pipe_info['bounds']['max_lat'] - pipe_info['bounds']['min_lat'])
                 if pipe_area > 0:
+                    # Penalise distance more aggressively ( *10 ) to prefer local overlaps
                     score = (overlap_area / pipe_area) * \
                         (1.0 / (1.0 + distance * 10))
                     if score > best_match_score:
                         best_match_score = score
                         best_match = area_info
             elif point_in_polygon(pipe_center, area_bounds):
+                # Rare case: center lies inside but no positive overlap extents (degenerate bbox)
                 score = 1.0 / (1.0 + distance)
                 if score > best_match_score:
                     best_match_score = score
                     best_match = area_info
         if best_match and best_match_score > 0.01:
+            # Overlap or in-bounds match deemed reliable
             catchment_record['A_km2'] = best_match['A_km2']
             catchment_record['basin_name'] = best_match.get('basin_name', '')
             catchment_record['area_type'] = best_match.get('type', '')
             catchment_record['matched_catchment'] = best_match['name']
             catchment_record['match_score'] = round(best_match_score, 3)
             catchment_record['match_type'] = 'overlap'
+            # Runoff coefficient adjustments (very coarse)
             if 'Urban' in best_match.get('type', '') or 'urban' in best_match.get('management', '').lower():
                 catchment_record['C'] = 0.8
             elif 'Residential' in best_match.get('type', ''):
@@ -270,6 +447,7 @@ def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, de
             elif 'Rural' in best_match.get('type', '') or 'rural' in best_match.get('management', '').lower():
                 catchment_record['C'] = 0.3
         elif closest_match and closest_distance < 0.1:
+            # Nearest-neighbour fallback when within ~11 km
             catchment_record['A_km2'] = closest_match['A_km2']
             catchment_record['basin_name'] = closest_match.get(
                 'basin_name', '')
@@ -286,6 +464,7 @@ def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, de
             else:
                 catchment_record['C'] = 0.6
         else:
+            # Last resort: estimate area from pipe spatial footprint & network size
             pipe_bounds = pipe_info['bounds']
             width_km = (pipe_bounds['max_lon'] -
                         pipe_bounds['min_lon']) * 111.0
@@ -303,6 +482,7 @@ def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, de
 
 
 def save_results(data: List[Dict], output_file: str):
+    """Persist results to JSON (UTF-8, pretty printed)."""
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"Saved {len(data)} catchment area records to {output_file}")
@@ -321,7 +501,7 @@ def main():  # pragma: no cover - convenience script
     # Determine project root as 3 levels up from this file ( .../urban_flooding_digitaltwin )
     project_root = Path(__file__).resolve().parents[3]
     data_dir = project_root / "data"
-    pipes_file = data_dir / "INF_DRN_PIPES__PV_-8890311221817093938.geojson"
+    pipes_file = data_dir / "PerthMetroStormDrainPipe.geojson"
     catchments_file = data_dir / \
         "Hydrographic_Catchments_Subcatchments_DWER_030_WA_GDA2020_Public.geojson"
     # User expectation (question) used singular form; keep legacy plural as fallback.
@@ -412,6 +592,6 @@ if __name__ == "__main__":  # pragma: no cover
 
 
 __all__ = [
-    'calculate_pipe_capacity', 'aggregate_pipes_with_location', 'extract_catchments_with_geometry',
-    'spatial_match_catchments', 'save_results', 'main'
+    'load_pipe_materials', 'calculate_pipe_grade', 'calculate_pipe_capacity', 'aggregate_pipes_with_location',
+    'extract_catchments_with_geometry', 'spatial_match_catchments', 'save_results', 'main'
 ]
