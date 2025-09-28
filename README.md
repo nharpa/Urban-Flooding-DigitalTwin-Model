@@ -3,7 +3,7 @@
 This repository contains a prototype "digital twin" style workflow for urban flooding risk assessment. It integrates:
 
 - Spatial processing of drainage pipe network GeoJSON and hydrographic catchment polygons
-- Automated spatial (overlap / nearest / heuristic) matching to derive catchment hydraulic attributes
+- Direct foreign key (ufi) join of pipe aggregates to catchment polygons (replaces legacy spatial heuristic matching)
 - A lightweight hydrologic + capacity loading + sigmoid risk model (Rational Method inspired)
 - MongoDB persistence with JSON Schema validation and indexes (catchments, rainfall events, simulations)
 - Design storm & historical style rainfall event creation
@@ -60,10 +60,12 @@ Legacy top-level modules (e.g. `domain.py`, `database_v3.py`) remain as shims th
 ## 3. Data Flow Overview
 
 1. Input GeoJSON files (pipes + catchment polygons) are processed by `geojson_converter_spatial.py`:
-   - Aggregates pipe segments per subcatchment → capacity, length, diameter stats
-   - Extracts polygon bounds / centroid / area (or estimates if missing)
-   - Performs spatial heuristic matching (overlap > nearest > estimated)
-   - Outputs `data/catchments_spatial_matched.json`
+
+- Aggregates pipe segments per subcatchment (key = `ufi`) → capacity, length, diameter stats
+- Extracts polygon bounds / centroid / area (or estimates if missing)
+- Directly joins pipe aggregates to catchments using shared `ufi` (no overlap / nearest heuristic needed)
+- Outputs `data/catchments_spatial_matched.json`
+
 2. `import_spatial_to_mongodb.py` loads the JSON and upserts catchments into MongoDB with validation.
 3. Design rainfall events are created (2, 10, 50, 100 year + historical template) and stored.
 4. Simulations use `domain.simulate_catchment` to generate time series and risk metrics.
@@ -225,15 +227,35 @@ python weather_api_client.py
 
 ---
 
-## 9. Spatial Matching Logic (Heuristic)
+## 9. Catchment Linking (Foreign Key Join)
 
-Priority order:
+The previous heuristic spatial matching stage (overlap → nearest → estimated) has been refactored.
+Pipe features now carry a stable foreign key `ufi` that directly references the primary key of their
+parent catchment polygon. The pipeline now:
 
-1. Bounding box overlap score (overlap ratio × distance decay)
-2. Nearest centroid within 0.1° (~11 km) with distance → score + confidence
-3. Fallback area estimation from pipe network extent & density
+1. Aggregates pipe stats per `ufi`
+2. Loads catchment polygons keyed by `ufi`
+3. Performs a dictionary join to build unified records
 
-Adjusts runoff coefficient `C` by interpreted land-use hints (urban/residential/rural).
+Runoff coefficient `C` is still heuristically adjusted from land‑use fields (`type`, `management`).
+If a catchment has no corresponding pipe data it is currently omitted (optional future flag could
+emit zero‑capacity placeholders).
+
+Migration differences vs legacy heuristic output:
+
+| Removed Fields      | Reason                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| `match_type`        | No spatial heuristic performed                                                        |
+| `match_score`       | Overlap / distance score obsolete                                                     |
+| `match_distance_km` | Nearest neighbour step removed                                                        |
+| `area_estimated`    | Area now taken directly from catchment (still estimated only if source value missing) |
+
+New / clarified fields:
+
+- `ufi`: Explicit ID used for joining
+- `catchment_id`: Mirrors `ufi` (legacy compatibility)
+
+Benefits: deterministic, faster, simpler to test, and avoids ambiguous matches in dense networks.
 
 ---
 
@@ -428,7 +450,7 @@ Included tests:
 
 Additional future test targets:
 
-- Spatial matching heuristics correctness
+- Foreign key join integrity (ufi coverage)
 - DB persistence round-trip
 - Real-time ingestion parsing robustness
 

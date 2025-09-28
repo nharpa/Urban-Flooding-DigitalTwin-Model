@@ -197,13 +197,7 @@ def get_polygon_center(geometry: Dict) -> Optional[Tuple[float, float]]:
     return None
 
 
-def point_in_polygon(point: Tuple[float, float], polygon_bounds: Tuple[float, float, float, float]) -> bool:
-    """Test if a (lon, lat) point lies within a precomputed bounding box."""
-    if not polygon_bounds:
-        return False
-    lon, lat = point
-    min_lon, min_lat, max_lon, max_lat = polygon_bounds
-    return min_lon <= lon <= max_lon and min_lat <= lat <= max_lat
+# NOTE: point_in_polygon removed – bounding box matching no longer required after refactor
 
 # -------------------------- Aggregation Functions ------------------------- #
 
@@ -231,6 +225,7 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
         pipes_data = json.load(f)
     # Load material Manning values once for all pipes
     materials_lookup = load_pipe_materials()
+
     subcatchment_data = defaultdict(lambda: {
         'pipes': [], 'all_coordinates': [],
         'bounds': {'min_lon': 180, 'min_lat': 90, 'max_lon': -180, 'max_lat': -90}
@@ -239,19 +234,30 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
         # Defensive parsing of expected GeoJSON structure
         props = feature.get('properties', {})
         geom = feature.get('geometry', {})
-        subcatchment = props.get('SUBCATCHMENT', 'Unknown')
-        # Support multiple possible key variants for diameter & length
+        raw_ufi = props.get('ufi')
+        # Normalise ufi to string to ensure consistent dictionary keys
+        subcatchment = str(raw_ufi) if raw_ufi is not None else 'Unknown'
+
+        # Extract key hydraulic attributes with fallbacks
         diameter = props.get('Feat_Diam') or 0
         length = props.get('Feat_Len') or 0
         inv_us = props.get('Inv_Lvl_US')
         inv_ds = props.get('Inv_Lvl_DS')
+
+        # Derive pipe grade (percent); fallback to 0 if cannot be computed
         derived_grade = calculate_pipe_grade(inv_us, inv_ds, length)
         grade = derived_grade if derived_grade is not None else 0
+
+        # Material code (for Manning n lookup)
         material = props.get('Feat_Mat', None)
+
+        # Only consider pipes with valid diameter & length
         if diameter and length and diameter > 0 and length > 0 and material:
+
             # Estimate pipe capacity (m^3/s)
             capacity = calculate_pipe_capacity(
                 diameter, grade, material, materials_lookup)
+
             coords = geom.get('coordinates', [])
             if coords:
                 valid_coords = []
@@ -275,6 +281,7 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
             subcatchment_data[subcatchment]['pipes'].append({
                 'diameter': diameter, 'length': length, 'capacity': capacity, 'material': material
             })
+
     subcatchment_results = {}
     for subcatch, data in subcatchment_data.items():
         pipes = data['pipes']
@@ -316,15 +323,23 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
         catchments_data = json.load(f)
     catchment_dict = {}
     for idx, feature in enumerate(catchments_data['features']):
-        props = feature['properties']
-        geom = feature['geometry']
-        catch_name = props.get('catch_name', 'Unknown')
-        unique_id = f"{catch_name}_{idx}"
-        area_km2 = props.get('catch_flod', 0)
-        bounds = get_polygon_bounds(geom)
-        center = get_polygon_center(geom)
+        props = feature.get('properties', {})
+        geom = feature.get('geometry', {})
+        catch_name = props.get('catch_name') or 'Unknown'
+        # Prefer explicit primary key 'ufi' if present; fallback to synthetic id
+        ufi = props.get('ufi')
+        key = str(ufi) if ufi is not None else f"{catch_name}_{idx}"
+        area_km2 = props.get('catch_flod') or props.get('catch_full') or 0
+        try:
+            area_km2 = float(area_km2)
+        except (TypeError, ValueError):
+            area_km2 = 0
+        bounds = get_polygon_bounds(geom) if geom else None
+        center = get_polygon_center(geom) if geom else None
         if area_km2 > 0 and bounds:
-            catchment_dict[unique_id] = {
+            catchment_dict[key] = {
+                'catchment_id': key,
+                'ufi': ufi,
                 'name': catch_name,
                 'sub_name': props.get('sub_name', ''),
                 'A_km2': round(area_km2, 2),
@@ -337,146 +352,82 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
                 },
                 'center': {'lon': round(center[0], 6), 'lat': round(center[1], 6)} if center else None
             }
+    # Debug: number of catchments keyed by ufi vs synthetic
+    # (Could be toggled by a verbose flag in future)
+    keyed_by_ufi = sum(1 for c in catchment_dict.values()
+                       if c.get('ufi') is not None)
+    print(
+        f"Loaded {len(catchment_dict)} catchments ({keyed_by_ufi} with explicit ufi)")
     return catchment_dict
 
-# ----------------------------- Matching Logic ------------------------------ #
+
+# --------------------------- Direct Join Logic ---------------------------- #
 
 
-def calculate_distance(lon1: float, lat1: float, lon2: float, lat2: float) -> float:
-    """Return planar distance in degrees between two (lon, lat) points.
-
-    Note: Caller applies conversion to kilometres when required.
-    """
-    return math.sqrt((lon2 - lon1)**2 + (lat2 - lat1)**2)
-
-
-def spatial_match_catchments(subcatchment_pipes: Dict, catchment_areas: Dict, default_C: float = 0.6) -> List[Dict]:
-    """Heuristically match aggregated pipe clusters to catchment polygons.
-
-    Matching Strategy (in priority order):
-    1. Overlap score: bounding box intersection ratio scaled by inverse distance.
-       (``score = (overlap / pipe_box_area) * 1/(1 + 10*dist)``)
-    2. Nearest center: if no overlap match above a minimal score threshold and
-       distance < 0.1 degrees (~11 km).
-    3. Estimation fallback: derive an approximate area from pipe bounding box
-       dimensions & network length when no plausible candidate exists.
-
-    Runoff coefficient (``C``) adjustments are heuristically applied using
-    simple land-use cues in the matched catchment's ``type`` / ``management``.
+def join_pipes_catchments(subcatchment_pipes: Dict[str, Dict], catchment_areas: Dict[str, Dict], default_C: float = 0.6) -> List[Dict]:
+    """Directly combine pipe aggregates with catchment geometry using shared 'ufi' key.
 
     Parameters
     ----------
     subcatchment_pipes : Dict
-        Output of :func:`aggregate_pipes_with_location`.
+        Output of :func:`aggregate_pipes_with_location` keyed by ufi (or legacy id).
     catchment_areas : Dict
-        Output of :func:`extract_catchments_with_geometry`.
-    default_C : float, default 0.6
-        Baseline runoff coefficient used when no land-use refinement applies.
+        Output of :func:`extract_catchments_with_geometry` keyed by ufi.
+    default_C : float
+        Baseline runoff coefficient when no heuristic adjustment applies.
 
     Returns
     -------
     List[Dict]
-        Per-subcatchment records enriched with area / match metadata.
+        Unified catchment records ready for persistence / simulation.
     """
-    combined_catchments = []
-    for subcatch_id, pipe_info in subcatchment_pipes.items():
-        catchment_record = {
-            'catchment_id': subcatch_id,
-            'name': subcatch_id,
-            'C': default_C,
+    results: List[Dict] = []
+    unmatched_pipes = []
+    # Iterate over pipe aggregates first to ensure every pipe cluster tries to find a catchment
+    for key, pipe_info in subcatchment_pipes.items():
+        catchment = catchment_areas.get(key)
+        if not catchment:
+            unmatched_pipes.append(key)
+            continue
+        record = {
+            'catchment_id': key,
+            'name': catchment.get('name', key),
+            'A_km2': catchment.get('A_km2'),
+            'C': default_C,  # may adjust below
             'Qcap_m3s': pipe_info['Qcap_m3s'],
             'pipe_count': pipe_info['pipe_count'],
             'total_pipe_length_m': pipe_info['total_length_m'],
             'max_pipe_diameter_mm': pipe_info['max_diameter_mm'],
-            'location': {'center': pipe_info['center'], 'bounds': pipe_info['bounds']}
+            'location': {
+                # prefer pipe network centroid for hydraulics
+                'center': pipe_info['center'],
+                'bounds': pipe_info['bounds']
+            },
+            'basin_name': catchment.get('basin_name', ''),
+            'area_type': catchment.get('type', ''),
+            'ufi': catchment.get('ufi'),
         }
-        pipe_center = (pipe_info['center']['lon'], pipe_info['center']['lat'])
-        best_match = None
-        best_match_score = 0
-        closest_distance = float('inf')
-        closest_match = None
-        for area_name, area_info in catchment_areas.items():
-            area_center = area_info.get('center')
-            if not area_center:
-                continue
-            distance = calculate_distance(
-                pipe_center[0], pipe_center[1], area_center['lon'], area_center['lat'])
-            if distance < closest_distance:
-                closest_distance = distance
-                closest_match = area_info
-            area_bounds = (
-                area_info['bounds']['min_lon'], area_info['bounds']['min_lat'],
-                area_info['bounds']['max_lon'], area_info['bounds']['max_lat']
-            )
-            # Compute overlap extents along each axis (in degrees)
-            lon_overlap = min(pipe_info['bounds']['max_lon'], area_info['bounds']['max_lon']) - max(
-                pipe_info['bounds']['min_lon'], area_info['bounds']['min_lon'])
-            lat_overlap = min(pipe_info['bounds']['max_lat'], area_info['bounds']['max_lat']) - max(
-                pipe_info['bounds']['min_lat'], area_info['bounds']['min_lat'])
-            if lon_overlap > 0 and lat_overlap > 0:
-                # Basic rectangle intersection area (degree^2, relative only)
-                overlap_area = lon_overlap * lat_overlap
-                pipe_area = (pipe_info['bounds']['max_lon'] - pipe_info['bounds']['min_lon']) * (
-                    pipe_info['bounds']['max_lat'] - pipe_info['bounds']['min_lat'])
-                if pipe_area > 0:
-                    # Penalise distance more aggressively ( *10 ) to prefer local overlaps
-                    score = (overlap_area / pipe_area) * \
-                        (1.0 / (1.0 + distance * 10))
-                    if score > best_match_score:
-                        best_match_score = score
-                        best_match = area_info
-            elif point_in_polygon(pipe_center, area_bounds):
-                # Rare case: center lies inside but no positive overlap extents (degenerate bbox)
-                score = 1.0 / (1.0 + distance)
-                if score > best_match_score:
-                    best_match_score = score
-                    best_match = area_info
-        if best_match and best_match_score > 0.01:
-            # Overlap or in-bounds match deemed reliable
-            catchment_record['A_km2'] = best_match['A_km2']
-            catchment_record['basin_name'] = best_match.get('basin_name', '')
-            catchment_record['area_type'] = best_match.get('type', '')
-            catchment_record['matched_catchment'] = best_match['name']
-            catchment_record['match_score'] = round(best_match_score, 3)
-            catchment_record['match_type'] = 'overlap'
-            # Runoff coefficient adjustments (very coarse)
-            if 'Urban' in best_match.get('type', '') or 'urban' in best_match.get('management', '').lower():
-                catchment_record['C'] = 0.8
-            elif 'Residential' in best_match.get('type', ''):
-                catchment_record['C'] = 0.6
-            elif 'Rural' in best_match.get('type', '') or 'rural' in best_match.get('management', '').lower():
-                catchment_record['C'] = 0.3
-        elif closest_match and closest_distance < 0.1:
-            # Nearest-neighbour fallback when within ~11 km
-            catchment_record['A_km2'] = closest_match['A_km2']
-            catchment_record['basin_name'] = closest_match.get(
-                'basin_name', '')
-            catchment_record['area_type'] = closest_match.get('type', '')
-            catchment_record['matched_catchment'] = closest_match['name']
-            catchment_record['match_distance_km'] = round(
-                closest_distance * 111, 2)
-            catchment_record['match_score'] = round(
-                1.0 / (1.0 + closest_distance * 10), 3)
-            catchment_record['match_type'] = 'nearest'
-            catchment_record['area_confidence'] = 'low' if closest_distance > 0.05 else 'medium'
-            if 'Coastal' in closest_match.get('type', '') or 'Swan' in closest_match.get('basin_name', ''):
-                catchment_record['C'] = 0.7
-            else:
-                catchment_record['C'] = 0.6
-        else:
-            # Last resort: estimate area from pipe spatial footprint & network size
-            pipe_bounds = pipe_info['bounds']
-            width_km = (pipe_bounds['max_lon'] -
-                        pipe_bounds['min_lon']) * 111.0
-            height_km = (pipe_bounds['max_lat'] -
-                         pipe_bounds['min_lat']) * 111.0
-            estimated_area = max(width_km * height_km * 1.5,
-                                 pipe_info['total_length_m'] / 1000.0 * 0.5)
-            catchment_record['A_km2'] = round(estimated_area, 2)
-            catchment_record['area_estimated'] = True
-            catchment_record['match_score'] = 0
-        combined_catchments.append(catchment_record)
-    return combined_catchments
+        # Simple runoff coefficient heuristic based on area_type / management
+        area_type = (catchment.get('type') or '').lower()
+        management = (catchment.get('management') or '').lower()
+        if 'urban' in area_type or 'urban' in management:
+            record['C'] = 0.8
+        elif 'residential' in area_type:
+            record['C'] = 0.6
+        elif 'industrial' in area_type:
+            record['C'] = 0.75
+        elif 'rural' in area_type or 'rural' in management or 'agri' in area_type:
+            record['C'] = 0.3
+        results.append(record)
+    if unmatched_pipes:
+        print(
+            f"Warning: {len(unmatched_pipes)} pipe group(s) had no matching catchment ufi: {unmatched_pipes[:5]}{'...' if len(unmatched_pipes) > 5 else ''}")
+    # Optionally, list catchments without pipes
+    orphan_catchments = [
+        k for k in catchment_areas.keys() if k not in subcatchment_pipes]
+    if orphan_catchments:
+        print(f"Info: {len(orphan_catchments)} catchment(s) lacked pipe data.")
+    return results
 
 # ----------------------------- Persistence -------------------------------- #
 
@@ -503,7 +454,7 @@ def main():  # pragma: no cover - convenience script
     data_dir = project_root / "data"
     pipes_file = data_dir / "PerthMetroStormDrainPipe.geojson"
     catchments_file = data_dir / \
-        "Hydrographic_Catchments_Subcatchments_DWER_030_WA_GDA2020_Public.geojson"
+        "PerthMetroCatchments.geojson"
     # User expectation (question) used singular form; keep legacy plural as fallback.
     output_file = data_dir / "catchments_spatial_matched.json"
 
@@ -521,6 +472,7 @@ def main():  # pragma: no cover - convenience script
 
     print("\n1. Processing drainage pipe network data...")
     subcatchment_pipes = aggregate_pipes_with_location(str(pipes_file))
+
     print(f"   Found {len(subcatchment_pipes)} subcatchment pipe networks")
     for i, (subcatch, info) in enumerate(list(subcatchment_pipes.items())[:3]):
         print(f"\n   Example {i+1}: {subcatch}")
@@ -537,53 +489,36 @@ def main():  # pragma: no cover - convenience script
     print(
         f"   Found {len(catchment_areas)} catchment areas (total {len(catchment_areas)} with valid area)")
 
-    print("\n3. Executing spatial matching...")
-    matched_data = spatial_match_catchments(
-        subcatchment_pipes, catchment_areas)
-    print(f"   Created {len(matched_data)} matching records")
+    print("\n3. Joining pipe aggregates to catchments via foreign key 'ufi'...")
+    matched_data = join_pipes_catchments(subcatchment_pipes, catchment_areas)
+    print(f"   Created {len(matched_data)} joined catchment records")
 
     print("\n4. Saving results...")
     save_results(matched_data, str(output_file))
 
     print("\n=== Conversion Statistics ===")
     print(f"Total catchment areas: {len(matched_data)}")
-    overlap_count = sum(1 for c in matched_data if c.get(
-        'match_type') == 'overlap')
-    nearest_count = sum(1 for c in matched_data if c.get(
-        'match_type') == 'nearest')
-    estimated_count = sum(
-        1 for c in matched_data if c.get('area_estimated', False))
-    print(f"Overlap matching: {overlap_count}")
-    print(f"Distance matching: {nearest_count}")
-    print(f"Area estimation: {estimated_count}")
-    if overlap_count + nearest_count > 0:
-        match_scores = [c['match_score']
-                        for c in matched_data if 'match_score' in c and c['match_score'] > 0]
-        if match_scores:
-            avg_score = np.mean(match_scores)
-            max_score = np.max(match_scores)
-            print(f"Average match score: {avg_score:.3f}")
-            print(f"Highest match score: {max_score:.3f}")
+    # Basic statistics
+    total_capacity = sum(c.get('Qcap_m3s', 0) for c in matched_data)
+    total_area = sum(c.get('A_km2', 0) for c in matched_data if c.get('A_km2'))
+    print(f"Total joined capacity: {total_capacity:.2f} m³/s")
+    print(f"Total represented area: {total_area:.2f} km²")
 
     print("\nTop 5 matching results:")
-    for i, record in enumerate(matched_data[:5]):
-        print(f"\n{i+1}. {record['name']}:")
-        print(f"   - Qcap: {record['Qcap_m3s']} m³/s")
-        print(f"   - A_km2: {record['A_km2']} km²")
+    if not matched_data:
         print(
-            f"   - Location: [{record['location']['center']['lon']:.4f}, {record['location']['center']['lat']:.4f}]")
-        if 'matched_catchment' in record:
-            match_type = record.get('match_type', 'unknown')
-            if match_type == 'overlap':
+            "No records to display – no matching foreign keys between pipes and catchments.")
+    else:
+        top = matched_data[:5]
+        for i, record in enumerate(top):
+            print(f"\n{i+1}. {record['name']} (ufi={record.get('ufi', '?')}):")
+            print(f"   - Qcap: {record['Qcap_m3s']} m³/s")
+            print(f"   - A_km2: {record.get('A_km2', 'N/A')} km²")
+            center = record.get('location', {}).get('center', {})
+            if center:
                 print(
-                    f"   - Matched to: {record['matched_catchment']} (overlap match, score: {record['match_score']})")
-            elif match_type == 'nearest':
-                distance = record.get('match_distance_km', 'N/A')
-                confidence = record.get('area_confidence', 'N/A')
-                print(
-                    f"   - Matched to: {record['matched_catchment']} (nearest match, distance: {distance}km, confidence: {confidence})")
-        else:
-            print("   - Not matched (area estimated)")
+                    f"   - Location: [{center.get('lon', 'N/A')}, {center.get('lat', 'N/A')}]")
+            print(f"   - C (runoff coefficient): {record.get('C')}")
     return matched_data
 
 
@@ -593,5 +528,5 @@ if __name__ == "__main__":  # pragma: no cover
 
 __all__ = [
     'load_pipe_materials', 'calculate_pipe_grade', 'calculate_pipe_capacity', 'aggregate_pipes_with_location',
-    'extract_catchments_with_geometry', 'spatial_match_catchments', 'save_results', 'main'
+    'extract_catchments_with_geometry', 'join_pipes_catchments', 'save_results', 'main'
 ]
