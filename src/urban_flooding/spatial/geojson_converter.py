@@ -1,36 +1,7 @@
 """Spatial GeoJSON conversion & heuristic matching pipeline.
-
-This module encapsulates a light‑weight spatial processing workflow that:
-
-1. Aggregates raw pipe network features (capacity, length, diameters) by
-     reported ``SUBCATCHMENT`` identifier while deriving simple spatial
-     bounding boxes (no heavy GIS dependency required).
-2. Extracts attributes and geometry envelopes from catchment polygons.
-3. Performs a heuristic matching between pipe clusters (as proxy sub‑catchments)
-     and formal catchment areas using:
-     - Axis-aligned bounding box overlap ratio (primary)
-     - Center point proximity (fallback)
-     - Area estimation heuristic when no plausible match is found.
-4. Serialises the enriched / matched records to JSON for downstream hydrology
-     or simulation components.
-
-Design notes / assumptions:
-* We purposely avoid external geospatial libraries (e.g. shapely, geopandas)
-    to keep the dependency footprint minimal for quick experimentation.
-* All geometric reasoning is performed using crude bounding boxes; this keeps
-    computations O(N×M) but trivially fast for modest datasets.
-* Distances are treated in (lon, lat) degrees with an approximate conversion
-    (111 km per degree) where needed—acceptable for small regional extents.
-* Pipe hydraulic capacity is estimated with the Manning formula under the
-    assumption of full flow circular sections (simplified engineering proxy).
-
-Potential future enhancements (not implemented here):
-* Replace bounding-box overlap with polygon intersection area for higher
-    fidelity (would require a geometry engine dependency).
-* Introduce spatial indexing (R-tree) for scalability.
-* Calibrate runoff coefficients (``C``) via land-use classification dataset.
-* Add unit conversions & CRS awareness if multi-region data is ingested.
 """
+
+
 from __future__ import annotations
 
 import json
@@ -94,7 +65,7 @@ _PIPE_MANNING_CACHE: Dict[str, float] = {}
 
 
 def load_pipe_materials(refresh: bool = False) -> Dict[str, float]:
-    """Load pipe material Manning n values from ``data/pipe_materials.json``.
+    """Load pipe material Manning n values from ``data/PipeMaterials.json``.
 
     The JSON structure is expected to be ``{ code: { "manning_n": <number|null>, ... }, ... }``.
     Results are cached at module scope for efficiency. ``refresh=True`` forces a reload.
@@ -109,7 +80,7 @@ def load_pipe_materials(refresh: bool = False) -> Dict[str, float]:
         return _PIPE_MANNING_CACHE
     # Resolve repository root (same logic depth as main()) and locate data file
     project_root = Path(__file__).resolve().parents[3]
-    materials_path = project_root / "data" / "pipe_materials.json"
+    materials_path = project_root / "data" / "PipeMaterials.json"
     mapping: Dict[str, float] = {}
     try:
         with open(materials_path, "r", encoding="utf-8") as f:
@@ -136,7 +107,7 @@ def calculate_pipe_capacity(diameter_mm: float, slope: float, material: str = "R
         Longitudinal grade (percent). A sentinel / invalid slope (-499.5 or <= 0)
         is coerced to a nominal minimum (0.001) to avoid zero velocity.
     material : str, default "RC"
-        Material code used to look up Manning roughness from ``pipe_materials.json``.
+        Material code used to look up Manning roughness from ``PipeMaterials.json``.
     materials : Dict[str, float], optional
         Pre-loaded mapping of material codes to Manning n for efficiency. If not provided,
         the JSON file is loaded lazily & cached.
@@ -162,78 +133,42 @@ def calculate_pipe_capacity(diameter_mm: float, slope: float, material: str = "R
         (hydraulic_radius ** (2.0/3.0)) * (slope ** 0.5)
     return area * velocity
 
-# --------------------------- Geometry Utilities --------------------------- #
-
-
-def get_polygon_bounds(geometry: Dict) -> Optional[Tuple[float, float, float, float]]:
-    """Return axis-aligned bounding box (min_lon, min_lat, max_lon, max_lat).
-
-    Works for GeoJSON ``Polygon`` and ``MultiPolygon`` geometries. Returns
-    ``None`` if no coordinates are present.
-    """
-    all_coords = []
-    if geometry['type'] == 'Polygon':
-        all_coords.extend(geometry['coordinates'][0])
-    elif geometry['type'] == 'MultiPolygon':
-        for polygon in geometry['coordinates']:
-            all_coords.extend(polygon[0])
-    if not all_coords:
-        return None
-    lons = [c[0] for c in all_coords]
-    lats = [c[1] for c in all_coords]
-    return min(lons), min(lats), max(lons), max(lats)
-
-
-def get_polygon_center(geometry: Dict) -> Optional[Tuple[float, float]]:
-    """Return geometric center as midpoint of bounding box.
-
-    This is a crude centroid approximation adequate for matching heuristics.
-    Returns ``None`` if bounds are unavailable.
-    """
-    bounds = get_polygon_bounds(geometry)
-    if bounds:
-        min_lon, min_lat, max_lon, max_lat = bounds
-        return (min_lon + max_lon) / 2, (min_lat + max_lat) / 2
-    return None
-
-
-# NOTE: point_in_polygon removed – bounding box matching no longer required after refactor
 
 # -------------------------- Aggregation Functions ------------------------- #
 
-
 def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
-    """Aggregate pipe features by SUBCATCHMENT.
+    """Aggregate pipe features by SUBCATCHMENT (hydraulic metrics only).
 
-    Produces per-subcatchment summary statistics including:
-    * Pipe count, total length, average & maximum diameter
-    * Sum capacity of up to the three largest diameter pipes (proxy capacity)
-    * Derived bounding box & center point from all segment coordinates
+    Legacy spatial bounding box / centroid derivation has been removed because
+    catchment mapping is already externally validated and full polygon
+    geometry is now retained elsewhere. This function now focuses solely on
+    hydraulic summarisation:
+      * pipe_count
+      * total_length_m
+      * avg_diameter_mm
+      * max_diameter_mm
+      * Qcap_m3s  (sum of capacities of up to the three largest diameter pipes)
 
     Parameters
     ----------
     pipes_file : str
-        Path to a GeoJSON-like file containing ``features`` with ``geometry``
-        (LineString coordinates) and ``properties`` including hydraulic fields.
+        Path to a GeoJSON-like file containing features with hydraulic
+        attributes (diameter, length, invert levels, material).
 
     Returns
     -------
     Dict[str, Dict]
-        Mapping of subcatchment id to aggregated attributes.
+        Mapping of subcatchment id -> hydraulic summary metrics.
     """
     with open(pipes_file, 'r') as f:
         pipes_data = json.load(f)
     # Load material Manning values once for all pipes
     materials_lookup = load_pipe_materials()
 
-    subcatchment_data = defaultdict(lambda: {
-        'pipes': [], 'all_coordinates': [],
-        'bounds': {'min_lon': 180, 'min_lat': 90, 'max_lon': -180, 'max_lat': -90}
-    })
+    subcatchment_data = defaultdict(lambda: {'pipes': []})
     for feature in pipes_data['features']:
         # Defensive parsing of expected GeoJSON structure
         props = feature.get('properties', {})
-        geom = feature.get('geometry', {})
         raw_ufi = props.get('ufi')
         # Normalise ufi to string to ensure consistent dictionary keys
         subcatchment = str(raw_ufi) if raw_ufi is not None else 'Unknown'
@@ -251,36 +186,14 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
         # Material code (for Manning n lookup)
         material = props.get('Feat_Mat', None)
 
-        # Only consider pipes with valid diameter & length
+        # Only consider pipes with valid diameter & length & material
         if diameter and length and diameter > 0 and length > 0 and material:
-
-            # Estimate pipe capacity (m^3/s)
             capacity = calculate_pipe_capacity(
                 diameter, grade, material, materials_lookup)
-
-            coords = geom.get('coordinates', [])
-            if coords:
-                valid_coords = []
-                for coord in coords:
-                    if isinstance(coord, (list, tuple)) and len(coord) >= 2:
-                        try:
-                            lon = float(coord[0])
-                            lat = float(coord[1])
-                            valid_coords.append([lon, lat])
-                        except (TypeError, ValueError):
-                            continue
-                if valid_coords:
-                    subcatchment_data[subcatchment]['all_coordinates'].extend(
-                        valid_coords)
-                    for lon, lat in valid_coords:
-                        bounds = subcatchment_data[subcatchment]['bounds']
-                        bounds['min_lon'] = min(bounds['min_lon'], lon)
-                        bounds['min_lat'] = min(bounds['min_lat'], lat)
-                        bounds['max_lon'] = max(bounds['max_lon'], lon)
-                        bounds['max_lat'] = max(bounds['max_lat'], lat)
-            subcatchment_data[subcatchment]['pipes'].append({
-                'diameter': diameter, 'length': length, 'capacity': capacity, 'material': material
-            })
+            subcatchment_data[subcatchment]['pipes'].append(
+                {'diameter': diameter, 'length': length,
+                    'capacity': capacity, 'material': material}
+            )
 
     subcatchment_results = {}
     for subcatch, data in subcatchment_data.items():
@@ -292,68 +205,73 @@ def aggregate_pipes_with_location(pipes_file: str) -> Dict[str, Dict]:
         main_pipes = sorted(
             pipes, key=lambda x: x['diameter'], reverse=True)[:3]
         main_capacity = sum(p['capacity'] for p in main_pipes)
-        bounds = data['bounds']
-        center_lon = (bounds['min_lon'] + bounds['max_lon']) / 2
-        center_lat = (bounds['min_lat'] + bounds['max_lat']) / 2
         subcatchment_results[subcatch] = {
             'pipe_count': len(pipes),
             'total_length_m': round(total_length, 2),
             'avg_diameter_mm': round(np.mean([p['diameter'] for p in pipes]), 0),
             'max_diameter_mm': max(p['diameter'] for p in pipes),
             'Qcap_m3s': round(main_capacity, 3),
-            'bounds': {
-                'min_lon': round(bounds['min_lon'], 6),
-                'min_lat': round(bounds['min_lat'], 6),
-                'max_lon': round(bounds['max_lon'], 6),
-                'max_lat': round(bounds['max_lat'], 6)
-            },
-            'center': {'lon': round(center_lon, 6), 'lat': round(center_lat, 6)}
         }
     return subcatchment_results
 
 
 def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
-    """Load catchment polygons and derive simplified attributes.
+    """Load catchment features preserving full source geometry.
 
-    Area priority order: provided properties ``catch_norm`` or ``catch_full``;
-    if absent / invalid, approximate from geometry.
-    Each feature receives a synthetic unique id to avoid collisions.
+    Refactored: previously we reduced polygons to bounding boxes & centers.
+    This caused loss of spatial fidelity for downstream calculations. We now
+    retain the original GeoJSON ``geometry`` object so future processes can
+    perform accurate spatial operations (e.g. point-in-polygon) without
+    reloading source files.
+
+    Behaviour changes:
+    * ``bounds`` and ``center`` fields are no longer emitted here.
+    * ``geometry`` is passed through verbatim (Polygon / MultiPolygon).
+    * Only features with a positive numeric area attribute are kept (same
+      filtering intent as before, but area now strictly attribute-driven).
+    * Synthetic ids still generated when ``ufi`` absent.
+
+    Parameters
+    ----------
+    catchments_file : str
+        Path to the source catchments GeoJSON.
+
+    Returns
+    -------
+    Dict[str, Dict]
+        Mapping of id -> attributes incl. preserved ``geometry``.
     """
     with open(catchments_file, 'r') as f:
         catchments_data = json.load(f)
-    catchment_dict = {}
-    for idx, feature in enumerate(catchments_data['features']):
-        props = feature.get('properties', {})
-        geom = feature.get('geometry', {})
+    catchment_dict: Dict[str, Dict] = {}
+    for idx, feature in enumerate(catchments_data.get('features', [])):
+        if not isinstance(feature, dict):
+            continue
+        props = feature.get('properties', {}) or {}
+        geom = feature.get('geometry')
+        if not geom or not isinstance(geom, dict) or 'type' not in geom:
+            continue  # skip malformed
         catch_name = props.get('catch_name') or 'Unknown'
-        # Prefer explicit primary key 'ufi' if present; fallback to synthetic id
         ufi = props.get('ufi')
         key = str(ufi) if ufi is not None else f"{catch_name}_{idx}"
         area_km2 = props.get('catch_flod') or props.get('catch_full') or 0
         try:
             area_km2 = float(area_km2)
         except (TypeError, ValueError):
-            area_km2 = 0
-        bounds = get_polygon_bounds(geom) if geom else None
-        center = get_polygon_center(geom) if geom else None
-        if area_km2 > 0 and bounds:
-            catchment_dict[key] = {
-                'catchment_id': key,
-                'ufi': ufi,
-                'name': catch_name,
-                'sub_name': props.get('sub_name', ''),
-                'A_km2': round(area_km2, 2),
-                'basin_name': props.get('basin_name', ''),
-                'type': props.get('type', ''),
-                'management': props.get('management', ''),
-                'bounds': {
-                    'min_lon': round(bounds[0], 6), 'min_lat': round(bounds[1], 6),
-                    'max_lon': round(bounds[2], 6), 'max_lat': round(bounds[3], 6)
-                },
-                'center': {'lon': round(center[0], 6), 'lat': round(center[1], 6)} if center else None
-            }
-    # Debug: number of catchments keyed by ufi vs synthetic
-    # (Could be toggled by a verbose flag in future)
+            area_km2 = 0.0
+        if area_km2 <= 0:
+            continue
+        catchment_dict[key] = {
+            'catchment_id': key,
+            'ufi': ufi,
+            'name': catch_name,
+            'sub_name': props.get('sub_name', ''),
+            'A_km2': round(area_km2, 2),
+            'basin_name': props.get('basin_name', ''),
+            'type': props.get('type', ''),
+            'management': props.get('management', ''),
+            'geometry': geom,
+        }
     keyed_by_ufi = sum(1 for c in catchment_dict.values()
                        if c.get('ufi') is not None)
     print(
@@ -398,14 +316,11 @@ def join_pipes_catchments(subcatchment_pipes: Dict[str, Dict], catchment_areas: 
             'pipe_count': pipe_info['pipe_count'],
             'total_pipe_length_m': pipe_info['total_length_m'],
             'max_pipe_diameter_mm': pipe_info['max_diameter_mm'],
-            'location': {
-                # prefer pipe network centroid for hydraulics
-                'center': pipe_info['center'],
-                'bounds': pipe_info['bounds']
-            },
             'basin_name': catchment.get('basin_name', ''),
             'area_type': catchment.get('type', ''),
             'ufi': catchment.get('ufi'),
+            # Preserve original polygon geometry for higher-accuracy spatial queries
+            'geometry': catchment.get('geometry')
         }
         # Simple runoff coefficient heuristic based on area_type / management
         area_type = (catchment.get('type') or '').lower()
@@ -477,12 +392,8 @@ def main():  # pragma: no cover - convenience script
     for i, (subcatch, info) in enumerate(list(subcatchment_pipes.items())[:3]):
         print(f"\n   Example {i+1}: {subcatch}")
         print(f"     - Number of pipes: {info['pipe_count']}")
-        print(f"     - Qcap: {info['Qcap_m3s']} m³/s")
-        print(
-            f"     - Center point: [{info['center']['lon']}, {info['center']['lat']}]")
-        print("     - Boundary: [{:.4f}, {:.4f}] - [{:.4f}, {:.4f}]".format(
-            info['bounds']['min_lon'], info['bounds']['min_lat'], info['bounds']['max_lon'], info['bounds']['max_lat']
-        ))
+        print(f"     - Qcap (top3 sum): {info['Qcap_m3s']} m³/s")
+        print(f"     - Max diameter: {info['max_diameter_mm']} mm")
 
     print("\n2. Processing catchment area geometry data...")
     catchment_areas = extract_catchments_with_geometry(str(catchments_file))

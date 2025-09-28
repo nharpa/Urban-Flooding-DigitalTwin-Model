@@ -35,3 +35,10 @@ Should we deploy mongoDB in container? Yes
 Digital Twin service and api deployed in venv on VPS
 
 Update README and ensure code comments coverage
+
+**Deployment Workflows**
+
+1. Dockerfile to configure mongoDB
+2. init_db.py to apply schema and innitalise the database config
+3. geojson_converter.py this generates the catchments_spatial_matched.json - this can probabally be done once and deployed with the codebase.
+4. spatial_import.py imports rainfall events and spatial data into mongodb

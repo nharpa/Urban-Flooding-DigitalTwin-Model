@@ -5,12 +5,10 @@ contains (or whose bounding box contains) a provided geographic point.
 
 Workflow:
 1. Accept longitude/latitude + optional rainfall event id (defaults to latest or design_10yr)
-2. Find candidate catchments whose bounding box encloses the point.
-   (We currently only have stored center + bounds, not full polygons.)
-3. Pick the smallest-area candidate (heuristic) if multiple.
-4. Retrieve rainfall event (design_10yr fallback) and run simulation using
-   stored C, A_km2, Qcap_m3s parameters.
-5. Return risk metrics and basic catchment metadata.
+2. Use polygon containment (geopandas) to find the catchment geometry containing the point.
+3. If multiple contain, choose the smallest A_km2.
+4. Retrieve rainfall event (design_10yr fallback) and run simulation using stored parameters.
+5. Return risk metrics and metadata.
 
 If no catchment is found a 404 is returned.
 """
@@ -22,6 +20,7 @@ from pydantic import BaseModel, Field
 
 from src.urban_flooding.persistence.database import FloodingDatabase
 from src.urban_flooding.domain.simulation import simulate_catchment
+from src.urban_flooding.spatial.spatial_utils import find_catchment_for_point
 
 router = APIRouter()
 
@@ -63,54 +62,36 @@ def _risk_level(value: float) -> str:
 
 
 def _select_catchment_for_point(lon: float, lat: float, catchments: list[dict]) -> dict:
-    """Return the most appropriate catchment for a given point.
+    """Return catchment whose polygon contains the point using geopandas utility.
 
-    Logic:
-    1. Iterate through provided `catchments` and collect those whose location.bounds
-       encloses the (lon, lat) point. Bounds must provide min/max for lon & lat.
-    2. If multiple candidates are found, choose the one with the smallest `A_km2`
-       (heuristic assuming tighter bounds more specific catchment).
-    3. Raise HTTPException(404) if no candidates are found.
-
-    Parameters
-    ----------
-    lon : float
-        Longitude in WGS84.
-    lat : float
-        Latitude in WGS84.
-    catchments : list[dict]
-        Catchment records as returned by `FloodingDatabase.list_catchments()`.
-
-    Returns
-    -------
-    dict
-        Selected catchment dictionary.
+    Falls back to HTTP 404 if no polygon contains the point.
     """
-    candidates: list[dict] = []
-    for c in catchments:
-        loc = c.get("location") or {}
-        bounds = (loc.get("bounds") or {}) if isinstance(loc, dict) else {}
-        try:
-            min_lon = bounds.get("min_lon")
-            max_lon = bounds.get("max_lon")
-            min_lat = bounds.get("min_lat")
-            max_lat = bounds.get("max_lat")
-            if None in (min_lon, max_lon, min_lat, max_lat):
-                continue  # incomplete bounds, skip
-            if min_lon <= lon <= max_lon and min_lat <= lat <= max_lat:
-                candidates.append(c)
-        except Exception:
-            # Defensive: skip malformed catchment records
-            continue
-    if not candidates:
-
+    # Primary: geometry-based lookup
+    match = find_catchment_for_point(catchments, lon, lat)
+    if not match:
+        # Fallback for legacy / test fixtures that still supply only bounds
+        candidates: list[dict] = []
+        for c in catchments:
+            loc = c.get('location') or {}
+            b = (loc.get('bounds') or {}) if isinstance(loc, dict) else {}
+            try:
+                mn_lon, mx_lon = b.get('min_lon'), b.get('max_lon')
+                mn_lat, mx_lat = b.get('min_lat'), b.get('max_lat')
+                if None in (mn_lon, mx_lon, mn_lat, mx_lat):
+                    continue
+                if mn_lon <= lon <= mx_lon and mn_lat <= lat <= mx_lat:
+                    candidates.append(c)
+            except Exception:
+                continue
+        if candidates:
+            candidates.sort(key=lambda x: x.get('A_km2', float('inf')))
+            match = candidates[0]
+    if not match:
         raise HTTPException(
             status_code=404, detail="No catchment found for provided point")
-    print(candidates)
-    candidates.sort(key=lambda x: x.get("A_km2", float("inf")))
     print(
-        f"Selected catchment {candidates[0]['catchment_id']} for point ({lon}, {lat})")
-    return candidates[0]
+        f"Selected catchment {match['catchment_id']} for point ({lon}, {lat})")
+    return match
 
 
 @router.post("/risk/point", response_model=PointRiskResponse)

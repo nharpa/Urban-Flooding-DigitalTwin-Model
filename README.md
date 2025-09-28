@@ -57,36 +57,49 @@ Legacy top-level modules (e.g. `domain.py`, `database_v3.py`) remain as shims th
 
 ---
 
-## 3. Data Flow Overview
+## 3. Data Flow Overview (Geometry‑First)
 
-1. Input GeoJSON files (pipes + catchment polygons) are processed by `geojson_converter_spatial.py`:
+1. Input GeoJSON files (pipes + catchment polygons) are processed by `urban_flooding.spatial.geojson_converter` (run via `python -m urban_flooding.spatial.geojson_converter` or its `main()`):
 
-- Aggregates pipe segments per subcatchment (key = `ufi`) → capacity, length, diameter stats
-- Extracts polygon bounds / centroid / area (or estimates if missing)
-- Directly joins pipe aggregates to catchments using shared `ufi` (no overlap / nearest heuristic needed)
-- Outputs `data/catchments_spatial_matched.json`
+- Aggregates pipe segments per subcatchment (key = `ufi`) → hydraulic metrics (`Qcap_m3s`, `pipe_count`, `total_length_m`, diameter stats). No centroids / bounds are derived here anymore.
+- Loads catchment polygons preserving full GeoJSON `geometry` and core attributes (area, type, management, names).
+- Performs a direct dictionary join on `ufi` to associate hydraulic summaries with polygon geometry.
+- Writes `data/catchments_spatial_matched.json` containing: `catchment_id`, `ufi`, `name`, `A_km2`, hydraulic stats, heuristic runoff coefficient `C`, and full `geometry`.
 
-2. `import_spatial_to_mongodb.py` loads the JSON and upserts catchments into MongoDB with validation.
-3. Design rainfall events are created (2, 10, 50, 100 year + historical template) and stored.
-4. Simulations use `domain.simulate_catchment` to generate time series and risk metrics.
-5. Real‑time weather API ingestion (`weather_api_client.py`) converts observations to a rainfall event.
-6. `integrated_flood_system.py` can run comprehensive assessments, generate dashboards, and optionally loop in continuous monitoring mode.
+2. The CLI command `python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events` loads the JSON and upserts catchments into MongoDB (schema now supports a GeoJSON-like `geometry` field). Legacy helper scripts remain but are deprecated.
+3. Design rainfall events are created (2, 10, 50, 100 year + historical template) via `python -m urban_flooding.cli design-events`.
+4. Simulations use `domain.simulation.simulate_catchment` to generate time series and risk metrics.
+5. Real‑time weather API ingestion (`ingestion.weather_client`) converts observations to rainfall events.
+6. Higher-level orchestration (dashboards, monitoring loop) is provided by `services.integrated_system` and CLI commands (`risk-assess`, `monitor`).
+
+Key Change vs Legacy: Bounding box / centroid heuristics were removed; spatial accuracy now derives from authentic polygon geometries enabling precise point‑in‑polygon operations (already used in the point risk endpoint with a temporary fallback for legacy documents lacking geometry).
 
 ---
 
-## 4. MongoDB Schema Highlights
+## 4. MongoDB Schema Highlights (Updated)
 
 Collections:
 
-- `catchments`: Hydraulic + spatial + matching metadata (center + bounding box) and pipe stats
-- `rainfall_events`: Time series rainfall definitions
-- `simulations`: Simulation outputs (series + max_risk + references)
+- `catchments`: Hydraulic + spatial attributes with preserved polygon `geometry` (GeoJSON object), pipe stats, heuristic runoff coefficient. Legacy documents may still contain `location.bounds` without full geometry (migration guidance below).
+- `rainfall_events`: Time series rainfall definitions.
+- `simulations`: Simulation outputs (series + max_risk + references).
+- `issues`: Optional crowdsourced field issue reports (point locations) – see Issue Reporting section.
 
-Indexes (see `database_v3.py`):
+Indexes (see `urban_flooding/persistence/schemas.py`):
 
-- Functional: `catchment_id`, `simulation_id`, `event_id`
-- Query support: capacity, name, risk, return period
-- Spatial bounding box compound index (placeholder for future 2dsphere)
+- Functional: `catchment_id` (unique), `simulation_id`, `event_id`.
+- Query support: compound indexes for rainfall event lookups and simulation retrieval.
+- Spatial: Attempted `2dsphere` index on `geometry` (if present) prepared for future geospatial queries; legacy bounding box compound index removed.
+
+Geometry Field:
+
+```jsonc
+{
+  "geometry": { "type": "Polygon" | "MultiPolygon", "coordinates": [...] }
+}
+```
+
+Validation intentionally keeps the geometry schema permissive (basic shape/type) to allow upstream ingestion of varied polygon complexities. Downstream spatial operations (e.g., point‑in‑polygon) assume valid winding/order; a future enhancement may add optional geometry validation / repair.
 
 ---
 
@@ -114,7 +127,7 @@ Interpretation (suggested thresholds):
 Prerequisites:
 
 - Python 3.10+
-- MongoDB running locally (default URI `mongodb://localhost:27017/`)
+- MongoDB (run via provided `docker-compose.yml` or an existing deployment)
 
 Install dependencies:
 
@@ -132,7 +145,52 @@ $env:MONGODB_URI = "mongodb://user:pass@host:27017/?authSource=admin"
 
 ---
 
-## 7. Typical Workflow (CLI First)
+## 7. Database Deployment & Initialization (New)
+
+The quickest way to bring up MongoDB with the correct database name and persistent volumes is via Docker Compose (ships with this repo).
+
+Start MongoDB (foreground):
+
+```powershell
+docker compose up
+```
+
+Or run detached:
+
+```powershell
+docker compose up -d
+```
+
+Health check waits for the server to respond before marking the container healthy.
+
+Once the container is running, initialize (or re‑initialize) the collections, schema validators, and indexes. This is idempotent and safe to repeat after code updates.
+
+Using the CLI command:
+
+```powershell
+python -m urban_flooding.cli init-db
+```
+
+Or using the standalone helper script (handy inside other automation):
+
+```powershell
+python scripts/init_db.py
+```
+
+If you are using a remote / authenticated Mongo instance set `MONGODB_URI` before running the init command. Example:
+
+```powershell
+$env:MONGODB_URI = "mongodb://user:pass@remote-host:27017/?authSource=admin"
+python -m urban_flooding.cli init-db
+```
+
+You should see a list of initialized collection names. At this point the database layer is ready for spatial ingestion and rainfall event seeding.
+
+> Next Planned Enhancement: After the pending `geojson_converter` fix, the `init-db` command will be extended (or an additional `bootstrap` command added) to automatically process GeoJSON inputs and populate the `catchments` collection in one step.
+
+---
+
+## 8. Typical Workflow (CLI First)
 
 The new CLI consolidates common workflows. Run commands from the repository root (ensure `src` is on `PYTHONPATH`, which happens automatically when running from root).
 
@@ -184,31 +242,15 @@ python -m urban_flooding.cli trends --days 14
 python -m urban_flooding.cli simulate-simple --C 0.8 --i 25 --A 1.2 --capacity 18 --steps 6
 ```
 
-The legacy scripts (`import_spatial_to_mongodb.py`, `integrated_flood_system.py`, etc.) still work but are maintained as shims; prefer the CLI above.
+Legacy scripts (`import_spatial_to_mongodb.py`, `integrated_flood_system.py`, `geojson_converter_spatial.py`) remain as thin wrappers for backward compatibility but are deprecated. Preferred modern equivalents:
 
-### A. Generate Spatially Matched Catchments
+| Legacy Script                  | Replacement CLI Command                                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `geojson_converter_spatial.py` | `python -m urban_flooding.spatial.geojson_converter` (or run via conversion invoked in workflow)          |
+| `import_spatial_to_mongodb.py` | `python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events` |
+| `integrated_flood_system.py`   | `python -m urban_flooding.cli risk-assess` / `monitor` / `realtime-fetch` combinations                    |
 
-```powershell
-python geojson_converter_spatial.py
-```
-
-Outputs `catchments_spatial_matched.json` (default location: working directory or `data/`).
-
-### B. Import Data & Seed Rainfall Events
-
-```powershell
-python import_spatial_to_mongodb.py
-```
-
-Creates collections, upserts catchments, seeds rainfall events, runs sample risk assessment, prints report.
-
-### C. Real-time Weather Ingestion + Risk Assessment
-
-```powershell
-python integrated_flood_system.py
-```
-
-Follow interactive prompts; can opt into continuous monitoring mode.
+Use the CLI variants for consistent logging, argument validation, and future feature support.
 
 ### D. Weather API Standalone Demo
 
@@ -218,7 +260,7 @@ python weather_api_client.py
 
 ---
 
-## 8. Continuous Monitoring Mode
+## 9. Continuous Monitoring Mode
 
 - Periodically fetches weather API
 - Creates rainfall event if data present
@@ -227,50 +269,73 @@ python weather_api_client.py
 
 ---
 
-## 9. Catchment Linking (Foreign Key Join)
+## 10. Catchment Linking (Deterministic Geometry Join)
 
-The previous heuristic spatial matching stage (overlap → nearest → estimated) has been refactored.
-Pipe features now carry a stable foreign key `ufi` that directly references the primary key of their
-parent catchment polygon. The pipeline now:
+Heuristic spatial matching (overlap → nearest → estimated) has been fully retired. Each pipe feature
+includes a stable foreign key `ufi` pointing to its parent catchment polygon. During conversion:
 
-1. Aggregates pipe stats per `ufi`
-2. Loads catchment polygons keyed by `ufi`
-3. Performs a dictionary join to build unified records
+1. Pipe hydraulics are aggregated per `ufi` (capacity, pipe counts, diameter stats).
+2. Catchment polygons are loaded with preserved GeoJSON `geometry` keyed by `ufi`.
+3. A direct dictionary join produces unified catchment records embedding hydraulic metrics and geometry.
 
-Runoff coefficient `C` is still heuristically adjusted from land‑use fields (`type`, `management`).
-If a catchment has no corresponding pipe data it is currently omitted (optional future flag could
-emit zero‑capacity placeholders).
+Runoff coefficient `C` is heuristically derived from land‑use / management attributes. Catchments lacking
+pipe data are currently omitted (future option: output zero‑capacity records for completeness).
 
-Migration differences vs legacy heuristic output:
+Preserved Fields:
 
-| Removed Fields      | Reason                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| `match_type`        | No spatial heuristic performed                                                        |
-| `match_score`       | Overlap / distance score obsolete                                                     |
-| `match_distance_km` | Nearest neighbour step removed                                                        |
-| `area_estimated`    | Area now taken directly from catchment (still estimated only if source value missing) |
+- `ufi` / `catchment_id`: Stable identifier (mirrored for backward compatibility).
+- `geometry`: Full Polygon / MultiPolygon for precise spatial queries (e.g., point‑in‑polygon risk lookups).
 
-New / clarified fields:
+Removed Legacy Artifacts: `match_type`, `match_score`, `match_distance_km`, `area_estimated`, and derived
+`location.bounds` / `location.center` fields—these are no longer needed because authoritative geometry is stored.
 
-- `ufi`: Explicit ID used for joining
-- `catchment_id`: Mirrors `ufi` (legacy compatibility)
-
-Benefits: deterministic, faster, simpler to test, and avoids ambiguous matches in dense networks.
+Benefits: Deterministic joins, improved spatial fidelity, reduced complexity, and consistent reproducibility across reruns.
 
 ---
 
-## 10. Extensibility Ideas
+## 11. Extensibility Ideas (Forward Look)
 
-- Replace heuristic spatial matcher with full polygon intersection + area weighting
-- Introduce temporal resolution finer than 1h / 30min with hyetograph normalization
-- Enable ensemble forecast ingestion for probabilistic risk bands
-- Add GeoJSON 2dsphere index & store full geometry objects
-- Support machine learning calibration of C and Qcap from historical events
-- Provide REST API / FastAPI service layer for external clients
+- Area‑weighted rainfall / runoff distribution for partially intersecting polygons (if sub‑catchment nesting introduced).
+- Geometry QA & repair pipeline (self‑intersection fixing, winding order normalization) pre‑ingestion.
+- Pipe geometry capture (LineString → aggregated MultiLineString per catchment) for map visualization & hydraulic distribution modeling.
+- Temporal resolution refinement (sub‑hour hyetographs) with intensity normalization & convolution against catchment response curves.
+- Ensemble / probabilistic rainfall event ingestion (e.g., blending forecasts) to derive risk bands (P10 / P50 / P90).
+- Machine learning calibration of runoff coefficient `C` and effective capacity scaling using historical event + observation pairs.
+- Incremental geospatial caching layer with spatial index acceleration (R‑tree / Mongo 2dsphere queries) for high request volumes.
+- Streaming ingestion mode (websocket or pub/sub) for near real‑time rainfall updates driving rolling risk nowcasts.
 
 ---
 
-## 11. Issue Reporting (Crowdsourced Field Input)
+## 12. Migration Notes (Legacy Spatial Records)
+
+Some earlier datasets persisted catchments with only `location.bounds` / `location.center` and without full `geometry`.
+The new geometry‑first logic introduces polygon point‑in‑polygon selection and will fall back to bounds only when
+`geometry` is missing. To fully migrate:
+
+1. Re‑run the spatial conversion pipeline (`python -m urban_flooding.spatial.geojson_converter`) to produce an updated `catchments_spatial_matched.json` containing `geometry`.
+2. Use the CLI to ingest: `python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json`.
+3. (Optional cleanup) Remove legacy fields from existing records lacking geometry:
+
+```python
+from urban_flooding.persistence.database import FloodingDatabase
+db = FloodingDatabase()
+updated = 0
+for c in db.list_catchments():
+  if 'geometry' not in c or not c['geometry']:
+    # Attempt to look up replacement in refreshed JSON by ufi
+    # (Assuming you loaded the file into memory as new_data keyed by ufi)
+    pass
+```
+
+Recommended Approach: Instead of in‑place patching, drop & re‑ingest the `catchments` collection if no downstream
+references rely on stable `_id` values. The catchment `catchment_id` / `ufi` keys remain stable across regenerations.
+
+Deprecation Timeline: The fallback to bounding boxes in the risk endpoint will be removed in a future release once
+all production datasets contain polygon `geometry`.
+
+---
+
+## 13. Issue Reporting (Crowdsourced Field Input)
 
 An integrated issue reporting collection allows field / citizen users to submit flood related problems (e.g. flooded road, blocked drain) with geolocation, photos, and optional notes. The lifecycle/status workflow was intentionally simplified (no status or priority fields) to keep ingestion lightweight; enrichment or triage can be layered externally later if needed.
 
@@ -294,7 +359,7 @@ Schema (simplified current form):
 
 ---
 
-## 12. FastAPI Service & New Point Risk Endpoint
+## 14. FastAPI Service & New Point Risk Endpoint
 
 The project now includes a FastAPI application (see `main.py`) exposing simulation and risk services.
 
@@ -309,7 +374,7 @@ Runs a bespoke simulation for arbitrary rainfall time series and parameters. (Se
 
 POST `/risk/point`
 
-Purpose: Given a geographic coordinate (lon/lat), identify the catchment whose stored bounding box contains the point, run a simulation with a specified (or default) rainfall event, and return its risk metrics.
+Purpose: Given a geographic coordinate (lon/lat), identify the catchment polygon that contains the point (geometry first; falls back to legacy bounding boxes only if geometry absent), run a simulation with a specified (or default) rainfall event, and return risk metrics.
 
 Request Body:
 
@@ -354,11 +419,13 @@ Error (no catchment match):
 
 ### How It Works Internally
 
-1. Loads all catchments (Mongo) and filters those whose stored bounding box (`location.bounds`) contains the point.
-2. Chooses the smallest-area candidate if multiple.
-3. Retrieves the rainfall event.
-4. Runs `simulate_catchment` using the catchment's hydraulic parameters.
-5. Computes a categorical risk level from the continuous `max_risk`.
+1. Loads (or cached) catchments from MongoDB.
+2. Attempts polygon point‑in‑polygon test (shapely via geopandas) against preserved `geometry` for each catchment.
+3. If no geometries are present (legacy docs), falls back to bounding box containment of `location.bounds`.
+4. When multiple polygons contain the point (rare overlaps), selects the smallest area polygon to minimize ambiguity.
+5. Retrieves (or defaults) the rainfall event.
+6. Runs `simulate_catchment` with hydraulic parameters.
+7. Derives categorical risk from the continuous `max_risk` value.
 
 ### Running the API
 
@@ -370,9 +437,10 @@ Visit interactive docs at: `http://localhost:8000/docs`
 
 ### Notes & Future Enhancements
 
-- Bounding box containment is a proxy; replace with real polygon point-in-polygon once geometries are stored.
-- Consider caching catchments in-memory to avoid per-request full scans (trivial for current dataset size).
-- Add optional parameter to return full series or summary only (currently only peak info returned; full internal series is accessible via code changes if needed).
+- Geometry-first already implemented; remove fallback code once all legacy records have geometry.
+- Consider in-memory caching with TTL or change stream invalidation for higher throughput deployments.
+- Add optional parameter to return full simulation series (currently returns peak summary only).
+- Potential: expose nearest-catchment explanation (distance to polygon boundary) for transparency.
 
 Key points:
 
@@ -411,7 +479,7 @@ Geospatial queries use a 2dsphere index on the GeoJSON `location` field.
 
 ---
 
-## 12. Minimal Programmatic Example (New Imports)
+## 15. Minimal Programmatic Example (New Imports)
 
 ```python
 from urban_flooding.persistence.database import FloodingDatabase
@@ -432,7 +500,7 @@ print(result['max_risk'])
 
 ---
 
-## 13. Testing / Validation
+## 16. Testing / Validation
 
 Pytest unit tests cover hydrology & simulation edge cases:
 
@@ -456,7 +524,7 @@ Additional future test targets:
 
 ---
 
-## 14. Troubleshooting
+## 17. Troubleshooting
 
 | Issue                   | Likely Cause                              | Fix                                                 |
 | ----------------------- | ----------------------------------------- | --------------------------------------------------- |
@@ -467,12 +535,12 @@ Additional future test targets:
 
 ---
 
-## 15. Disclaimer
+## 18. Disclaimer
 
 This code is illustrative and not a replacement for detailed hydrodynamic modeling or regulatory flood studies.
 
 ---
 
-## 16. License
+## 19. License
 
 Specify license here (e.g., MIT) – currently unspecified.

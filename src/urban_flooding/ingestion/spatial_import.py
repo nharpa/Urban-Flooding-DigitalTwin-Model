@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import uuid
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Sequence
 
 from urban_flooding.persistence.database import FloodingDatabase
 from urban_flooding.domain.simulation import simulate_catchment
@@ -48,21 +48,10 @@ def import_spatial_catchments(data: list, db: FloodingDatabase) -> Tuple[int, in
                     catchment['max_pipe_diameter_mm'])
             if 'pipe_count' in catchment:
                 catchment['pipe_count'] = int(catchment['pipe_count'])
-            if 'location' in catchment and catchment['location']:
-                location = catchment['location']
-                if 'center' in location:
-                    center = location['center']
-                    if isinstance(center, dict) and 'lat' in center and 'lon' in center:
-                        center['lat'] = float(center['lat'])
-                        center['lon'] = float(center['lon'])
-                    elif isinstance(center, list) and len(center) == 2:
-                        center[0] = float(center[0])
-                        center[1] = float(center[1])
-                if 'bounds' in location and location['bounds']:
-                    bounds = location['bounds']
-                    for k in ['min_lon', 'min_lat', 'max_lon', 'max_lat']:
-                        if k in bounds:
-                            bounds[k] = float(bounds[k])
+            # Geometry now preserved directly; ensure no accidental mutation beyond numeric casts
+            if 'geometry' in catchment and catchment['geometry'] is None:
+                # drop null geometry to keep docs clean
+                catchment.pop('geometry')
             existing = db.get_catchment(catchment['catchment_id'])
             if existing:
                 print(
@@ -81,82 +70,55 @@ def import_spatial_catchments(data: list, db: FloodingDatabase) -> Tuple[int, in
 # -------------------------- Rainfall Event Seeding ------------------------- #
 
 
-def create_design_rainfall_events(db: FloodingDatabase) -> int:
-    events = [
-        {
-            "event_id": "design_2yr",
-            "name": "2-year return perioddesign storm",
-            "rain_mmhr": [5.0, 8.0, 10.0, 8.0, 5.0, 3.0],
-            "timestamps_utc": [f"2025-09-25T{i:02d}:00:00Z" for i in range(6)],
-            "event_type": "design_storm",
-            "total_rainfall_mm": 39.0,
-            "peak_intensity_mmhr": 10.0,
-            "duration_hours": 6.0,
-            "return_period_years": 2,
-            "source": "Australian storm intensity formula",
-        },
-        {
-            "event_id": "design_10yr",
-            "name": "10-year return perioddesign storm",
-            "rain_mmhr": [8.0, 15.0, 25.0, 30.0, 20.0, 15.0, 10.0, 5.0],
-            "timestamps_utc": [f"2025-09-25T{i:02d}:00:00Z" for i in range(8)],
-            "event_type": "design_storm",
-            "total_rainfall_mm": 128.0,
-            "peak_intensity_mmhr": 30.0,
-            "duration_hours": 8.0,
-            "return_period_years": 10,
-            "source": "Australian storm intensity formula",
-        },
-        {
-            "event_id": "design_50yr",
-            "name": "50-year return perioddesign storm",
-            "rain_mmhr": [10.0, 20.0, 35.0, 50.0, 45.0, 35.0, 25.0, 15.0, 10.0],
-            "timestamps_utc": [f"2025-09-25T{i:02d}:00:00Z" for i in range(9)],
-            "event_type": "design_storm",
-            "total_rainfall_mm": 245.0,
-            "peak_intensity_mmhr": 50.0,
-            "duration_hours": 9.0,
-            "return_period_years": 50,
-            "source": "Australian storm intensity formula",
-        },
-        {
-            "event_id": "design_100yr",
-            "name": "100-year return perioddesign storm",
-            "rain_mmhr": [15.0, 30.0, 50.0, 70.0, 65.0, 50.0, 35.0, 20.0, 10.0],
-            "timestamps_utc": [f"2025-09-25T{i:02d}:00:00Z" for i in range(9)],
-            "event_type": "design_storm",
-            "total_rainfall_mm": 435.0,
-            "peak_intensity_mmhr": 70.0,
-            "duration_hours": 9.0,
-            "return_period_years": 100,
-            "source": "Australian storm intensity formula",
-        },
-        {
-            "event_id": "perth_historical_2024",
-            "name": "Perth 2024 historical storm",
-            "rain_mmhr": [3.0, 5.0, 12.0, 18.0, 22.0, 15.0, 8.0, 4.0],
-            "timestamps_utc": [f"2024-06-15T{i:02d}:00:00Z" for i in range(8)],
-            "event_type": "historical",
-            "total_rainfall_mm": 87.0,
-            "peak_intensity_mmhr": 22.0,
-            "duration_hours": 8.0,
-            "source": "Perth weather station records",
-        },
-    ]
-    for event in events:
-        event['rain_mmhr'] = [float(v) for v in event['rain_mmhr']]
-        if 'total_rainfall_mm' not in event:
-            event['total_rainfall_mm'] = float(sum(event['rain_mmhr']))
-        if 'peak_intensity_mmhr' not in event:
-            event['peak_intensity_mmhr'] = float(max(event['rain_mmhr']))
-        if 'duration_hours' not in event:
-            event['duration_hours'] = float(len(event['rain_mmhr']))
+def create_design_rainfall_events(db: FloodingDatabase, events_file: str = "data/RainfallEvents.json") -> int:
+    """Seed rainfall events from an external JSON file.
+
+    Parameters
+    ----------
+    db : FloodingDatabase
+        Database instance used for persistence.
+    events_file : str, optional
+        Path to JSON file containing a list of rainfall event objects.
+
+    Returns
+    -------
+    int
+        Number of events processed (attempted to save).
+    """
+    try:
+        with open(events_file, 'r') as f:
+            events: Sequence[dict] = json.load(f)
+    except FileNotFoundError:
+        print(f"Rainfall events file not found: {events_file}")
+        return 0
+    except json.JSONDecodeError as e:  # pragma: no cover - unlikely
+        print(f"Invalid rainfall events JSON ({events_file}): {e}")
+        return 0
+
+    loaded_count = 0
+    for raw in events:
+        # Work on a shallow copy to avoid mutating list content externally
+        event = dict(raw)
         try:
+            if 'rain_mmhr' not in event or 'timestamps_utc' not in event:
+                print(
+                    f"Skipping invalid event (missing required fields): {event.get('event_id')}")
+                continue
+            event['rain_mmhr'] = [float(v) for v in event['rain_mmhr']]
+            # Derived fields if absent
+            event.setdefault('total_rainfall_mm',
+                             float(sum(event['rain_mmhr'])))
+            event.setdefault('peak_intensity_mmhr',
+                             float(max(event['rain_mmhr'])))
+            event.setdefault('duration_hours', float(len(event['rain_mmhr'])))
             db.save_rainfall_event(**event)
-            print(f"Created rainfall event: {event['name']}")
+            print(
+                f"Created rainfall event: {event.get('name', event.get('event_id'))}")
+            loaded_count += 1
         except Exception as e:  # pragma: no cover
-            print(f"Failed to create rainfall event {event['name']}: {e}")
-    return len(events)
+            print(
+                f"Failed to create rainfall event {event.get('event_id')}: {e}")
+    return loaded_count
 
 # --------------------------- Risk Assessment ------------------------------- #
 
