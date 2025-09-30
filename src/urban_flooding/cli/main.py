@@ -25,7 +25,6 @@ from urban_flooding.ingestion.spatial_import import (
 )
 from urban_flooding.persistence.database import FloodingDatabase
 from urban_flooding.services.integrated_system import IntegratedFloodSystem
-from urban_flooding.domain.hydrology import q_runoff_m3s, risk_from_loading
 from urban_flooding.domain.simulation import simulate_catchment
 
 # ---------------- Issue Reports Command Handlers -----------------

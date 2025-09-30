@@ -15,12 +15,13 @@ If no catchment is found a 404 is returned.
 from __future__ import annotations
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
 from src.urban_flooding.persistence.database import FloodingDatabase
 from src.urban_flooding.domain.simulation import simulate_catchment
 from src.urban_flooding.spatial.spatial_utils import find_catchment_for_point
+from src.urban_flooding.auth.auth import verify_token
 
 router = APIRouter()
 
@@ -94,17 +95,20 @@ def _select_catchment_for_point(lon: float, lat: float, catchments: list[dict]) 
     return match
 
 
+# ...existing code...
 @router.post("/risk/point", response_model=PointRiskResponse)
-def risk_for_point(req: PointRiskRequest):
+def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)):
+
     db = FloodingDatabase()
-    lon = float(req.lon)
-    lat = float(req.lat)
+    lon = float(request.lon)
+    lat = float(request.lat)
 
     print(f"Computing risk for point ({lon}, {lat})")
     catchment = _select_catchment_for_point(
         lon=lon, lat=lat, catchments=db.list_catchments()
     )
-    event_id = req.rainfall_event_id or "design_10yr"
+
+    event_id = request.rainfall_event_id or "design_2yr"
     event = db.get_rainfall_event(event_id)
     if not event:
         # fallback: pick any existing event
@@ -114,6 +118,7 @@ def risk_for_point(req: PointRiskRequest):
                 status_code=500, detail="No rainfall events available")
         event = events[0]
         event_id = event["event_id"]
+
     sim = simulate_catchment(
         rain_mmhr=event["rain_mmhr"],
         timestamps_utc=event["timestamps_utc"],
@@ -121,6 +126,7 @@ def risk_for_point(req: PointRiskRequest):
         A_km2=catchment["A_km2"],
         Qcap_m3s=catchment["Qcap_m3s"],
     )
+
     max_risk = sim["max_risk"]
     max_point = None
     max_time = None
@@ -129,7 +135,8 @@ def risk_for_point(req: PointRiskRequest):
             max_point = p
             max_time = p["t"]
             break
-    return PointRiskResponse(
+
+    response = PointRiskResponse(
         catchment_id=catchment["catchment_id"],
         catchment_name=catchment.get("name", catchment["catchment_id"]),
         rainfall_event_id=event_id,
@@ -143,3 +150,5 @@ def risk_for_point(req: PointRiskRequest):
         max_risk_time=max_time,
         max_risk_point=max_point,
     )
+
+    return response
