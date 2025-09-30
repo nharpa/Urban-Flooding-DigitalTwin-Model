@@ -6,6 +6,7 @@ import uuid
 import pytz
 import requests
 from dotenv import load_dotenv
+from src.urban_flooding.auth.config import settings
 
 
 class WeatherAPIClient:
@@ -13,9 +14,9 @@ class WeatherAPIClient:
 
     def __init__(self, api_url: Optional[str] = None, api_token: Optional[str] = None, default_lat: float = None, default_lon: float = None):
         load_dotenv()
-        self.api_url = api_url or os.getenv(
-            "WEATHER_API_URL", "http://localhost:8000/api/v1/weather")
-        self.api_token = api_token or os.getenv("WEATHER_API_TOKEN")
+        self.api_url = api_url or settings.WEATHER_API_URL or "http://localhost:8000/api/v1/weather"
+        self.api_token = api_token or settings.WEATHER_API_TOKEN or os.getenv(
+            "WEATHER_API_TOKEN")
         if not self.api_token:
             raise ValueError(
                 "WEATHER_API_TOKEN not set. Provide via .env or constructor.")

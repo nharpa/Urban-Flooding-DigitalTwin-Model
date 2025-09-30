@@ -30,13 +30,13 @@ Intergration to frontend
 **TODO**
 
 **Digital Twin**
-Review geojson_converter to confirm new geojson matching working
-Rebuild database with new catchment structure
+~~Review geojson_converter to confirm new geojson matching working~~
+~~Rebuild database with new catchment structure~~
 Update digital twin continuous monitoring mode to become always on monitoring tied to API service running
 
 **API**
-Add authentication to endpoints
-Debug risk endpoint returning - "detail": "No catchment found for provided point"
+~~Add authentication to endpoints~~
+Debug risk endpoint returning - "detail": "No catchment found for provided point" - Given to Pedro
 
 **Deployment**
 Review resource requiements, likley double vps specs

@@ -17,10 +17,11 @@ Notes
   downstream logic.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from typing import List
 from src.urban_flooding.domain.simulation import simulate_catchment
+from src.urban_flooding.auth.auth import verify_token
 
 router = APIRouter()
 
@@ -62,7 +63,7 @@ class SimRequest(BaseModel):
 
 
 @router.post("/simulate")
-def simulate(req: SimRequest):
+def simulate(req: SimRequest, token: str = Depends(verify_token)):
     """Run a catchment simulation for the provided time series and properties.
 
     Parameters

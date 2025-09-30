@@ -9,16 +9,16 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.database import Database
 from pymongo.collection import Collection
 from .schemas import create_collections_with_validation, create_geospatial_indexes
+from src.urban_flooding.auth.config import settings
 
 
 class FloodingDatabase:
     """MongoDB database operations class with spatial query support."""
 
     def __init__(self, connection_uri: str = None, db_name: str = "urban_flooding_dt"):
-        self.uri = connection_uri or os.getenv(
-            "MONGODB_URI", "mongodb://localhost:27017/")
+        self.uri = connection_uri or settings.MONGODB_URL or "mongodb://localhost:27017/"
         self.client = MongoClient(self.uri)
-        self.db: Database = self.client[db_name]
+        self.db: Database = settings.MONGODB_NAME or self.client[db_name]
         create_collections_with_validation(self.db)
         self.catchments: Collection = self.db["catchments"]
         self.simulations: Collection = self.db["simulations"]
