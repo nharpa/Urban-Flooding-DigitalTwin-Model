@@ -188,6 +188,50 @@ You should see a list of initialized collection names. At this point the databas
 
 > Next Planned Enhancement: After the pending `geojson_converter` fix, the `init-db` command will be extended (or an additional `bootstrap` command added) to automatically process GeoJSON inputs and populate the `catchments` collection in one step.
 
+### 7.1 Standalone Spatial Import Helper (New Script)
+
+If you prefer a single-purpose script (useful in container ENTRYPOINT chains or CI jobs) you can run the new helper located at `scripts/spatial_import.py`.
+
+This wraps the same logic provided by the CLI commands `ingest-spatial`, `design-events`, and the sample risk assessment workflow.
+
+Basic usage (defaults to `data/catchments_spatial_matched.json`, creates design events, runs a 10-catchment risk sample using `design_10yr`):
+
+```powershell
+python scripts/spatial_import.py
+```
+
+Key options:
+
+```text
+--file <path>              Path to catchments JSON (default data/catchments_spatial_matched.json)
+--no-design-events         Skip design rainfall event seeding
+--event <event_id>         Rainfall event id for sample risk sims (default design_10yr)
+--top <N>                  Number of lowest-capacity catchments to simulate (default 10)
+--skip-risk                Ingest only (no simulations or report)
+```
+
+Examples:
+
+```powershell
+# Ingest only (no events, no simulations)
+python scripts/spatial_import.py --no-design-events --skip-risk
+
+# Use a different rainfall event and more samples
+python scripts/spatial_import.py --event design_50yr --top 25
+
+# Custom spatial JSON path
+python scripts/spatial_import.py --file data/alt_catchments.json
+```
+
+Exit code is non-zero on failure (e.g. missing file or DB connection issue) so it can be chained in automation:
+
+```powershell
+python scripts/init_db.py; if ($LASTEXITCODE -ne 0) { exit 1 }
+python scripts/spatial_import.py --skip-risk; if ($LASTEXITCODE -ne 0) { exit 1 }
+```
+
+The script ensures `src/` is added to `PYTHONPATH` automatically (mirrors `scripts/init_db.py`).
+
 ---
 
 ## 8. Typical Workflow (CLI First)
