@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-# Ensure src/ on path for direct execution (mirrors init_db.py)
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_PATH = REPO_ROOT / "src"
 if str(SRC_PATH) not in sys.path:
