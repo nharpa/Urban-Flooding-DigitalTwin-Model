@@ -8,8 +8,17 @@ from typing import List, Dict, Optional
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.database import Database
 from pymongo.collection import Collection
-from src.urban_flooding.persistence.schemas import create_collections_with_validation, create_geospatial_indexes
-from src.urban_flooding.auth.config import settings
+import sys
+from pathlib import Path
+
+# Ensure src/ on path for direct execution (mirrors init_db.py)
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SRC_PATH = REPO_ROOT / "src"
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
+
+from urban_flooding.auth.config import settings
+from urban_flooding.persistence.schemas import create_collections_with_validation, create_geospatial_indexes
 
 class FloodingDatabase:
     """MongoDB database operations class with spatial query support."""
