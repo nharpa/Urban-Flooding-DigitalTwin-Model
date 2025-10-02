@@ -2,23 +2,38 @@
 
 Migrated from legacy `database_v3.py`.
 """
+from __future__ import annotations
 from datetime import datetime
 from typing import List, Dict, Optional
-import os
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.database import Database
 from pymongo.collection import Collection
-from .schemas import create_collections_with_validation, create_geospatial_indexes
+from src.urban_flooding.persistence.schemas import create_collections_with_validation, create_geospatial_indexes
 from src.urban_flooding.auth.config import settings
-
 
 class FloodingDatabase:
     """MongoDB database operations class with spatial query support."""
 
     def __init__(self, connection_uri: str = None, db_name: str = "urban_flooding_dt"):
+        """Initialize Mongo client and ensure `self.db` is a Database object.
+
+        The previous implementation assigned `self.db = settings.MONGODB_NAME`
+        when an env var was set, which yielded a plain string instead of a
+        Database instance causing AttributeError on collection operations.
+        """
         self.uri = connection_uri or settings.MONGODB_URL or "mongodb://localhost:27017/"
-        self.client = MongoClient(self.uri)
-        self.db: Database = settings.MONGODB_NAME or self.client[db_name]
+        # Allow fast failure when server not present (e.g. during unit tests)
+        self.client = MongoClient(self.uri, serverSelectionTimeoutMS=200)
+        # Determine database name preference order
+        chosen_name = settings.MONGODB_NAME or db_name
+        # Always obtain a Database object from the client
+        self.db = self.client[chosen_name]
+
+        # Defensive: if misconfiguration somehow leaves a string, fix it
+        if not hasattr(self.db, "list_collection_names"):
+            # Fallback to default name
+            self.db = self.client[db_name]
+
         create_collections_with_validation(self.db)
         self.catchments: Collection = self.db["catchments"]
         self.simulations: Collection = self.db["simulations"]
@@ -180,7 +195,7 @@ class FloodingDatabase:
         self.client.close()
 
     # ---------------- Issue Reports -----------------
-    def create_issue_report(self, issue_type: str, description: str, latitude: float, longitude: float, user_uid: str, display_name: str = None, email: str = None, photo_urls: List[str] | None = None, notes: str | None = None) -> str:
+    def create_issue_report(self, issue_type: str, description: str, latitude: float, longitude: float, user_uid: str, display_name: str = None, email: str = None) -> str:
         """Create a new issue report and return its business key issue_id."""
         from uuid import uuid4
         issue_id = f"ISSUE_{uuid4().hex[:10]}"
@@ -191,7 +206,6 @@ class FloodingDatabase:
             "description": description,
             "location": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
             "user": {"uid": user_uid, "display_name": display_name, "email": email},
-            "photo_urls": photo_urls or [],
             "created_at": now,
         }
         self.issue_reports.insert_one(doc)
@@ -222,11 +236,6 @@ class FloodingDatabase:
         }
         cursor = self.issue_reports.find(query, {"_id": 0}).limit(limit)
         return list(cursor)
-
-    def add_issue_photos(self, issue_id: str, photo_urls: List[str]) -> bool:
-        res = self.issue_reports.update_one(
-            {"issue_id": issue_id}, {"$push": {"photo_urls": {"$each": photo_urls}}})
-        return res.modified_count > 0
 
     def issue_report_statistics(self) -> Dict:
         total = self.issue_reports.count_documents({})

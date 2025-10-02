@@ -68,8 +68,6 @@ def _cmd_issue_create(args: argparse.Namespace) -> int:
             user_uid=args.uid,
             display_name=args.display_name,
             email=args.email,
-            photo_urls=args.photo if args.photo else None,
-            notes=args.notes,
         )
         print(f"Created issue report: {issue_id}")
     finally:
@@ -87,7 +85,7 @@ def _cmd_issue_list(args: argparse.Namespace) -> int:
             return 0
         for r in reports:
             print(
-                f"{r['issue_id']} | {r['issue_type']} | {r.get('notes', '')} | {r['created_at']}")
+                f"{r['issue_id']} | {r['issue_type']} | {r['created_at']}")
     finally:
         db.close()
     return 0
@@ -286,7 +284,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_issue.add_argument("--email", help="Reporter email")
     p_issue.add_argument("--photo", action="append",
                          help="Photo URL (repeatable)")
-    p_issue.add_argument("--notes", help="Free-form notes / context")
     p_issue.set_defaults(func=_cmd_issue_create)
 
     p_issue_list = sub.add_parser("issue-list", help="List issue reports")

@@ -352,7 +352,6 @@ Schema (simplified current form):
     "display_name": "Jane",
     "email": "jane@example.com"
   },
-  "photo_urls": ["https://.../img1.jpg"],
   "created_at": "2025-09-27T08:12:00Z"
 }
 ```
