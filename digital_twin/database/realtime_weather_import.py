@@ -6,7 +6,7 @@ import uuid
 import pytz
 import requests
 from dotenv import load_dotenv
-from src.urban_flooding.auth.config import settings
+from digital_twin.auth.config import settings
 
 
 class WeatherAPIClient:
@@ -75,10 +75,10 @@ class WeatherAPIClient:
             weather_data)
         if not rain_mmhr:
             raise ValueError("No valid rainfall data found")
-        event_id = f"weather_api_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+        event_id = f"weather_api_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         if not event_name:
             event_name = f"{stats['station_name']} - {stats['start_time_local']}"
-        return {"event_id": event_id, "name": event_name, "rain_mmhr": rain_mmhr, "timestamps_utc": timestamps_utc, "event_type": event_type, "total_rainfall_mm": stats["total_rainfall_mm"], "peak_intensity_mmhr": stats["peak_intensity_mmhr"], "duration_hours": stats["duration_hours"], "source": f"Weather API - {stats['station_name']} ({stats['station_id']})", "metadata": {"station_info": stats, "api_fetch_time": datetime.utcnow().isoformat(), "observation_count": stats["observation_count"]}}
+        return {"event_id": event_id, "name": event_name, "rain_mmhr": rain_mmhr, "timestamps_utc": timestamps_utc, "event_type": event_type, "total_rainfall_mm": stats["total_rainfall_mm"], "peak_intensity_mmhr": stats["peak_intensity_mmhr"], "duration_hours": stats["duration_hours"], "source": f"Weather API - {stats['station_name']} ({stats['station_id']})", "metadata": {"station_info": stats, "api_fetch_time": datetime.now().isoformat(), "observation_count": stats["observation_count"]}}
 
     def assess_rainfall_severity(self, total_mm: float, peak_intensity_mmhr: float) -> str:
         if peak_intensity_mmhr >= 50:

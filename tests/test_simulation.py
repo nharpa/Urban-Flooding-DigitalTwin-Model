@@ -1,5 +1,5 @@
 import pytest
-from urban_flooding.domain.simulation import simulate_catchment, q_runoff_m3s, risk_from_loading
+from digital_twin.services.risk_simulation import simulate_catchment, q_runoff_m3s, risk_from_loading
 
 
 def test_simulate_catchment_increasing_intensity():

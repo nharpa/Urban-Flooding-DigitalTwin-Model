@@ -1,8 +1,8 @@
+from __future__ import annotations
+
 from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-import os
-from typing import Optional
-from src.urban_flooding.auth.config import settings
+from digital_twin.auth.config import settings
 
 security = HTTPBearer()
 

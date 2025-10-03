@@ -18,10 +18,10 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
-from src.urban_flooding.persistence.database import FloodingDatabase
-from src.urban_flooding.domain.simulation import simulate_catchment
-from src.urban_flooding.spatial.spatial_utils import find_catchment_for_point
-from src.urban_flooding.auth.auth import verify_token
+from digital_twin.database.database_utils import FloodingDatabase
+from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.spatial.spatial_utils import find_catchment_for_point
+from digital_twin.auth.auth import verify_token
 
 router = APIRouter()
 

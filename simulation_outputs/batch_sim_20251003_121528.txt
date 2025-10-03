@@ -1,0 +1,1256 @@
+=== Batch Catchment Simulation ===
+Catchments found: 139
+Timesteps: 6 (from 2025-09-25T00:00:00Z to 2025-09-25T05:00:00Z)
+Rain (mm/hr): 0.1, 0.2, 0.2, 0.1, 0.0, 0.0
+----------------------------------
+
+>>> Catchment 3055.0 - SwanAvon_Canning River | C=0.6 A_km2=871.93 Qcap_m3s=1.717
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.544m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=29.088m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=29.088m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.544m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3055.0: 0.677
+
+>>> Catchment 757.0 - SwanAvon_Canning River | C=0.6 A_km2=892.67 Qcap_m3s=12.484
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.89m3/s L=1.193 R=0.536
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=29.779m3/s L=2.385 R=0.669
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=29.779m3/s L=2.385 R=0.669
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.89m3/s L=1.193 R=0.536
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 757.0: 0.669
+
+>>> Catchment 2825.0 - SwanAvon_Canning River | C=0.6 A_km2=199.4 Qcap_m3s=7.558
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=3.326m3/s L=0.44 R=0.157
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=6.652m3/s L=0.88 R=0.411
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=6.652m3/s L=0.88 R=0.411
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=3.326m3/s L=0.44 R=0.157
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2825.0: 0.411
+
+>>> Catchment 752.0 - SwanAvon_Canning River | C=0.6 A_km2=69.84 Qcap_m3s=5.704
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.165m3/s L=0.204 R=0.084
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.33m3/s L=0.408 R=0.145
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.33m3/s L=0.408 R=0.145
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.165m3/s L=0.204 R=0.084
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 752.0: 0.145
+
+>>> Catchment 3062.0 - SwanAvon_Canning River | C=0.6 A_km2=185.46 Qcap_m3s=13.179
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=3.093m3/s L=0.235 R=0.091
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=6.187m3/s L=0.469 R=0.169
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=6.187m3/s L=0.469 R=0.169
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=3.093m3/s L=0.235 R=0.091
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3062.0: 0.169
+
+>>> Catchment 766.0 - SwanAvon_Canning River | C=0.6 A_km2=18.64 Qcap_m3s=11.205
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.311m3/s L=0.028 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.622m3/s L=0.055 R=0.056
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.622m3/s L=0.055 R=0.056
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.311m3/s L=0.028 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 766.0: 0.056
+
+>>> Catchment 3603.0 - SwanAvon_Canning River | C=0.6 A_km2=878.88 Qcap_m3s=6.706
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.66m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=29.319m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=29.319m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.66m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3603.0: 0.677
+
+>>> Catchment 759.0 - SwanAvon_Canning River | C=0.6 A_km2=832.69 Qcap_m3s=8.958
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=13.889m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=27.779m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=27.779m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=13.889m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 759.0: 0.677
+
+>>> Catchment 3600.0 - SwanAvon_Canning River | C=0.6 A_km2=833.57 Qcap_m3s=0.74
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=13.904m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=27.808m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=27.808m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=13.904m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3600.0: 0.677
+
+>>> Catchment 749.0 - SwanAvon_Canning River | C=0.6 A_km2=12.88 Qcap_m3s=7.011
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.215m3/s L=0.031 R=0.052
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.43m3/s L=0.061 R=0.056
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.43m3/s L=0.061 R=0.056
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.215m3/s L=0.031 R=0.052
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 749.0: 0.056
+
+>>> Catchment 3602.0 - SwanAvon_Canning River | C=0.6 A_km2=823.86 Qcap_m3s=0.524
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=13.742m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=27.484m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=27.484m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=13.742m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3602.0: 0.677
+
+>>> Catchment 754.0 - SwanAvon_Canning River | C=0.6 A_km2=15.04 Qcap_m3s=0.27
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.251m3/s L=0.929 R=0.447
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.502m3/s L=1.858 R=0.623
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.502m3/s L=1.858 R=0.623
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.251m3/s L=0.929 R=0.447
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 754.0: 0.623
+
+>>> Catchment 3696.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=250.98 Qcap_m3s=151.26
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=4.186m3/s L=0.028 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=8.373m3/s L=0.055 R=0.056
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=8.373m3/s L=0.055 R=0.056
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=4.186m3/s L=0.028 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3696.0: 0.056
+
+>>> Catchment 3601.0 - SwanAvon_Canning River | C=0.6 A_km2=854.12 Qcap_m3s=0.27
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.247m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=28.493m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=28.493m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.247m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3601.0: 0.677
+
+>>> Catchment 3059.0 - SwanAvon_Canning River | C=0.6 A_km2=19.41 Qcap_m3s=1.717
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.324m3/s L=0.189 R=0.081
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.648m3/s L=0.377 R=0.134
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.648m3/s L=0.377 R=0.134
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.324m3/s L=0.189 R=0.081
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3059.0: 0.134
+
+>>> Catchment 3053.0 - SwanAvon_Canning River | C=0.6 A_km2=15.28 Qcap_m3s=0.035
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.255m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.51m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.51m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.255m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3053.0: 0.677
+
+>>> Catchment 2248.0 - SwanAvon_Canning River | C=0.6 A_km2=894.43 Qcap_m3s=4.239
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.919m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=29.838m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=29.838m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.919m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2248.0: 0.677
+
+>>> Catchment 2058.0 - Bartram Road Catchment | C=0.6 A_km2=131.54 Qcap_m3s=1.497
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.194m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.388m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.388m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.194m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2058.0: 0.677
+
+>>> Catchment 2646.0 - _Coastal | C=0.6 A_km2=11.42 Qcap_m3s=5.064
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.19m3/s L=0.038 R=0.053
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.381m3/s L=0.075 R=0.059
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.381m3/s L=0.075 R=0.059
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.19m3/s L=0.038 R=0.053
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2646.0: 0.059
+
+>>> Catchment 3045.0 - SwanAvon_Lower Swan | C=0.6 A_km2=3.72 Qcap_m3s=4.096
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.062m3/s L=0.015 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.124m3/s L=0.03 R=0.052
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.124m3/s L=0.03 R=0.052
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.062m3/s L=0.015 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3045.0: 0.052
+
+>>> Catchment 3044.0 - SwanAvon_Lower Swan | C=0.6 A_km2=17.41 Qcap_m3s=5.392
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.29m3/s L=0.054 R=0.055
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.581m3/s L=0.108 R=0.064
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.581m3/s L=0.108 R=0.064
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.29m3/s L=0.054 R=0.055
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3044.0: 0.064
+
+>>> Catchment 3361.0 - _Coastal | C=0.6 A_km2=37.57 Qcap_m3s=8.509
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.627m3/s L=0.074 R=0.058
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.253m3/s L=0.147 R=0.072
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.253m3/s L=0.147 R=0.072
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.627m3/s L=0.074 R=0.058
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3361.0: 0.072
+
+>>> Catchment 2241.0 - SwanAvon_Lower Swan | C=0.6 A_km2=114561.95 Qcap_m3s=0.014
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1910.893m3/s L=2729.848 R=0.998
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3821.787m3/s L=5459.695 R=0.999
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3821.787m3/s L=5459.695 R=0.999
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1910.893m3/s L=2729.848 R=0.998
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2241.0: 0.999
+
+>>> Catchment 3314.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=62.31 Qcap_m3s=17.199
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.039m3/s L=0.06 R=0.056
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.079m3/s L=0.121 R=0.067
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.079m3/s L=0.121 R=0.067
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.039m3/s L=0.06 R=0.056
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3314.0: 0.067
+
+>>> Catchment 613.0 - _Coastal | C=0.6 A_km2=73.69 Qcap_m3s=20.291
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.229m3/s L=0.061 R=0.056
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.458m3/s L=0.121 R=0.067
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.458m3/s L=0.121 R=0.067
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.229m3/s L=0.061 R=0.056
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 613.0: 0.067
+
+>>> Catchment 2233.0 - _Coastal | C=0.6 A_km2=28.5 Qcap_m3s=5.815
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.475m3/s L=0.082 R=0.06
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.951m3/s L=0.164 R=0.075
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.951m3/s L=0.164 R=0.075
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.475m3/s L=0.082 R=0.06
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2233.0: 0.075
+
+>>> Catchment 3348.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=9.46 Qcap_m3s=4.865
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.158m3/s L=0.032 R=0.052
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.316m3/s L=0.065 R=0.057
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.316m3/s L=0.065 R=0.057
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.158m3/s L=0.032 R=0.052
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3348.0: 0.057
+
+>>> Catchment 3350.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=15.8 Qcap_m3s=6.484
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.264m3/s L=0.041 R=0.053
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.527m3/s L=0.081 R=0.06
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.527m3/s L=0.081 R=0.06
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.264m3/s L=0.041 R=0.053
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3350.0: 0.06
+
+>>> Catchment 3349.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=8.65 Qcap_m3s=5.22
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.144m3/s L=0.028 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.289m3/s L=0.055 R=0.056
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.289m3/s L=0.055 R=0.056
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.144m3/s L=0.028 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3349.0: 0.056
+
+>>> Catchment 3318.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=54.33 Qcap_m3s=8.017
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.906m3/s L=0.113 R=0.065
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.812m3/s L=0.226 R=0.089
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.812m3/s L=0.226 R=0.089
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.906m3/s L=0.113 R=0.065
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3318.0: 0.089
+
+>>> Catchment 3316.0 - _Coastal | C=0.6 A_km2=9.6 Qcap_m3s=13.682
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.16m3/s L=0.012 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.32m3/s L=0.023 R=0.051
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.32m3/s L=0.023 R=0.051
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.16m3/s L=0.012 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3316.0: 0.051
+
+>>> Catchment 697.0 - SwanAvon_Lower Swan | C=0.6 A_km2=51.11 Qcap_m3s=6.706
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.853m3/s L=0.127 R=0.068
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.705m3/s L=0.254 R=0.096
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.705m3/s L=0.254 R=0.096
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.853m3/s L=0.127 R=0.068
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 697.0: 0.096
+
+>>> Catchment 722.0 - SwanAvon_Lower Swan | C=0.6 A_km2=6.44 Qcap_m3s=10.905
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.107m3/s L=0.01 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.215m3/s L=0.02 R=0.05
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.215m3/s L=0.02 R=0.05
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.107m3/s L=0.01 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 722.0: 0.05
+
+>>> Catchment 726.0 - SwanAvon_Canning River | C=0.6 A_km2=53.11 Qcap_m3s=6.159
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.886m3/s L=0.144 R=0.071
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.772m3/s L=0.288 R=0.106
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.772m3/s L=0.288 R=0.106
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.886m3/s L=0.144 R=0.071
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 726.0: 0.106
+
+>>> Catchment 3354.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1655.2 Qcap_m3s=14.93
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=27.609m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=55.217m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=55.217m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=27.609m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3354.0: 0.677
+
+>>> Catchment 2244.0 - SwanAvon_Lower Swan | C=0.6 A_km2=15.42 Qcap_m3s=10.905
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.257m3/s L=0.024 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.514m3/s L=0.047 R=0.054
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.514m3/s L=0.047 R=0.054
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.257m3/s L=0.024 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2244.0: 0.054
+
+>>> Catchment 692.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1637.37 Qcap_m3s=20.024
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=27.311m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=54.623m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=54.623m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=27.311m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 692.0: 0.677
+
+>>> Catchment 718.0 - SwanAvon_Lower Swan | C=0.6 A_km2=55.21 Qcap_m3s=6.533
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.921m3/s L=0.141 R=0.071
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.842m3/s L=0.282 R=0.104
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.842m3/s L=0.282 R=0.104
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.921m3/s L=0.141 R=0.071
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 718.0: 0.104
+
+>>> Catchment 703.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1610.2 Qcap_m3s=0.166
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=26.858m3/s L=3.236 R=0.721
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=53.716m3/s L=6.472 R=0.819
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=53.716m3/s L=6.472 R=0.819
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=26.858m3/s L=3.236 R=0.721
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 703.0: 0.819
+
+>>> Catchment 737.0 - SwanAvon_Canning River | C=0.6 A_km2=51.71 Qcap_m3s=0.086
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.863m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.725m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.725m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.863m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 737.0: 0.677
+
+>>> Catchment 3046.0 - SwanAvon_Canning River | C=0.6 A_km2=53.84 Qcap_m3s=0.111
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.898m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.796m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.796m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.898m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3046.0: 0.677
+
+>>> Catchment 733.0 - SwanAvon_Canning River | C=0.6 A_km2=50.07 Qcap_m3s=0.374
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.835m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.67m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.67m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.835m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 733.0: 0.677
+
+>>> Catchment 739.0 - SwanAvon_Canning River | C=0.6 A_km2=36.72 Qcap_m3s=1.921
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.612m3/s L=0.319 R=0.115
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.225m3/s L=0.638 R=0.252
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.225m3/s L=0.638 R=0.252
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.612m3/s L=0.319 R=0.115
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 739.0: 0.252
+
+>>> Catchment 3035.0 - SwanAvon_Lower Swan | C=0.6 A_km2=16.13 Qcap_m3s=0.187
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.269m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.538m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.538m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.269m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3035.0: 0.677
+
+>>> Catchment 736.0 - SwanAvon_Canning River | C=0.6 A_km2=71.2 Qcap_m3s=0.194
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.188m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.375m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.375m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.188m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 736.0: 0.677
+
+>>> Catchment 711.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1536.15 Qcap_m3s=8.356
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=25.623m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=51.246m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=51.246m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=25.623m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 711.0: 0.677
+
+>>> Catchment 714.0 - SwanAvon_Lower Swan | C=0.6 A_km2=8.71 Qcap_m3s=0.316
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.145m3/s L=0.46 R=0.165
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.291m3/s L=0.92 R=0.44
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.291m3/s L=0.92 R=0.44
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.145m3/s L=0.46 R=0.165
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 714.0: 0.44
+
+>>> Catchment 704.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1486.55 Qcap_m3s=0.092
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=24.796m3/s L=5.39 R=0.796
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=49.591m3/s L=10.781 R=0.872
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=49.591m3/s L=10.781 R=0.872
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=24.796m3/s L=5.39 R=0.796
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 704.0: 0.872
+
+>>> Catchment 3025.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1480.31 Qcap_m3s=0.374
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=24.692m3/s L=1.32 R=0.556
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=49.383m3/s L=2.641 R=0.687
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=49.383m3/s L=2.641 R=0.687
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=24.692m3/s L=1.32 R=0.556
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3025.0: 0.687
+
+>>> Catchment 721.0 - SwanAvon_Lower Swan | C=0.6 A_km2=1499.59 Qcap_m3s=0.236
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=25.013m3/s L=2.12 R=0.647
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=50.026m3/s L=4.24 R=0.763
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=50.026m3/s L=4.24 R=0.763
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=25.013m3/s L=2.12 R=0.647
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 721.0: 0.763
+
+>>> Catchment 3064.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=5.91 Qcap_m3s=1.497
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.099m3/s L=0.066 R=0.057
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.197m3/s L=0.132 R=0.069
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.197m3/s L=0.132 R=0.069
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.099m3/s L=0.066 R=0.057
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3064.0: 0.069
+
+>>> Catchment 784.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=101.48 Qcap_m3s=42.899
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.693m3/s L=0.039 R=0.053
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3.385m3/s L=0.079 R=0.059
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3.385m3/s L=0.079 R=0.059
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.693m3/s L=0.039 R=0.053
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 784.0: 0.059
+
+>>> Catchment 774.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=20.12 Qcap_m3s=4.221
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.336m3/s L=0.08 R=0.059
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.671m3/s L=0.159 R=0.074
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.671m3/s L=0.159 R=0.074
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.336m3/s L=0.08 R=0.059
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 774.0: 0.074
+
+>>> Catchment 745.0 - _Coastal | C=0.6 A_km2=186.08 Qcap_m3s=1.056
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=3.104m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=6.208m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=6.208m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=3.104m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 745.0: 0.677
+
+>>> Catchment 3066.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=25.05 Qcap_m3s=1.717
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.418m3/s L=0.243 R=0.094
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.836m3/s L=0.487 R=0.177
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.836m3/s L=0.487 R=0.177
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.418m3/s L=0.243 R=0.094
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3066.0: 0.177
+
+>>> Catchment 767.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=9.73 Qcap_m3s=1.621
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.162m3/s L=0.1 R=0.063
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.325m3/s L=0.2 R=0.083
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.325m3/s L=0.2 R=0.083
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.162m3/s L=0.1 R=0.063
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 767.0: 0.083
+
+>>> Catchment 781.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=30.63 Qcap_m3s=1.056
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.511m3/s L=0.484 R=0.175
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.022m3/s L=0.968 R=0.476
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.022m3/s L=0.968 R=0.476
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.511m3/s L=0.484 R=0.175
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 781.0: 0.476
+
+>>> Catchment 2054.0 - Bartram Road Catchment | C=0.6 A_km2=73.18 Qcap_m3s=0.092
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.221m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.441m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.441m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.221m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2054.0: 0.677
+
+>>> Catchment 2240.0 - SwanAvon_Lower Swan | C=0.6 A_km2=21.89 Qcap_m3s=15.442
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.365m3/s L=0.024 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.73m3/s L=0.047 R=0.054
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.73m3/s L=0.047 R=0.054
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.365m3/s L=0.024 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2240.0: 0.054
+
+>>> Catchment 1847.0 - _Coastal | C=0.6 A_km2=19.52 Qcap_m3s=15.082
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.326m3/s L=0.022 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.651m3/s L=0.043 R=0.054
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.651m3/s L=0.043 R=0.054
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.326m3/s L=0.022 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 1847.0: 0.054
+
+>>> Catchment 3028.0 - SwanAvon_Lower Swan | C=0.6 A_km2=12.92 Qcap_m3s=11.101
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.216m3/s L=0.019 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.431m3/s L=0.039 R=0.053
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.431m3/s L=0.039 R=0.053
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.216m3/s L=0.019 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3028.0: 0.053
+
+>>> Catchment 2234.0 - SwanAvon_Lower Swan | C=0.6 A_km2=16.26 Qcap_m3s=29.081
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.271m3/s L=0.009 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.542m3/s L=0.019 R=0.05
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.542m3/s L=0.019 R=0.05
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.271m3/s L=0.009 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2234.0: 0.05
+
+>>> Catchment 2239.0 - SwanAvon_Lower Swan | C=0.6 A_km2=10.38 Qcap_m3s=8.093
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.173m3/s L=0.021 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.346m3/s L=0.043 R=0.054
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.346m3/s L=0.043 R=0.054
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.173m3/s L=0.021 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2239.0: 0.054
+
+>>> Catchment 3359.0 - SwanAvon_Lower Swan | C=0.6 A_km2=18.93 Qcap_m3s=12.932
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.316m3/s L=0.024 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.632m3/s L=0.049 R=0.055
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.632m3/s L=0.049 R=0.055
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.316m3/s L=0.024 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3359.0: 0.055
+
+>>> Catchment 705.0 - SwanAvon_Lower Swan | C=0.6 A_km2=114538.16 Qcap_m3s=0.708
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1910.497m3/s L=53.969 R=0.962
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3820.993m3/s L=107.938 R=0.978
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3820.993m3/s L=107.938 R=0.978
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1910.497m3/s L=53.969 R=0.962
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 705.0: 0.978
+
+>>> Catchment 3027.0 - SwanAvon_Lower Swan | C=0.6 A_km2=112989.42 Qcap_m3s=0.18
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1884.664m3/s L=209.407 R=0.987
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3769.327m3/s L=418.814 R=0.992
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3769.327m3/s L=418.814 R=0.992
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1884.664m3/s L=209.407 R=0.987
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3027.0: 0.992
+
+>>> Catchment 3030.0 - SwanAvon_Lower Swan | C=0.6 A_km2=6.35 Qcap_m3s=1757.552
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.106m3/s L=0.0 R=0.047
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.212m3/s L=0.0 R=0.047
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.212m3/s L=0.0 R=0.047
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.106m3/s L=0.0 R=0.047
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3030.0: 0.047
+
+>>> Catchment 3042.0 - SwanAvon_Lower Swan | C=0.6 A_km2=3.12 Qcap_m3s=13.024
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.052m3/s L=0.004 R=0.048
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.104m3/s L=0.008 R=0.049
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.104m3/s L=0.008 R=0.049
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.052m3/s L=0.004 R=0.048
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3042.0: 0.049
+
+>>> Catchment 2242.0 - SwanAvon_Lower Swan | C=0.6 A_km2=31.55 Qcap_m3s=15.909
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.526m3/s L=0.033 R=0.052
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.053m3/s L=0.066 R=0.057
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.053m3/s L=0.066 R=0.057
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.526m3/s L=0.033 R=0.052
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2242.0: 0.057
+
+>>> Catchment 656.0 - SwanAvon_Lower Swan | C=0.6 A_km2=446.03 Qcap_m3s=10.335
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=7.44m3/s L=0.72 R=0.301
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=14.88m3/s L=1.44 R=0.573
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=14.88m3/s L=1.44 R=0.573
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=7.44m3/s L=0.72 R=0.301
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 656.0: 0.573
+
+>>> Catchment 679.0 - _Coastal | C=0.6 A_km2=38.29 Qcap_m3s=22.552
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.639m3/s L=0.028 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.277m3/s L=0.057 R=0.056
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.277m3/s L=0.057 R=0.056
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.639m3/s L=0.028 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 679.0: 0.056
+
+>>> Catchment 2237.0 - SwanAvon_Lower Swan | C=0.6 A_km2=10.41 Qcap_m3s=2.219
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.174m3/s L=0.078 R=0.059
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.347m3/s L=0.157 R=0.074
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.347m3/s L=0.157 R=0.074
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.174m3/s L=0.078 R=0.059
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2237.0: 0.074
+
+>>> Catchment 2235.0 - SwanAvon_Lower Swan | C=0.6 A_km2=27.6 Qcap_m3s=46.375
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.46m3/s L=0.01 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.921m3/s L=0.02 R=0.05
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.921m3/s L=0.02 R=0.05
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.46m3/s L=0.01 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2235.0: 0.05
+
+>>> Catchment 2228.0 - SwanAvon_Lower Swan | C=0.6 A_km2=631.21 Qcap_m3s=4.438
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=10.529m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=21.057m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=21.057m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=10.529m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2228.0: 0.677
+
+>>> Catchment 3358.0 - SwanAvon_Lower Swan | C=0.6 A_km2=455.82 Qcap_m3s=4.228
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=7.603m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=15.206m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=15.206m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=7.603m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3358.0: 0.677
+
+>>> Catchment 3347.0 - SwanAvon_Lower Swan | C=0.6 A_km2=111.65 Qcap_m3s=6.388
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.862m3/s L=0.292 R=0.107
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3.725m3/s L=0.583 R=0.223
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3.725m3/s L=0.583 R=0.223
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.862m3/s L=0.292 R=0.107
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3347.0: 0.223
+
+>>> Catchment 615.0 - SwanAvon_Lower Swan | C=0.6 A_km2=580.08 Qcap_m3s=2.087
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=9.676m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=19.351m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=19.351m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=9.676m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 615.0: 0.677
+
+>>> Catchment 2231.0 - SwanAvon_Lower Swan | C=0.6 A_km2=42.98 Qcap_m3s=8.599
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.717m3/s L=0.083 R=0.06
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.434m3/s L=0.167 R=0.076
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.434m3/s L=0.167 R=0.076
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.717m3/s L=0.083 R=0.06
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2231.0: 0.076
+
+>>> Catchment 659.0 - SwanAvon_Lower Swan | C=0.6 A_km2=2.95 Qcap_m3s=0.57
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.049m3/s L=0.086 R=0.061
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.098m3/s L=0.173 R=0.077
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.098m3/s L=0.173 R=0.077
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.049m3/s L=0.086 R=0.061
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 659.0: 0.077
+
+>>> Catchment 3357.0 - SwanAvon_Lower Swan | C=0.6 A_km2=19.37 Qcap_m3s=4.874
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.323m3/s L=0.066 R=0.057
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.646m3/s L=0.133 R=0.069
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.646m3/s L=0.133 R=0.069
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.323m3/s L=0.066 R=0.057
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3357.0: 0.069
+
+>>> Catchment 3342.0 - SwanAvon_Lower Swan | C=0.6 A_km2=109793.61 Qcap_m3s=1.083
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1831.357m3/s L=33.82 R=0.945
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3662.715m3/s L=67.64 R=0.968
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3662.715m3/s L=67.64 R=0.968
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1831.357m3/s L=33.82 R=0.945
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3342.0: 0.968
+
+>>> Catchment 672.0 - SwanAvon_Lower Swan | C=0.6 A_km2=55.13 Qcap_m3s=0.221
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.92m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.839m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.839m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.92m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 672.0: 0.677
+
+>>> Catchment 3340.0 - SwanAvon_Lower Swan | C=0.6 A_km2=308.75 Qcap_m3s=5.263
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=5.15m3/s L=0.979 R=0.484
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=10.3m3/s L=1.957 R=0.632
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=10.3m3/s L=1.957 R=0.632
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=5.15m3/s L=0.979 R=0.484
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3340.0: 0.632
+
+>>> Catchment 3315.0 - SwanAvon_Lower Swan | C=0.6 A_km2=289.08 Qcap_m3s=6.115
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=4.822m3/s L=0.789 R=0.347
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=9.644m3/s L=1.577 R=0.591
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=9.644m3/s L=1.577 R=0.591
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=4.822m3/s L=0.789 R=0.347
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3315.0: 0.591
+
+>>> Catchment 3312.0 - _Coastal | C=0.6 A_km2=41.57 Qcap_m3s=4.093
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.693m3/s L=0.169 R=0.076
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.387m3/s L=0.339 R=0.121
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.387m3/s L=0.339 R=0.121
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.693m3/s L=0.169 R=0.076
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3312.0: 0.121
+
+>>> Catchment 3304.0 - SwanAvon_Lower Swan | C=0.6 A_km2=219.96 Qcap_m3s=5.811
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=3.669m3/s L=0.631 R=0.249
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=7.338m3/s L=1.263 R=0.547
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=7.338m3/s L=1.263 R=0.547
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=3.669m3/s L=0.631 R=0.249
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3304.0: 0.547
+
+>>> Catchment 3324.0 - _Coastal | C=0.6 A_km2=182.55 Qcap_m3s=6.245
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=3.045m3/s L=0.488 R=0.177
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=6.09m3/s L=0.975 R=0.481
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=6.09m3/s L=0.975 R=0.481
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=3.045m3/s L=0.488 R=0.177
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3324.0: 0.481
+
+>>> Catchment 3326.0 - Yanchep Coastal Lakes | C=0.6 A_km2=100.53 Qcap_m3s=7.276
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.677m3/s L=0.23 R=0.09
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3.354m3/s L=0.461 R=0.166
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3.354m3/s L=0.461 R=0.166
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.677m3/s L=0.23 R=0.09
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3326.0: 0.166
+
+>>> Catchment 592.0 - Yanchep Coastal Lakes | C=0.6 A_km2=148.57 Qcap_m3s=1.01
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.478m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.956m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.956m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.478m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 592.0: 0.677
+
+>>> Catchment 2225.0 - Yanchep Coastal Lakes | C=0.6 A_km2=15.67 Qcap_m3s=0.671
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.261m3/s L=0.39 R=0.138
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.523m3/s L=0.779 R=0.34
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.523m3/s L=0.779 R=0.34
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.261m3/s L=0.39 R=0.138
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2225.0: 0.34
+
+>>> Catchment 3323.0 - Yanchep Coastal Lakes | C=0.6 A_km2=24.24 Qcap_m3s=3.652
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.404m3/s L=0.111 R=0.065
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.809m3/s L=0.221 R=0.088
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.809m3/s L=0.221 R=0.088
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.404m3/s L=0.111 R=0.065
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3323.0: 0.088
+
+>>> Catchment 3327.0 - Yanchep Coastal Lakes | C=0.6 A_km2=20.67 Qcap_m3s=0.429
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.345m3/s L=0.804 R=0.357
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.69m3/s L=1.607 R=0.595
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.69m3/s L=1.607 R=0.595
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.345m3/s L=0.804 R=0.357
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3327.0: 0.595
+
+>>> Catchment 3317.0 - Wanneroo Coastal Lakes | C=0.6 A_km2=20.9 Qcap_m3s=0.383
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.349m3/s L=0.91 R=0.433
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.697m3/s L=1.82 R=0.619
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.697m3/s L=1.82 R=0.619
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.349m3/s L=0.91 R=0.433
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3317.0: 0.619
+
+>>> Catchment 681.0 - SwanAvon_Lower Swan | C=0.6 A_km2=73.55 Qcap_m3s=12.888
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.227m3/s L=0.095 R=0.062
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.454m3/s L=0.19 R=0.081
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.454m3/s L=0.19 R=0.081
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.227m3/s L=0.095 R=0.062
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 681.0: 0.081
+
+>>> Catchment 3338.0 - SwanAvon_Lower Swan | C=0.6 A_km2=74.92 Qcap_m3s=0.624
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.25m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.499m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.499m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.25m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3338.0: 0.677
+
+>>> Catchment 696.0 - SwanAvon_Lower Swan | C=0.6 A_km2=11.72 Qcap_m3s=14.019
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.195m3/s L=0.014 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.391m3/s L=0.028 R=0.051
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.391m3/s L=0.028 R=0.051
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.195m3/s L=0.014 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 696.0: 0.051
+
+>>> Catchment 688.0 - SwanAvon_Lower Swan | C=0.6 A_km2=83.83 Qcap_m3s=1.922
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.398m3/s L=0.728 R=0.306
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.797m3/s L=1.455 R=0.575
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.797m3/s L=1.455 R=0.575
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.398m3/s L=0.728 R=0.306
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 688.0: 0.575
+
+>>> Catchment 698.0 - SwanAvon_Lower Swan | C=0.6 A_km2=9.23 Qcap_m3s=0.167
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.154m3/s L=0.922 R=0.442
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.308m3/s L=1.844 R=0.621
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.308m3/s L=1.844 R=0.621
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.154m3/s L=0.922 R=0.442
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 698.0: 0.621
+
+>>> Catchment 654.0 - SwanAvon_Lower Swan | C=0.6 A_km2=291.79 Qcap_m3s=3.612
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=4.867m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=9.734m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=9.734m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=4.867m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 654.0: 0.677
+
+>>> Catchment 1891.0 - SwanAvon_Lower Swan | C=0.6 A_km2=3.89 Qcap_m3s=6.379
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.065m3/s L=0.01 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.13m3/s L=0.02 R=0.05
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.13m3/s L=0.02 R=0.05
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.065m3/s L=0.01 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 1891.0: 0.05
+
+>>> Catchment 685.0 - SwanAvon_Lower Swan | C=0.6 A_km2=26.43 Qcap_m3s=0.137
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.441m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.882m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.882m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.441m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 685.0: 0.677
+
+>>> Catchment 3610.0 - SwanAvon_Lower Swan | C=0.6 A_km2=514.8 Qcap_m3s=0.751
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=8.587m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=17.174m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=17.174m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=8.587m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3610.0: 0.677
+
+>>> Catchment 3642.0 - SwanAvon_Lower Swan | C=0.6 A_km2=13.18 Qcap_m3s=1.87
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.22m3/s L=0.118 R=0.066
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.44m3/s L=0.235 R=0.092
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.44m3/s L=0.235 R=0.092
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.22m3/s L=0.118 R=0.066
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3642.0: 0.092
+
+>>> Catchment 687.0 - SwanAvon_Lower Swan | C=0.6 A_km2=593.27 Qcap_m3s=0.066
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=9.896m3/s L=2.999 R=0.708
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=19.791m3/s L=5.997 R=0.81
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=19.791m3/s L=5.997 R=0.81
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=9.896m3/s L=2.999 R=0.708
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 687.0: 0.81
+
+>>> Catchment 3702.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=1.76 Qcap_m3s=2.378
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.029m3/s L=0.012 R=0.049
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.059m3/s L=0.025 R=0.051
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.059m3/s L=0.025 R=0.051
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.029m3/s L=0.012 R=0.049
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3702.0: 0.051
+
+>>> Catchment 3701.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=13.62 Qcap_m3s=3.801
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.227m3/s L=0.06 R=0.056
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.454m3/s L=0.12 R=0.067
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.454m3/s L=0.12 R=0.067
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.227m3/s L=0.06 R=0.056
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3701.0: 0.067
+
+>>> Catchment 3521.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=787.12 Qcap_m3s=5.311
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=13.129m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=26.258m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=26.258m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=13.129m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3521.0: 0.677
+
+>>> Catchment 3700.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=13.4 Qcap_m3s=0.961
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.224m3/s L=0.233 R=0.091
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.447m3/s L=0.465 R=0.167
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.447m3/s L=0.465 R=0.167
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.224m3/s L=0.233 R=0.091
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3700.0: 0.167
+
+>>> Catchment 779.0 - SwanAvon_Canning River | C=0.6 A_km2=141.95 Qcap_m3s=1.264
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.368m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.735m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.735m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.368m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 779.0: 0.677
+
+>>> Catchment 809.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=706.14 Qcap_m3s=0.166
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=11.778m3/s L=1.419 R=0.57
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=23.557m3/s L=2.838 R=0.699
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=23.557m3/s L=2.838 R=0.699
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=11.778m3/s L=1.419 R=0.57
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 809.0: 0.699
+
+>>> Catchment 3597.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=21.53 Qcap_m3s=2.157
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.359m3/s L=0.166 R=0.076
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.718m3/s L=0.333 R=0.119
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.718m3/s L=0.333 R=0.119
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.359m3/s L=0.166 R=0.076
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3597.0: 0.119
+
+>>> Catchment 814.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=693.06 Qcap_m3s=0.857
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=11.56m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=23.12m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=23.12m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=11.56m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 814.0: 0.677
+
+>>> Catchment 3520.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=664.24 Qcap_m3s=0.961
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=11.08m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=22.159m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=22.159m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=11.08m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3520.0: 0.677
+
+>>> Catchment 825.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=35.14 Qcap_m3s=0.961
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.586m3/s L=0.61 R=0.237
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.172m3/s L=1.22 R=0.54
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.172m3/s L=1.22 R=0.54
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.586m3/s L=0.61 R=0.237
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 825.0: 0.54
+
+>>> Catchment 3693.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=12.69 Qcap_m3s=0.961
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.212m3/s L=0.22 R=0.088
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.423m3/s L=0.441 R=0.157
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.423m3/s L=0.441 R=0.157
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.212m3/s L=0.22 R=0.088
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3693.0: 0.157
+
+>>> Catchment 3692.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=124.43 Qcap_m3s=22.283
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.075m3/s L=0.093 R=0.062
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.151m3/s L=0.186 R=0.08
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.151m3/s L=0.186 R=0.08
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.075m3/s L=0.093 R=0.062
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3692.0: 0.08
+
+>>> Catchment 2827.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=1149.47 Qcap_m3s=3.038
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=19.173m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=38.346m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=38.346m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=19.173m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2827.0: 0.677
+
+>>> Catchment 2828.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=1133.87 Qcap_m3s=3.699
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=18.913m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=37.826m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=37.826m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=18.913m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2828.0: 0.677
+
+>>> Catchment 3694.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=32.49 Qcap_m3s=10.684
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.542m3/s L=0.051 R=0.055
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.084m3/s L=0.101 R=0.063
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.084m3/s L=0.101 R=0.063
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.542m3/s L=0.051 R=0.055
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3694.0: 0.063
+
+>>> Catchment 3599.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=4.55 Qcap_m3s=1.779
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.076m3/s L=0.043 R=0.054
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.152m3/s L=0.085 R=0.06
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.152m3/s L=0.085 R=0.06
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.076m3/s L=0.043 R=0.054
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3599.0: 0.06
+
+>>> Catchment 3596.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=847.02 Qcap_m3s=3.699
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=14.128m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=28.257m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=28.257m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=14.128m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3596.0: 0.677
+
+>>> Catchment 3695.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=824.37 Qcap_m3s=2.66
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=13.75m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=27.501m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=27.501m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=13.75m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3695.0: 0.677
+
+>>> Catchment 827.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=112.47 Qcap_m3s=3.699
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.876m3/s L=0.507 R=0.186
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=3.752m3/s L=1.014 R=0.503
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=3.752m3/s L=1.014 R=0.503
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.876m3/s L=0.507 R=0.186
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 827.0: 0.503
+
+>>> Catchment 3067.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=139.53 Qcap_m3s=0.315
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.327m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.655m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.655m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.327m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3067.0: 0.677
+
+>>> Catchment 2359.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=51.55 Qcap_m3s=1.62
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.86m3/s L=0.531 R=0.197
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.72m3/s L=1.062 R=0.512
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.72m3/s L=1.062 R=0.512
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.86m3/s L=0.531 R=0.197
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2359.0: 0.512
+
+>>> Catchment 799.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=41.24 Qcap_m3s=6.62
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.688m3/s L=0.104 R=0.064
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.376m3/s L=0.208 R=0.085
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.376m3/s L=0.208 R=0.085
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.688m3/s L=0.104 R=0.064
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 799.0: 0.085
+
+>>> Catchment 808.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=55.24 Qcap_m3s=0.307
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.921m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=1.843m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=1.843m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.921m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 808.0: 0.677
+
+>>> Catchment 3598.0 - SwanAvon_Canning River | C=0.6 A_km2=17.01 Qcap_m3s=0.704
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.284m3/s L=0.403 R=0.143
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.567m3/s L=0.806 R=0.359
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.567m3/s L=0.806 R=0.359
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.284m3/s L=0.403 R=0.143
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3598.0: 0.359
+
+>>> Catchment 791.0 - SwanAvon_Canning River | C=0.6 A_km2=80.91 Qcap_m3s=1.233
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.35m3/s L=1.095 R=0.518
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.699m3/s L=2.189 R=0.653
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.699m3/s L=2.189 R=0.653
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.35m3/s L=1.095 R=0.518
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 791.0: 0.653
+
+>>> Catchment 3691.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=63.85 Qcap_m3s=7.28
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=1.065m3/s L=0.146 R=0.072
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=2.13m3/s L=0.293 R=0.107
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=2.13m3/s L=0.293 R=0.107
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=1.065m3/s L=0.146 R=0.072
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3691.0: 0.107
+
+>>> Catchment 3690.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=12.13 Qcap_m3s=0.031
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.202m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.405m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.405m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.202m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3690.0: 0.677
+
+>>> Catchment 3697.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=1.09 Qcap_m3s=0.201
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.018m3/s L=0.09 R=0.061
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.036m3/s L=0.181 R=0.079
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.036m3/s L=0.181 R=0.079
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.018m3/s L=0.09 R=0.061
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3697.0: 0.079
+
+>>> Catchment 812.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=399.41 Qcap_m3s=4.139
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=6.662m3/s L=1.25 R=0.545
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=13.324m3/s L=2.5 R=0.677
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=13.324m3/s L=2.5 R=0.677
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=6.662m3/s L=1.25 R=0.545
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 812.0: 0.677
+
+>>> Catchment 3698.0 - Peel Estuary_Serpentine River | C=0.6 A_km2=18.41 Qcap_m3s=0.28
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.307m3/s L=1.097 R=0.519
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.614m3/s L=2.193 R=0.654
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.614m3/s L=2.193 R=0.654
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.307m3/s L=1.097 R=0.519
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3698.0: 0.654
+
+>>> Catchment 780.0 - SwanAvon_Canning River | C=0.6 A_km2=135.56 Qcap_m3s=0.031
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=2.261m3/s L=1.459 R=0.576
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=4.522m3/s L=2.918 R=0.704
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=4.522m3/s L=2.918 R=0.704
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=2.261m3/s L=1.459 R=0.576
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 780.0: 0.704
+
+>>> Catchment 3353.0 - SwanAvon_Lower Swan | C=0.6 A_km2=8.27 Qcap_m3s=3.945
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.138m3/s L=0.035 R=0.052
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.276m3/s L=0.07 R=0.058
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.276m3/s L=0.07 R=0.058
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.138m3/s L=0.035 R=0.052
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3353.0: 0.058
+
+>>> Catchment 3029.0 - SwanAvon_Lower Swan | C=0.6 A_km2=11.31 Qcap_m3s=7.223
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.189m3/s L=0.026 R=0.051
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.377m3/s L=0.052 R=0.055
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.377m3/s L=0.052 R=0.055
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.189m3/s L=0.026 R=0.051
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 3029.0: 0.055
+
+>>> Catchment 2243.0 - SwanAvon_Lower Swan | C=0.6 A_km2=10.25 Qcap_m3s=7.967
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.171m3/s L=0.021 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.342m3/s L=0.043 R=0.054
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.342m3/s L=0.043 R=0.054
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.171m3/s L=0.021 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 2243.0: 0.054
+
+>>> Catchment 708.0 - SwanAvon_Lower Swan | C=0.6 A_km2=11.31 Qcap_m3s=8.971
+t=2025-09-25T00:00:00Z i=0.1mm/hr Qrunoff=0.189m3/s L=0.021 R=0.05
+t=2025-09-25T01:00:00Z i=0.2mm/hr Qrunoff=0.377m3/s L=0.042 R=0.053
+t=2025-09-25T02:00:00Z i=0.2mm/hr Qrunoff=0.377m3/s L=0.042 R=0.053
+t=2025-09-25T03:00:00Z i=0.1mm/hr Qrunoff=0.189m3/s L=0.021 R=0.05
+t=2025-09-25T04:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+t=2025-09-25T05:00:00Z i=0.0mm/hr Qrunoff=0.0m3/s L=0.0 R=0.047
+Max risk for 708.0: 0.053

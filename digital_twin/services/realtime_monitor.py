@@ -6,15 +6,11 @@ import uuid
 import sys
 from pathlib import Path
 
-# Ensure src/ on path for direct execution (mirrors init_db.py)
-REPO_ROOT = Path(__file__).resolve().parent.parent
-SRC_PATH = REPO_ROOT / "src"
-if str(SRC_PATH) not in sys.path:
-    sys.path.insert(0, str(SRC_PATH))
 
-from urban_flooding.persistence.database import FloodingDatabase
-from urban_flooding.domain.simulation import simulate_catchment
-from urban_flooding.ingestion.weather_client import WeatherAPIClient
+from digital_twin.database.database_utils import FloodingDatabase
+from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.database.realtime_weather_import import WeatherAPIClient
+
 
 class RealTimeFloodMonitor:
     def __init__(self, db: FloodingDatabase, weather_client: WeatherAPIClient):
