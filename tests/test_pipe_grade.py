@@ -1,7 +1,7 @@
 import math
 import pytest
 
-from src.urban_flooding.spatial.geojson_converter import calculate_pipe_grade
+from digital_twin.spatial.spatial_utils import calculate_pipe_grade
 
 
 def test_calculate_pipe_grade_basic():

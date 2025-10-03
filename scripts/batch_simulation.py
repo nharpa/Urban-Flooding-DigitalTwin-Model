@@ -1,19 +1,10 @@
-# Ensure the src/ directory is on sys.path when running the script directly
-from __future__ import annotations
-from uuid import uuid4
+
 from typing import List, Iterable
-import sys
-from pathlib import Path
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
-SRC_PATH = REPO_ROOT / "src"
-if str(SRC_PATH) not in sys.path:
-    sys.path.insert(0, str(SRC_PATH))
-
-from urban_flooding.persistence.database import FloodingDatabase
-from urban_flooding.domain import simulation
+from digital_twin.database.database_utils import FloodingDatabase
+from digital_twin.services import risk_simulation
 from datetime import datetime
 from pathlib import Path
+
 
 def _iter_catchments(db: FloodingDatabase) -> Iterable[dict]:
     """Yield all catchment documents (business fields only)."""
@@ -87,7 +78,7 @@ def run_batch_simulation(
         emit(
             f"\n>>> Catchment {cid} - {name} | C={C} A_km2={A_km2} Qcap_m3s={Qcap_m3s}")
 
-        sim = simulation.simulate_catchment(
+        sim = risk_simulation.simulate_catchment(
             rain_mmhr, timestamps_utc, C, A_km2, Qcap_m3s)
         # Print each timestep row as requested
         for row in sim["series"]:
@@ -107,7 +98,7 @@ def run_batch_simulation(
 
 
 def _demo_run():  # pragma: no cover - helper for manual execution
-    rain_mmhr = [5.0, 8.0, 10.0, 8.0, 5.0, 3.0]
+    rain_mmhr = [0.1, 0.2, 0.2, 0.1, 0.0, 0.0]
     timestamps_utc = [
         "2025-09-25T00:00:00Z",
         "2025-09-25T01:00:00Z",

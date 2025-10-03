@@ -1,14 +1,12 @@
 from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-import os
-from typing import Optional
-from src.urban_flooding.auth.config import settings
+from digital_twin.auth.config import Settings
 
 security = HTTPBearer()
 
 
 def get_api_token() -> str:
-    token = settings.API_TOKEN
+    token = Settings.API_TOKEN
     if not token:
         raise ValueError("API_TOKEN is not configured")
     return token

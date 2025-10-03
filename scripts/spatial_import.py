@@ -1,42 +1,13 @@
-"""Standalone spatial ingestion + optional risk assessment helper.
-
-Provides a thin wrapper around functions in
-`urban_flooding.ingestion.spatial_import` so deployments / containers can
-invoke a single script (similar to `init_db.py`). Mirrors the CLI command:
-
-    python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events
-
-Usage examples (from repo root):
-
-    python scripts/spatial_import.py                       # default JSON + design events + sample risk
-    python scripts/spatial_import.py --file custom.json    # custom catchments file
-    python scripts/spatial_import.py --no-design-events    # skip rainfall event seeding
-    python scripts/spatial_import.py --skip-risk           # ingest only (no simulations or report)
-    python scripts/spatial_import.py --top 25 --event design_50yr
-
-Exit codes: 0 success, 1 failure.
-"""
-from __future__ import annotations
-
 import argparse
-import sys
-from pathlib import Path
 from typing import Optional
-
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
-SRC_PATH = REPO_ROOT / "src"
-if str(SRC_PATH) not in sys.path:
-    sys.path.insert(0, str(SRC_PATH))
-
-from urban_flooding.ingestion.spatial_import import (  # noqa: E402
+from digital_twin.database.static_data_import import (  # noqa: E402
     load_spatial_data,
     import_spatial_catchments,
     create_design_rainfall_events,
     run_risk_assessment,
     generate_spatial_risk_report,
 )
-from urban_flooding.persistence.database import FloodingDatabase  # noqa: E402
+from digital_twin.database.database_utils import FloodingDatabase  # noqa: E402
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:

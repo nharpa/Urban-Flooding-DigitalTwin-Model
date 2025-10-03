@@ -20,8 +20,8 @@ Notes
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from typing import List
-from src.urban_flooding.domain.simulation import simulate_catchment
-from src.urban_flooding.auth.auth import verify_token
+from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.auth.auth import verify_token
 
 router = APIRouter()
 
