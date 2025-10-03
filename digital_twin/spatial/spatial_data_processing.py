@@ -4,7 +4,7 @@ import json
 from typing import Dict, List
 from collections import defaultdict
 from pathlib import Path
-from spatial_data_processing import (
+from .spatial_utils import (
     load_pipe_materials,
     calculate_pipe_capacity,
     calculate_pipe_grade
@@ -233,7 +233,7 @@ def save_results(data: List[Dict], output_file: str):
 # ----------------------------- CLI / Demo --------------------------------- #
 
 
-def main():  # pragma: no cover - convenience script
+def main():
     """Run full spatial conversion pipeline.
 
     Fixes applied:
@@ -242,7 +242,7 @@ def main():  # pragma: no cover - convenience script
     - Add graceful error messages if source files are missing
     """
     # Determine project root as 3 levels up from this file ( .../urban_flooding_digitaltwin )
-    project_root = Path(__file__).resolve().parents[3]
+    project_root = Path(__file__).resolve().parents[2]
     data_dir = project_root / "data"
     pipes_file = data_dir / "PerthMetroStormDrainPipe.geojson"
     catchments_file = data_dir / \
