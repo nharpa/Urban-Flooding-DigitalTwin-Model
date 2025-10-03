@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from digital_twin.auth.config import Settings
+from digital_twin.auth.config import settings
 
 security = HTTPBearer()
 
 
 def get_api_token() -> str:
-    token = Settings.API_TOKEN
+    token = settings.API_TOKEN
     if not token:
         raise ValueError("API_TOKEN is not configured")
     return token
