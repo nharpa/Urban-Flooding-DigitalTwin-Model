@@ -53,14 +53,14 @@ class PointRiskResponse(BaseModel):
 
 def _risk_level(value: float) -> str:
     if value >= 0.8:
-        return "very_high"
+        return "Very High"
     if value >= 0.6:
-        return "high"
+        return "High"
     if value >= 0.4:
-        return "medium"
+        return "Medium"
     if value >= 0.2:
-        return "low"
-    return "very_low"
+        return "Low"
+    return "Very Low"
 
 
 @router.post("/risk/point", response_model=PointRiskResponse)
