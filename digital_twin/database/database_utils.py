@@ -9,30 +9,31 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.collection import Collection
 from digital_twin.auth.config import settings
 from digital_twin.database.database_schema import create_collections_with_validation, create_geospatial_indexes
+from digital_twin.auth.config import settings
 
 
 class FloodingDatabase:
     """MongoDB database operations class with spatial query support."""
 
-    def __init__(self, connection_uri: str = None, db_name: str = "urban_flooding_dt"):
+    def __init__(self):
         """Initialize Mongo client and ensure `self.db` is a Database object.
 
         The previous implementation assigned `self.db = settings.MONGODB_NAME`
         when an env var was set, which yielded a plain string instead of a
         Database instance causing AttributeError on collection operations.
         """
-        self.uri = connection_uri or settings.MONGODB_URL or "mongodb://localhost:27017/"
+        username = settings.MONGO_INITDB_ROOT_USERNAME
+        password = settings.MONGO_INITDB_ROOT_PASSWORD
+        base_uri = settings.MONGODB_URL
+        db_name = settings.MONGODB_NAME
+        # If username and password are set, inject them into the URI
+        if username and password:
+            self.uri = f"mongodb://{username}:{password}@{base_uri}"
+
         # Allow fast failure when server not present (e.g. during unit tests)
         self.client = MongoClient(self.uri, serverSelectionTimeoutMS=200)
-        # Determine database name preference order
-        chosen_name = settings.MONGODB_NAME or db_name
         # Always obtain a Database object from the client
-        self.db = self.client[chosen_name]
-
-        # Defensive: if misconfiguration somehow leaves a string, fix it
-        if not hasattr(self.db, "list_collection_names"):
-            # Fallback to default name
-            self.db = self.client[db_name]
+        self.db = self.client[db_name]
 
         create_collections_with_validation(self.db)
         self.catchments: Collection = self.db["catchments"]

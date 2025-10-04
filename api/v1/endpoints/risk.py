@@ -19,9 +19,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
 from digital_twin.database.database_utils import FloodingDatabase
-from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.services.risk_algorithm import simulate_catchment
 from digital_twin.spatial.spatial_utils import find_catchment_for_point
 from digital_twin.auth.auth import verify_token
+from digital_twin.services.fetch_realtime_weather import get_rainfall_event_from_api
 
 router = APIRouter()
 
@@ -62,40 +63,6 @@ def _risk_level(value: float) -> str:
     return "very_low"
 
 
-def _select_catchment_for_point(lon: float, lat: float, catchments: list[dict]) -> dict:
-    """Return catchment whose polygon contains the point using geopandas utility.
-
-    Falls back to HTTP 404 if no polygon contains the point.
-    """
-    # Primary: geometry-based lookup
-    match = find_catchment_for_point(catchments, lon, lat)
-    if not match:
-        # Fallback for legacy / test fixtures that still supply only bounds
-        candidates: list[dict] = []
-        for c in catchments:
-            loc = c.get('location') or {}
-            b = (loc.get('bounds') or {}) if isinstance(loc, dict) else {}
-            try:
-                mn_lon, mx_lon = b.get('min_lon'), b.get('max_lon')
-                mn_lat, mx_lat = b.get('min_lat'), b.get('max_lat')
-                if None in (mn_lon, mx_lon, mn_lat, mx_lat):
-                    continue
-                if mn_lon <= lon <= mx_lon and mn_lat <= lat <= mx_lat:
-                    candidates.append(c)
-            except Exception:
-                continue
-        if candidates:
-            candidates.sort(key=lambda x: x.get('A_km2', float('inf')))
-            match = candidates[0]
-    if not match:
-        raise HTTPException(
-            status_code=404, detail="No catchment found for provided point")
-    print(
-        f"Selected catchment {match['catchment_id']} for point ({lon}, {lat})")
-    return match
-
-
-# ...existing code...
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)):
 
@@ -104,12 +71,20 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     lat = float(request.lat)
 
     print(f"Computing risk for point ({lon}, {lat})")
-    catchment = _select_catchment_for_point(
-        lon=lon, lat=lat, catchments=db.list_catchments()
+    catchment = find_catchment_for_point(
+        catchments=db.list_catchments(), lon=lon, lat=lat
     )
 
-    event_id = request.rainfall_event_id or "design_2yr"
-    event = db.get_rainfall_event(event_id)
+    if request.rainfall_event_id == "current":
+        # special case: fetch latest event
+        print("Fetching current weather observation from API...")
+        event_id = get_rainfall_event_from_api(
+            lat=lat, lon=lon, catchment=catchment)
+        event = db.get_rainfall_event(event_id)
+    else:
+        event_id = request.rainfall_event_id or "design_10yr"
+        event = db.get_rainfall_event(event_id)
+
     if not event:
         # fallback: pick any existing event
         events = db.list_rainfall_events()
@@ -118,7 +93,6 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
                 status_code=500, detail="No rainfall events available")
         event = events[0]
         event_id = event["event_id"]
-
     sim = simulate_catchment(
         rain_mmhr=event["rain_mmhr"],
         timestamps_utc=event["timestamps_utc"],

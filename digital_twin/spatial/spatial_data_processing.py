@@ -131,7 +131,7 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
         catch_name = props.get('catch_name') or 'Unknown'
         ufi = props.get('ufi')
         key = str(ufi) if ufi is not None else f"{catch_name}_{idx}"
-        area_km2 = props.get('catch_flod') or props.get('catch_full') or 0
+        area_km2 = props.get('catch_norm') or props.get('catch_full') or 0
         try:
             area_km2 = float(area_km2)
         except (TypeError, ValueError):

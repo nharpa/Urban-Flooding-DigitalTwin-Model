@@ -1,7 +1,7 @@
 
 from typing import List, Iterable
 from digital_twin.database.database_utils import FloodingDatabase
-from digital_twin.services import risk_simulation
+from digital_twin.services import risk_algorithm
 from datetime import datetime
 from pathlib import Path
 
@@ -78,7 +78,7 @@ def run_batch_simulation(
         emit(
             f"\n>>> Catchment {cid} - {name} | C={C} A_km2={A_km2} Qcap_m3s={Qcap_m3s}")
 
-        sim = risk_simulation.simulate_catchment(
+        sim = risk_algorithm.simulate_catchment(
             rain_mmhr, timestamps_utc, C, A_km2, Qcap_m3s)
         # Print each timestep row as requested
         for row in sim["series"]:

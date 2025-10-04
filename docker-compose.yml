@@ -6,9 +6,11 @@ services:
     container_name: urban_flooding_mongo
     restart: always
     ports:
-      - "27017:27017"  
+      - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: urban_flooding_dt
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
@@ -20,6 +22,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    env_file:
+      - .env
 
 volumes:
   mongodb_data:

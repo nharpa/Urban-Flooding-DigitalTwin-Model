@@ -13,8 +13,8 @@ Dependences are injected (e.g. database, weather client) for easier testing.
 """
 from __future__ import annotations
 from digital_twin.database.static_data_import import load_spatial_data, import_spatial_catchments, create_design_rainfall_events
-from digital_twin.database.realtime_weather_import import WeatherAPIClient
-from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.services.fetch_realtime_weather import WeatherAPIClient
+from digital_twin.services.risk_algorithm import simulate_catchment
 from digital_twin.database.database_utils import FloodingDatabase
 
 from datetime import datetime, timedelta
@@ -33,31 +33,10 @@ class IntegratedFloodSystem:
         self.weather_client = weather_client or WeatherAPIClient()
         self.perth_tz = pytz.timezone("Australia/Perth")
 
-    # ------------------------- Initialization / Seeding --------------------- #
-    def setup_initial_data(self) -> bool:
-
-        print("\n" + "=" * 70)
-        print("System Initialization")
-        print("=" * 70)
-        try:
-            print("\n1. Importing spatially matched catchment area data...")
-            catchments_data = load_spatial_data()
-            imported, updated, skipped = import_spatial_catchments(
-                catchments_data, self.db)
-            print(
-                f"   ✓ Import complete: Added/new {imported}, Updated {updated}, Skipped {skipped}")
-        except FileNotFoundError:
-            print("   ⚠️  Spatial data file not found")
-            return False
-        print("\n2. Creating design rainfall events...")
-        event_count = create_design_rainfall_events(self.db)
-        print(f"   ✓ Created {event_count} rainfall events")
-        return True
-
     # --------------------------- Weather Ingestion -------------------------- #
     def fetch_current_weather(self, save_to_db: bool = True) -> Optional[Dict]:
         print("\nFetching real-time weather data...")
-        weather_data = self.weather_client.fetch_weather_data()
+        weather_data = self.weather_client.fetch_weather_observation_data()
         if not weather_data:
             print("Unable to fetch weather data")
             return None

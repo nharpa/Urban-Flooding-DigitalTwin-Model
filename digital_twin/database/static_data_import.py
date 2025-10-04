@@ -12,9 +12,8 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime
-from typing import List, Tuple, Sequence
-from digital_twin.services.risk_simulation import simulate_catchment
+from typing import Tuple, Sequence
+from digital_twin.services.risk_algorithm import simulate_catchment
 from digital_twin.database.database_utils import FloodingDatabase
 
 

@@ -20,7 +20,7 @@ Notes
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from typing import List
-from digital_twin.services.risk_simulation import simulate_catchment
+from digital_twin.services.risk_algorithm import simulate_catchment
 from digital_twin.auth.auth import verify_token
 
 router = APIRouter()

@@ -6,8 +6,10 @@ import os
 class Settings(BaseSettings):
     APP_NAME: str = "flood-backend"
     API_TOKEN: Optional[str] = None
-    MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGODB_URL: str = "localhost:27017"
     MONGODB_NAME: Optional[str] = None
+    MONGO_INITDB_ROOT_USERNAME: Optional[str] = None
+    MONGO_INITDB_ROOT_PASSWORD: Optional[str] = None
     WEATHER_API_TOKEN: Optional[str] = None
     WEATHER_API_URL: Optional[str] = None
 
