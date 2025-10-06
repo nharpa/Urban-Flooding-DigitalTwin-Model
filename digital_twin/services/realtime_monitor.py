@@ -8,123 +8,122 @@ import uuid
 # Import project modules (assumes digital_twin/ is on PYTHONPATH)
 from digital_twin.database.database_utils import FloodingDatabase
 from digital_twin.services.risk_algorithm import simulate_catchment
-from digital_twin.services.fetch_realtime_weather import WeatherAPIClient
+from digital_twin.services.realtime_weather_service import WeatherAPIClient
 
 
 class RealTimeFloodMonitor:
-    """
-    Orchestrates real-time weather ingestion, risk simulation, and alert reporting.
-    """
 
-    def __init__(self, db: FloodingDatabase, weather_client: WeatherAPIClient):
-        """
-        Initialize the monitor with a database and weather API client.
-        """
-        self.db = db
-        self.weather_client = weather_client
+    def __init__(self, db: Optional[FloodingDatabase] = None):
+        self.db = db if db else FloodingDatabase()
+        self.weather_client = WeatherAPIClient()
 
-    def fetch_and_save_current_weather(self, lat: float = None, lon: float = None, save_to_db: bool = True) -> Optional[Dict]:
+    def start_periodic_monitoring(self, interval_seconds: int = 3600):
         """
-        Fetch current weather data (optionally for a given lat/lon), convert to rainfall event, and optionally save to DB.
-        Returns the rainfall event dict or None on failure.
+        Starts a background process that runs every `interval_seconds` (default: 1 hour).
+        For each catchment, creates a rainfall observation event using the centroid and runs risk assessment.
+        Should be called on Uvicorn server startup.
         """
-        weather_data = self.weather_client.fetch_weather_data(lat, lon)
-        if not weather_data:
-            return None
-        try:
-            rainfall_event = self.weather_client.create_rainfall_event_from_api(
-                weather_data,
-                event_name=f"Perth real-time observation - {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                event_type="historical"
-            )
-            if save_to_db:
-                self.db.save_rainfall_event(**rainfall_event)
-                print(f"Saved rainfall event: {rainfall_event['event_id']}")
-            return rainfall_event
-        except Exception as e:
-            print(f"Failed to process weather data: {e}")
-            return None
+        import threading
+        import time
 
-    def run_realtime_risk_assessment(self, rainfall_event: Dict, catchment_ids: List[str] = None, risk_threshold: float = 0.5) -> List[Dict]:
-        """
-        Run risk assessment for a set of catchments using the provided rainfall event.
-        If catchment_ids is None, defaults to 10 lowest-capacity catchments (max_capacity=50).
-        Returns a list of risk result dicts (sorted by max_risk descending).
-        """
-        results = []
-        if catchment_ids:
-            # Fetch specified catchments
-            catchments = [self.db.get_catchment(cid) for cid in catchment_ids]
-            catchments = [c for c in catchments if c]
+        def monitor_loop():
+            while True:
+                print(
+                    "[RealTimeFloodMonitor] Running periodic risk assessment for all catchments...")
+                catchments = self.db.list_catchments()
+                for catchment in catchments:
+                    # Extract centroid (lat, lon) from catchment record
+                    center = catchment.get("location", {}).get("center", {})
+                    lat = center.get("lat")
+                    lon = center.get("lon")
+                    if lat is None or lon is None:
+                        print(
+                            f"[RealTimeFloodMonitor] Catchment {catchment.get('catchment_id')} missing centroid, skipping.")
+                        continue
+                    try:
+                        event_id = self.weather_client.create_rainfall_observations_event(
+                            lat=lat, lon=lon, catchment=catchment)
+                        self.run_realtime_risk_assessment(
+                            event_id, catchment["catchment_id"])
+                        print(
+                            f"[RealTimeFloodMonitor] Risk assessment complete for catchment {catchment.get('catchment_id')}")
+                    except Exception as e:
+                        print(
+                            f"[RealTimeFloodMonitor] Error processing catchment {catchment.get('catchment_id')}: {e}")
+                time.sleep(interval_seconds)
+
+        thread = threading.Thread(target=monitor_loop, daemon=True)
+        thread.start()
+
+    def run_realtime_risk_assessment(self, rainfall_eventID: str, catchment_id: str) -> Dict:
+        rainfall_event = self.db.get_rainfall_event(rainfall_eventID)
+        if not rainfall_event:
+            print(f"Rainfall event {rainfall_eventID} not found")
+            return {}
+
+        catchment = self.db.get_catchment(catchment_id)
+        if not catchment:
+            print(f"Catchment {catchment_id} not found")
+            return {}
+
+        # Simulate risk for this catchment
+        sim_results = simulate_catchment(
+            rain_mmhr=rainfall_event["rain_mmhr"],
+            timestamps_utc=rainfall_event["timestamps_utc"],
+            C=catchment["C"],
+            A_km2=catchment["A_km2"],
+            Qcap_m3s=catchment["Qcap_m3s"]
+        )
+
+        max_risk = sim_results["max_risk"]
+        # Assign risk level category
+        if max_risk >= 0.8:
+            risk_level = "Very High"
+        elif max_risk >= 0.6:
+            risk_level = "High"
+        elif max_risk >= 0.4:
+            risk_level = "Medium"
+        elif max_risk >= 0.2:
+            risk_level = "Low"
         else:
-            # Default: sample 10 lowest-capacity catchments
-            catchments = self.db.get_catchments_by_capacity(max_capacity=50)[
-                :10]
-        if not catchments:
-            print("No catchments found to evaluate")
-            return results
-        print(
-            f"\nRunning real-time risk assessment for {len(catchments)} catchments...")
-        for catchment in catchments:
-            # Simulate risk for this catchment
-            sim_results = simulate_catchment(
-                rain_mmhr=rainfall_event["rain_mmhr"],
-                timestamps_utc=rainfall_event["timestamps_utc"],
-                C=catchment["C"],
-                A_km2=catchment["A_km2"],
-                Qcap_m3s=catchment["Qcap_m3s"]
-            )
-            max_risk = sim_results["max_risk"]
-            # Assign risk level category
-            if max_risk >= 0.8:
-                risk_level = "Very High"
-            elif max_risk >= 0.6:
-                risk_level = "High"
-            elif max_risk >= 0.4:
-                risk_level = "Medium"
-            elif max_risk >= 0.2:
-                risk_level = "Low"
-            else:
-                risk_level = "Very Low"
-            # Find time of peak risk
-            max_risk_time = None
-            for i, point in enumerate(sim_results["series"]):
-                if point["R"] == max_risk:
-                    max_risk_time = rainfall_event["timestamps_utc"][i]
-                    break
-            result = {
-                "catchment_id": catchment["catchment_id"],
-                "catchment_name": catchment["name"],
-                "location": catchment.get("location", {}),
-                "max_risk": max_risk,
-                "risk_level": risk_level,
-                "max_risk_time": max_risk_time,
-                "alert": max_risk >= risk_threshold,
-                "details": {
-                    "A_km2": catchment["A_km2"],
-                    "Qcap_m3s": catchment["Qcap_m3s"],
-                    "C": catchment["C"]
-                }
+            risk_level = "Very Low"
+        # Find time of peak risk
+        max_risk_time = None
+        for i, point in enumerate(sim_results["series"]):
+            if point["R"] == max_risk:
+                max_risk_time = rainfall_event["timestamps_utc"][i]
+                break
+        # Save simulation result to DB
+        simulation_id = str(uuid.uuid4())
+        self.db.save_simulation(
+            simulation_id=simulation_id,
+            catchment_id=catchment["catchment_id"],
+            rain_mmhr=rainfall_event["rain_mmhr"],
+            timestamps_utc=rainfall_event["timestamps_utc"],
+            C=catchment["C"],
+            A_km2=catchment["A_km2"],
+            Qcap_m3s=catchment["Qcap_m3s"],
+            series=sim_results["series"],
+            max_risk=max_risk,
+            rainfall_event_id=rainfall_event["event_id"],
+            notes=f"Real-time risk assessment - {risk_level} risk"
+        )
+
+        result = {
+            "catchment_id": catchment["catchment_id"],
+            "catchment_name": catchment["name"],
+            "rainfall_event_id": rainfall_event["event_id"],
+            "max_risk": max_risk,
+            "risk_level": risk_level,
+            "max_risk_time": max_risk_time,
+            "alert": max_risk >= 0.6,
+            "parameters": {
+                "A_km2": catchment["A_km2"],
+                "Qcap_m3s": catchment["Qcap_m3s"],
+                "C": catchment["C"]
             }
-            results.append(result)
-            # Save simulation result to DB
-            simulation_id = str(uuid.uuid4())
-            self.db.save_simulation(
-                simulation_id=simulation_id,
-                catchment_id=catchment["catchment_id"],
-                rain_mmhr=rainfall_event["rain_mmhr"],
-                timestamps_utc=rainfall_event["timestamps_utc"],
-                C=catchment["C"],
-                A_km2=catchment["A_km2"],
-                Qcap_m3s=catchment["Qcap_m3s"],
-                series=sim_results["series"],
-                max_risk=max_risk,
-                rainfall_event_id=rainfall_event["event_id"],
-                notes=f"Real-time risk assessment - {risk_level} risk"
-            )
-        # Sort results by risk descending
-        results.sort(key=lambda x: x["max_risk"], reverse=True)
-        return results
+        }
+        return result
 
     def generate_alert_report(self, risk_results: List[Dict]) -> str:
         """

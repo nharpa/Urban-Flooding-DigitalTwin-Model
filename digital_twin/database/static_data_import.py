@@ -59,6 +59,7 @@ def import_spatial_catchments(data: list, db: FloodingDatabase) -> Tuple[int, in
                 print(
                     f"Import: {catchment['catchment_id']} - {catchment.get('name')}")
                 imported_count += 1
+
             db.save_catchment_full(catchment)
         except Exception as e:  # pragma: no cover
             print(f"Error processing {catchment.get('catchment_id')}: {e}")

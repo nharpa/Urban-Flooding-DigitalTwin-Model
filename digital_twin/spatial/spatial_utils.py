@@ -1,9 +1,24 @@
+# Utility to calculate centroid from GeoJSON polygon
 import math
-import geopandas as gpd
-import json
-from typing import List, Dict, Optional
-from shapely.geometry import shape, Point
 from pathlib import Path
+from shapely.geometry import shape, Point
+from typing import List, Dict, Optional
+import json
+import geopandas as gpd
+
+
+def calculate_catchment_centroid(geometry: dict) -> list:
+    """
+    Calculate centroid (lat, lon) from a GeoJSON geometry dict.
+    Returns a dict: {"lat": <float>, "lon": <float>} (WGS84)
+    """
+    from shapely.geometry import shape
+    try:
+        geom = shape(geometry)
+        centroid = geom.centroid
+        return [centroid.y, centroid.x]
+    except Exception:
+        return [None, None]
 
 
 # ----------------------------- Pipe Hydraulics ----------------------------- #

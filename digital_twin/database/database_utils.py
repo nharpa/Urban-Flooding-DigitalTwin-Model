@@ -71,6 +71,10 @@ class FloodingDatabase:
             print(f"Issue reports index creation error: {e}")
 
     def save_catchment_full(self, catchment_data: Dict) -> str:
+        """
+        Upsert a full catchment record. Requires at least: catchment_id, name, C, A_km2, Qcap_m3s.
+        Preserves all fields, including geometry and location/centroid.
+        """
         required_fields = ["catchment_id", "name", "C", "A_km2", "Qcap_m3s"]
         for field in required_fields:
             if field not in catchment_data:
@@ -81,19 +85,6 @@ class FloodingDatabase:
         self.catchments.replace_one(
             {"catchment_id": catchment_data["catchment_id"]}, catchment_data, upsert=True)
         return catchment_data["catchment_id"]
-
-    def save_catchment(self, catchment_id: str, name: str, C: float, A_km2: float, Qcap_m3s: float, **kwargs) -> str:
-        doc = {"catchment_id": catchment_id, "name": name, "C": C,
-               "A_km2": A_km2, "Qcap_m3s": Qcap_m3s, "updated_at": datetime.now()}
-        existing = self.catchments.find_one({"catchment_id": catchment_id})
-        doc["created_at"] = existing.get(
-            "created_at", datetime.now()) if existing else datetime.now()
-        for k, v in kwargs.items():
-            if v is not None:
-                doc[k] = v
-        self.catchments.replace_one(
-            {"catchment_id": catchment_id}, doc, upsert=True)
-        return catchment_id
 
     def find_catchments_by_location(self, lon: float, lat: float, max_distance_km: float = 10.0) -> List[Dict]:
         degree_offset = max_distance_km / 111.0
