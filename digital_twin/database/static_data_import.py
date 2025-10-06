@@ -59,6 +59,7 @@ def import_spatial_catchments(data: list, db: FloodingDatabase) -> Tuple[int, in
                 print(
                     f"Import: {catchment['catchment_id']} - {catchment.get('name')}")
                 imported_count += 1
+
             db.save_catchment_full(catchment)
         except Exception as e:  # pragma: no cover
             print(f"Error processing {catchment.get('catchment_id')}: {e}")
@@ -153,6 +154,7 @@ def run_risk_assessment(db: FloodingDatabase, num_samples: int = 10, event_id: s
             Qcap_m3s=catchment['Qcap_m3s'],
             series=results['series'],
             max_risk=results['max_risk'],
+            flowcode=catchment['flowcode'],
             rainfall_event_id=event['event_id'],
             notes=f"Risk assessment: {catchment['name']} - {event['name']}"
         )

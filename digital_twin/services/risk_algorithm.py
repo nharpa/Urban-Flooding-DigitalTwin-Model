@@ -50,7 +50,6 @@ def risk_from_loading(L: float, k: float = 8.0) -> float:
     return 1.0 / (1.0 + math.exp(-k * (L - 1.0)))
 
 
-
 def _compress_L_for_risk(L: float) -> float:
     """
     Map L >= 1 into a compressed range so the logistic risk stays responsive.
@@ -117,11 +116,12 @@ def simulate_catchment(
         max_r = max(max_r, R)
 
         series.append({
-            "t": t,
-            "i": i,
+            "t": t,              # Timestamp (UTC) for this time step
+            "i": i,              # Rainfall intensity (mm/hr) at this time step
+            # Runoff/discharge (m^3/s) at this time step
             "Qrunoff": round(Q, 3),
-            "L": round(L, 3),             # raw load (helps debugging)
-            "R": round(R, 3)              # displayed risk (post-compression if enabled)
+            "L": round(L, 3),    # Capacity loading ratio (Qrunoff / Qcap_used)
+            "R": round(R, 3)     # Risk score (0-1) for this time step
         })
 
     return {"series": series, "max_risk": round(max_r, 3)}

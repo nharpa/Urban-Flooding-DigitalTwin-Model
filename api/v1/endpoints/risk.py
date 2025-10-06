@@ -19,10 +19,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
 from digital_twin.database.database_utils import FloodingDatabase
-from digital_twin.services.risk_algorithm import simulate_catchment
 from digital_twin.spatial.spatial_utils import find_catchment_for_point
 from digital_twin.auth.auth import verify_token
-from digital_twin.services.fetch_realtime_weather import get_rainfall_event_from_api
+from digital_twin.services.realtime_weather_service import WeatherAPIClient
+from digital_twin.services.realtime_monitor import RealTimeFloodMonitor
 
 router = APIRouter()
 
@@ -41,88 +41,72 @@ class PointRiskRequest(BaseModel):
 
 
 class PointRiskResponse(BaseModel):
-    catchment_id: str
-    catchment_name: str
-    rainfall_event_id: str
+    catchment_id: str  # Unique identifier for the catchment containing the point
+    catchment_name: str  # Human-readable name of the catchment
+    rainfall_event_id: str  # ID of the rainfall event used for the risk calculation
+    # Maximum risk value computed for the catchment (0-1 scale)
     max_risk: float
+    # Categorical risk level (e.g., Very Low, Low, Medium, High, Very High)
     risk_level: str
+    # Model parameters used in the simulation (C, A_km2, Qcap_m3s)
     parameters: dict
+    # Timestamp (UTC) when the maximum risk occurred
     max_risk_time: Optional[str]
-    max_risk_point: Optional[dict]
-
-
-def _risk_level(value: float) -> str:
-    if value >= 0.8:
-        return "Very High"
-    if value >= 0.6:
-        return "High"
-    if value >= 0.4:
-        return "Medium"
-    if value >= 0.2:
-        return "Low"
-    return "Very Low"
 
 
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)):
 
     db = FloodingDatabase()
+    weather_client = WeatherAPIClient()
+    monitor = RealTimeFloodMonitor(db=db)
     lon = float(request.lon)
     lat = float(request.lat)
 
+    # Find catchment containing the point
     print(f"Computing risk for point ({lon}, {lat})")
     catchment = find_catchment_for_point(
         catchments=db.list_catchments(), lon=lon, lat=lat
     )
+    # If no catchment found, return 404
+    if not catchment:
+        raise HTTPException(
+            status_code=404, detail="No catchment found for point")
 
-    if request.rainfall_event_id == "current":
-        # special case: fetch latest event
-        print("Fetching current weather observation from API...")
-        event_id = get_rainfall_event_from_api(
+    if not request.rainfall_event_id:
+        event_id = "design_2yr"
+    elif request.rainfall_event_id == "current":
+        event_id = weather_client.create_rainfall_observations_event(
             lat=lat, lon=lon, catchment=catchment)
-        event = db.get_rainfall_event(event_id)
+    elif request.rainfall_event_id == "forecast":
+        event_id = weather_client.create_rainfall_forecast_event(
+            lat=lat, lon=lon, catchment=catchment)
     else:
-        event_id = request.rainfall_event_id or "design_10yr"
-        event = db.get_rainfall_event(event_id)
+        valid_event = db.get_rainfall_event(request.rainfall_event_id)
+        if valid_event:
+            event_id = request.rainfall_event_id
+        else:
+            event_id = "design_2yr"
 
-    if not event:
-        # fallback: pick any existing event
-        events = db.list_rainfall_events()
-        if not events:
-            raise HTTPException(
-                status_code=500, detail="No rainfall events available")
-        event = events[0]
-        event_id = event["event_id"]
-    sim = simulate_catchment(
-        rain_mmhr=event["rain_mmhr"],
-        timestamps_utc=event["timestamps_utc"],
-        C=catchment["C"],
-        A_km2=catchment["A_km2"],
-        Qcap_m3s=catchment["Qcap_m3s"],
+    # Simulate risk for this catchment
+    simulation = monitor.run_realtime_risk_assessment(
+        rainfall_eventID=event_id,
+        catchment_id=catchment["catchment_id"]
     )
+    # Check simulation result
+    if not simulation:
+        raise HTTPException(
+            status_code=500, detail="Risk simulation failed")
 
-    max_risk = sim["max_risk"]
-    max_point = None
-    max_time = None
-    for p in sim["series"]:
-        if p["R"] == max_risk:
-            max_point = p
-            max_time = p["t"]
-            break
-
+    # Format response
     response = PointRiskResponse(
-        catchment_id=catchment["catchment_id"],
-        catchment_name=catchment.get("name", catchment["catchment_id"]),
-        rainfall_event_id=event_id,
-        max_risk=max_risk,
-        risk_level=_risk_level(max_risk),
-        parameters={
-            "C": catchment["C"],
-            "A_km2": catchment["A_km2"],
-            "Qcap_m3s": catchment["Qcap_m3s"],
-        },
-        max_risk_time=max_time,
-        max_risk_point=max_point,
+        catchment_id=simulation["catchment_id"],
+        catchment_name=simulation["catchment_name"],
+        rainfall_event_id=simulation["rainfall_event_id"],
+        max_risk=simulation["max_risk"],
+        risk_level=simulation["risk_level"],
+        parameters=simulation["parameters"],
+        max_risk_time=simulation["max_risk_time"],
     )
 
     return response

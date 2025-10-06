@@ -5,6 +5,7 @@ from typing import Dict, List
 from collections import defaultdict
 from pathlib import Path
 from .spatial_utils import (
+    calculate_catchment_centroid,
     load_pipe_materials,
     calculate_pipe_capacity,
     calculate_pipe_grade
@@ -128,6 +129,7 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
         geom = feature.get('geometry')
         if not geom or not isinstance(geom, dict) or 'type' not in geom:
             continue  # skip malformed
+        centroid = calculate_catchment_centroid(geom)
         catch_name = props.get('catch_name') or 'Unknown'
         ufi = props.get('ufi')
         key = str(ufi) if ufi is not None else f"{catch_name}_{idx}"
@@ -138,17 +140,21 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
             area_km2 = 0.0
         if area_km2 <= 0:
             continue
+        print(props)
         catchment_dict[key] = {
             'catchment_id': key,
             'ufi': ufi,
-            'name': catch_name,
+            'name': key + "_" + catch_name,
             'sub_name': props.get('sub_name', ''),
             'A_km2': round(area_km2, 2),
             'basin_name': props.get('basin_name', ''),
             'type': props.get('type', ''),
             'management': props.get('management', ''),
+            'flowcode': props.get('flowcode', None),
+            'centroid': centroid,
             'geometry': geom,
         }
+
     keyed_by_ufi = sum(1 for c in catchment_dict.values()
                        if c.get('ufi') is not None)
     print(
@@ -195,10 +201,14 @@ def join_pipes_catchments(subcatchment_pipes: Dict[str, Dict], catchment_areas: 
             'max_pipe_diameter_mm': pipe_info['max_diameter_mm'],
             'basin_name': catchment.get('basin_name', ''),
             'area_type': catchment.get('type', ''),
-            'ufi': catchment.get('ufi'),
+            'centroid': catchment.get('centroid', [None, None]),
+            'flowcode': catchment.get('flowcode', None),
+            # 'management': catchment.get('management', ''),
             # Preserve original polygon geometry for higher-accuracy spatial queries
             'geometry': catchment.get('geometry')
         }
+        print(catchment.get('flowcode'))
+        print(type(catchment.get('flowcode')))
         # Simple runoff coefficient heuristic based on area_type / management
         area_type = (catchment.get('type') or '').lower()
         management = (catchment.get('management') or '').lower()
