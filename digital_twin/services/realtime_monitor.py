@@ -17,7 +17,7 @@ class RealTimeFloodMonitor:
         self.db = db if db else FloodingDatabase()
         self.weather_client = WeatherAPIClient()
 
-    def start_periodic_monitoring(self, interval_seconds: int = 3600):
+    def start_periodic_monitoring(self, interval_seconds: int = 86400):
         """
         Starts a background process that runs every `interval_seconds` (default: 1 hour).
         For each catchment, creates a rainfall observation event using the centroid and runs risk assessment.
@@ -33,9 +33,9 @@ class RealTimeFloodMonitor:
                 catchments = self.db.list_catchments()
                 for catchment in catchments:
                     # Extract centroid (lat, lon) from catchment record
-                    center = catchment.get("location", {}).get("center", {})
-                    lat = center.get("lat")
-                    lon = center.get("lon")
+                    center = catchment.get("centroid", [None, None])
+                    lat = center[0]
+                    lon = center[1]
                     if lat is None or lon is None:
                         print(
                             f"[RealTimeFloodMonitor] Catchment {catchment.get('catchment_id')} missing centroid, skipping.")

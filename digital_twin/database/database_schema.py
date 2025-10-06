@@ -11,7 +11,7 @@ CATCHMENT_SCHEMA = {
             "C": {"bsonType": "double", "minimum": 0.0, "maximum": 1.0},
             "A_km2": {"bsonType": "double", "minimum": 0.0},
             "Qcap_m3s": {"bsonType": "double", "minimum": 0.0},
-            # Optional centroid (latitude, longitude)
+            "flowcode": {"bsonType": "double"},
             "centroid": {
                 "bsonType": ["array", "null"],
                 "items": [
