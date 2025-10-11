@@ -33,6 +33,8 @@ class FloodingDatabase:
         # Allow fast failure when server not present (e.g. during unit tests)
         self.client = MongoClient(self.uri, serverSelectionTimeoutMS=200)
         # Always obtain a Database object from the client
+        if db_name is None:
+            raise ValueError("MONGODB_NAME must be set and not None.")
         self.db = self.client[db_name]
 
         create_collections_with_validation(self.db)
@@ -101,7 +103,7 @@ class FloodingDatabase:
     def get_catchment_with_pipes(self, catchment_id: str) -> Optional[Dict]:
         return self.catchments.find_one({"catchment_id": catchment_id}, {"_id": 0})
 
-    def get_catchments_by_capacity(self, min_capacity: float = None, max_capacity: float = None) -> List[Dict]:
+    def get_catchments_by_capacity(self, min_capacity: Optional[float] = None, max_capacity: Optional[float] = None) -> List[Dict]:
         query = {}
         if min_capacity is not None:
             query["Qcap_m3s"] = {"$gte": min_capacity}
@@ -171,11 +173,11 @@ class FloodingDatabase:
     def get_rainfall_event(self, event_id: str) -> Optional[Dict]:
         return self.rainfall_events.find_one({"event_id": event_id}, {"_id": 0})
 
-    def list_catchments(self, land_use: str = None) -> List[Dict]:
+    def list_catchments(self, land_use: Optional[str] = None) -> List[Dict]:
         query = {"land_use": land_use} if land_use else {}
         return list(self.catchments.find(query, {"_id": 0}))
 
-    def list_rainfall_events(self, event_type: str = None, min_return_period: int = None) -> List[Dict]:
+    def list_rainfall_events(self, event_type: Optional[str] = None, min_return_period: Optional[int] = None) -> List[Dict]:
         query = {}
         if event_type:
             query["event_type"] = event_type
@@ -187,7 +189,7 @@ class FloodingDatabase:
         self.client.close()
 
     # ---------------- Issue Reports -----------------
-    def create_issue_report(self, issue_type: str, description: str, latitude: float, longitude: float, user_uid: str, display_name: str = None, email: str = None) -> str:
+    def create_issue_report(self, issue_type: str, description: str, latitude: float, longitude: float, user_uid: str, display_name: Optional[str] = None, email: Optional[str] = None) -> str:
         """Create a new issue report and return its business key issue_id."""
         from uuid import uuid4
         issue_id = f"ISSUE_{uuid4().hex[:10]}"

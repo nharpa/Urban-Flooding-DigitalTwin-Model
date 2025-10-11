@@ -41,10 +41,10 @@ class RealTimeFloodMonitor:
                             f"[RealTimeFloodMonitor] Catchment {catchment.get('catchment_id')} missing centroid, skipping.")
                         continue
                     try:
-                        event_id = self.weather_client.create_rainfall_observations_event(
+                        event = self.weather_client.create_rainfall_observations_event(
                             lat=lat, lon=lon, catchment=catchment)
                         self.run_realtime_risk_assessment(
-                            event_id, catchment["catchment_id"])
+                            event["event_id"], catchment["catchment_id"])
                         print(
                             f"[RealTimeFloodMonitor] Risk assessment complete for catchment {catchment.get('catchment_id')}")
                     except Exception as e:

@@ -53,6 +53,31 @@ class PointRiskResponse(BaseModel):
     # Timestamp (UTC) when the maximum risk occurred
     max_risk_time: Optional[str]
 
+    # Catchment statistics
+    catchment_area_km2: float  # Catchment area in square kilometers
+    runoff_coefficient: float  # Runoff coefficient (C parameter)
+    pipe_capacity_m3s: float  # Pipe capacity in cubic meters per second
+    total_pipe_length_m: Optional[float]  # Total pipe length in meters
+    # Maximum pipe diameter in millimeters
+    max_pipe_diameter_mm: Optional[float]
+    pipe_count: Optional[int]  # Number of pipes in catchment
+    flowcode: Optional[float]  # Flow code identifier
+    catchment_centroid: Optional[list]  # Centroid coordinates [lat, lon]
+
+    # Rainfall event data
+    rainfall_event_name: Optional[str]  # Human-readable name of rainfall event
+    # Description of the rainfall event
+    rainfall_event_description: Optional[str]
+    # Type (e.g., "design", "observed", "forecast")
+    rainfall_event_type: Optional[str]
+    # Duration of rainfall event in hours
+    rainfall_duration_hours: Optional[float]
+    total_rainfall_mm: Optional[float]  # Total rainfall amount in millimeters
+    max_intensity_mmhr: Optional[float]  # Maximum rainfall intensity in mm/hr
+    rainfall_timestamps: Optional[list]  # List of timestamps for rainfall data
+    # List of rainfall intensities (mm/hr)
+    rainfall_intensities: Optional[list]
+
 
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)):
@@ -68,7 +93,7 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     catchment = find_catchment_for_point(
         catchments=db.list_catchments(), lon=lon, lat=lat
     )
-    # If no catchment found, return 404
+
     if not catchment:
         raise HTTPException(
             status_code=404, detail="No catchment found for point")
@@ -76,17 +101,24 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     if not request.rainfall_event_id:
         event_id = "design_2yr"
     elif request.rainfall_event_id == "current":
-        event_id = weather_client.create_rainfall_observations_event(
+        event_result = weather_client.create_rainfall_observations_event(
             lat=lat, lon=lon, catchment=catchment)
+        event_id = event_result if isinstance(
+            event_result, str) else event_result.get("event_id", "design_2yr")
     elif request.rainfall_event_id == "forecast":
-        event_id = weather_client.create_rainfall_forecast_event(
+        event_result = weather_client.create_rainfall_forecast_event(
             lat=lat, lon=lon, catchment=catchment)
+        event_id = event_result if isinstance(
+            event_result, str) else event_result.get("event_id", "design_2yr")
     else:
         valid_event = db.get_rainfall_event(request.rainfall_event_id)
         if valid_event:
             event_id = request.rainfall_event_id
         else:
             event_id = "design_2yr"
+
+    # Get rainfall event data for response
+    rainfall_event = db.get_rainfall_event(event_id)
 
     # Simulate risk for this catchment
     simulation = monitor.run_realtime_risk_assessment(
@@ -98,7 +130,7 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
         raise HTTPException(
             status_code=500, detail="Risk simulation failed")
 
-    # Format response
+    # Format response with additional catchment and rainfall data
     response = PointRiskResponse(
         catchment_id=simulation["catchment_id"],
         catchment_name=simulation["catchment_name"],
@@ -107,6 +139,34 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
         risk_level=simulation["risk_level"],
         parameters=simulation["parameters"],
         max_risk_time=simulation["max_risk_time"],
+
+        # Catchment statistics
+        catchment_area_km2=catchment.get("A_km2", 0.0),
+        runoff_coefficient=catchment.get("C", 0.0),
+        pipe_capacity_m3s=catchment.get("Qcap_m3s", 0.0),
+        total_pipe_length_m=catchment.get("total_pipe_length_m"),
+        max_pipe_diameter_mm=catchment.get("max_pipe_diameter_mm"),
+        pipe_count=catchment.get("pipe_count"),
+        flowcode=catchment.get("flowcode"),
+        catchment_centroid=catchment.get("centroid"),
+
+        # Rainfall event data
+        rainfall_event_name=rainfall_event.get(
+            "name") if rainfall_event else None,
+        rainfall_event_description=rainfall_event.get(
+            "description") if rainfall_event else None,
+        rainfall_event_type=rainfall_event.get(
+            "event_type") if rainfall_event else None,
+        rainfall_duration_hours=rainfall_event.get(
+            "duration_hours") if rainfall_event else None,
+        total_rainfall_mm=sum(rainfall_event.get(
+            "rain_mmhr", [])) if rainfall_event and rainfall_event.get("rain_mmhr") else None,
+        max_intensity_mmhr=max(rainfall_event.get(
+            "rain_mmhr", [])) if rainfall_event and rainfall_event.get("rain_mmhr") else None,
+        rainfall_timestamps=rainfall_event.get(
+            "timestamps_utc") if rainfall_event else None,
+        rainfall_intensities=rainfall_event.get(
+            "rain_mmhr") if rainfall_event else None,
     )
 
     return response
