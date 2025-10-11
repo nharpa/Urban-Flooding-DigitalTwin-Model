@@ -103,13 +103,21 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     elif request.rainfall_event_id == "current":
         event_result = weather_client.create_rainfall_observations_event(
             lat=lat, lon=lon, catchment=catchment)
-        event_id = event_result if isinstance(
-            event_result, str) else event_result.get("event_id", "design_2yr")
+        if isinstance(event_result, str):
+            event_id = event_result
+        elif isinstance(event_result, dict):
+            event_id = event_result.get("event_id", "design_2yr")
+        else:
+            event_id = "design_2yr"
     elif request.rainfall_event_id == "forecast":
         event_result = weather_client.create_rainfall_forecast_event(
             lat=lat, lon=lon, catchment=catchment)
-        event_id = event_result if isinstance(
-            event_result, str) else event_result.get("event_id", "design_2yr")
+        if isinstance(event_result, str):
+            event_id = event_result
+        elif isinstance(event_result, dict):
+            event_id = event_result.get("event_id", "design_2yr")
+        else:
+            event_id = "design_2yr"
     else:
         valid_event = db.get_rainfall_event(request.rainfall_event_id)
         if valid_event:
