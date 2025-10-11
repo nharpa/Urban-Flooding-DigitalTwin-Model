@@ -44,7 +44,7 @@ class RealTimeFloodMonitor:
                         event = self.weather_client.create_rainfall_observations_event(
                             lat=lat, lon=lon, catchment=catchment)
                         self.run_realtime_risk_assessment(
-                            event["event_id"], catchment["catchment_id"])
+                            event, catchment["catchment_id"])
                         print(
                             f"[RealTimeFloodMonitor] Risk assessment complete for catchment {catchment.get('catchment_id')}")
                     except Exception as e:
