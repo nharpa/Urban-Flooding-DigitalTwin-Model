@@ -89,10 +89,18 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     lat = float(request.lat)
 
     # Find catchment containing the point
-    print(f"Computing risk for point ({lon}, {lat})")
+    print(f"🌊 FLOOD RISK ANALYSIS INITIATED for coordinates ({lon}, {lat})")
+    print(
+        f"📍 Analyzing spatial data across {len(db.list_catchments())} catchment areas...")
     catchment = find_catchment_for_point(
         catchments=db.list_catchments(), lon=lon, lat=lat
     )
+
+    if catchment:
+        print(
+            f"✅ Target catchment identified: {catchment.get('name', 'Unknown')} (ID: {catchment.get('catchment_id')})")
+        print(
+            f"   📊 Catchment specs: Area={catchment.get('A_km2', 0):.2f}km², Capacity={catchment.get('Qcap_m3s', 0):.1f}m³/s")
 
     if not catchment:
         raise HTTPException(
@@ -128,6 +136,13 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     # Get rainfall event data for response
     rainfall_event = db.get_rainfall_event(event_id)
 
+    if rainfall_event:
+        total_rain = sum(rainfall_event.get("rain_mmhr", []))
+        max_intensity = max(rainfall_event.get("rain_mmhr", [0]))
+        print(
+            f"🌧️  RAINFALL EVENT: {rainfall_event.get('name', event_id)} - Total: {total_rain:.1f}mm, Peak: {max_intensity:.1f}mm/hr")
+
+    print(f"⚡ Running hydrological simulation engine...")
     # Simulate risk for this catchment
     simulation = monitor.run_realtime_risk_assessment(
         rainfall_eventID=event_id,
@@ -137,6 +152,11 @@ def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)
     if not simulation:
         raise HTTPException(
             status_code=500, detail="Risk simulation failed")
+
+    # Display impressive results
+    risk_emoji = "🔴" if simulation["max_risk"] >= 0.7 else "🟡" if simulation["max_risk"] >= 0.4 else "🟢"
+    print(
+        f"{risk_emoji} RISK ASSESSMENT COMPLETE: {simulation['risk_level']} ({simulation['max_risk']:.3f})")
 
     # Format response with additional catchment and rainfall data
     response = PointRiskResponse(
