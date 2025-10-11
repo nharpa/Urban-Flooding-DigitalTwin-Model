@@ -57,6 +57,9 @@ class WeatherAPIClient:
                    "Content-Type": "application/json"}
         data = {"lat": lat, "lon": lon}
         try:
+            if not settings.WEATHER_API_URL:
+                print("Weather API URL is not set.")
+                return None
             url = settings.WEATHER_API_URL + "/history"
             response = requests.post(
                 url, json=data, headers=headers, timeout=30)
@@ -88,6 +91,9 @@ class WeatherAPIClient:
                    "Content-Type": "application/json"}
         data = {"lat": lat, "lon": lon}
         try:
+            if not settings.WEATHER_API_URL:
+                print("Weather API URL is not set.")
+                return None
             url = settings.WEATHER_API_URL + "/forecast/hourly"
             response = requests.post(
                 url, json=data, headers=headers, timeout=30)

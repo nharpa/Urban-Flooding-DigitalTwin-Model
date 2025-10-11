@@ -4,8 +4,8 @@ from typing import List, Dict
 
 
 # -------------------- TUNING KNOBS --------------------
-HEADROOM = 2.5          # aim for L ~ 1/HEADROOM at near-peak rain
-CAP_BOOST_MAX = 50.0    # allow capacity boost up to 30x (was 3x)
+HEADROOM = 3          # aim for L ~ 1/HEADROOM at near-peak rain
+CAP_BOOST_MAX = 220.0    # allow capacity boost
 
 # Optional: compress very large L before risk to avoid saturation
 USE_LOG_COMPRESSION = True
@@ -116,12 +116,12 @@ def simulate_catchment(
         max_r = max(max_r, R)
 
         series.append({
-            "t": t,              # Timestamp (UTC) for this time step
-            "i": i,              # Rainfall intensity (mm/hr) at this time step
-            # Runoff/discharge (m^3/s) at this time step
+            "t": t,
+            "i": i,
             "Qrunoff": round(Q, 3),
-            "L": round(L, 3),    # Capacity loading ratio (Qrunoff / Qcap_used)
-            "R": round(R, 3)     # Risk score (0-1) for this time step
+            "L": round(L, 3),             # raw load (helps debugging)
+            # displayed risk (post-compression if enabled)
+            "R": round(R, 3)
         })
 
-    return {"series": series, "max_risk": round(max_r, 3)}
+    return {"series": series, "max_risk": round(max_r*0.1, 3)}
