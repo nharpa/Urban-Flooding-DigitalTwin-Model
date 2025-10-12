@@ -1,5 +1,10 @@
-# Real-time flood monitoring service for urban flooding digital twin.
-# Provides weather ingestion, risk simulation, and alert reporting.
+"""Real-time flood monitoring service for urban flooding digital twin.
+
+This module provides comprehensive real-time monitoring capabilities including
+weather data ingestion, flood risk simulation, and automated alert reporting.
+It integrates with external weather APIs to continuously assess flood risk
+across all catchments and generate alerts when risk thresholds are exceeded.
+"""
 
 from typing import List, Dict, Optional
 from datetime import datetime
@@ -12,8 +17,29 @@ from digital_twin.services.realtime_weather_service import WeatherAPIClient
 
 
 class RealTimeFloodMonitor:
+    """Real-time flood monitoring and alerting system.
+
+    This class provides automated monitoring of flood risk across all catchments
+    using real-time weather data. It periodically fetches weather observations,
+    runs risk simulations, and can generate alert reports when high-risk
+    conditions are detected.
+
+    Attributes
+    ----------
+    db : FloodingDatabase
+        Database connection for catchment and event storage.
+    weather_client : WeatherAPIClient
+        Client for fetching real-time weather data.
+    """
 
     def __init__(self, db: Optional[FloodingDatabase] = None):
+        """Initialize the real-time flood monitor.
+
+        Parameters
+        ----------
+        db : FloodingDatabase, optional
+            Database connection instance. If None, a new connection will be created.
+        """
         self.db = db if db else FloodingDatabase()
         self.weather_client = WeatherAPIClient()
 
@@ -56,6 +82,25 @@ class RealTimeFloodMonitor:
         thread.start()
 
     def run_realtime_risk_assessment(self, rainfall_eventID: str, catchment_id: str) -> Dict:
+        """Run flood risk assessment for a specific catchment and rainfall event.
+
+        Retrieves the rainfall event and catchment data from the database,
+        runs the simulation using the risk algorithm, categorizes the risk level,
+        and saves the results back to the database.
+
+        Parameters
+        ----------
+        rainfall_eventID : str
+            Unique identifier for the rainfall event to use in simulation.
+        catchment_id : str
+            Unique identifier for the catchment to assess.
+
+        Returns
+        -------
+        Dict
+            Risk assessment results containing catchment info, risk metrics,
+            parameters, and alert status.
+        """
         rainfall_event = self.db.get_rainfall_event(rainfall_eventID)
         if not rainfall_event:
             print(f"Rainfall event {rainfall_eventID} not found")

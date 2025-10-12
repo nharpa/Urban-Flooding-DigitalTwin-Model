@@ -1,4 +1,18 @@
 
+"""Spatial data processing for urban flooding digital twin.
+
+This module provides comprehensive spatial data processing capabilities for
+integrating GeoJSON catchment and pipe network data. It performs hydraulic
+calculations, aggregates pipe statistics by catchment, and produces processed
+datasets suitable for flood risk modeling.
+
+Key functionality includes:
+- Pipe hydraulic capacity calculations
+- Catchment geometry processing
+- Spatial joining of pipes to catchments
+- Export of processed data for database ingestion
+"""
+
 import numpy as np
 import json
 from typing import Dict, List

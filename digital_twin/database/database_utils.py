@@ -45,6 +45,11 @@ class FloodingDatabase:
         self._create_indexes()
 
     def _create_indexes(self):
+        """Create database indexes for optimal query performance.
+
+        Creates indexes on frequently queried fields including unique index
+        on catchment_id and indexes for spatial queries.
+        """
         self.catchments.create_index("catchment_id", unique=True)
         self.catchments.create_index("name")
         self.catchments.create_index("C")
@@ -89,12 +94,46 @@ class FloodingDatabase:
         return catchment_data["catchment_id"]
 
     def find_catchments_by_location(self, lon: float, lat: float, max_distance_km: float = 10.0) -> List[Dict]:
+        """Find catchments near a given geographic location.
+
+        Parameters
+        ----------
+        lon : float
+            Longitude coordinate.
+        lat : float
+            Latitude coordinate.
+        max_distance_km : float, default 10.0
+            Maximum search distance in kilometers.
+
+        Returns
+        -------
+        List[Dict]
+            List of catchment documents within the search radius.
+        """
         degree_offset = max_distance_km / 111.0
         query = {"location.center.lon": {"$gte": lon - degree_offset, "$lte": lon + degree_offset},
                  "location.center.lat": {"$gte": lat - degree_offset, "$lte": lat + degree_offset}}
         return list(self.catchments.find(query, {"_id": 0}))
 
     def find_catchments_in_bounds(self, min_lon: float, min_lat: float, max_lon: float, max_lat: float) -> List[Dict]:
+        """Find catchments within a rectangular geographic boundary.
+
+        Parameters
+        ----------
+        min_lon : float
+            Minimum longitude of bounding box.
+        min_lat : float
+            Minimum latitude of bounding box.
+        max_lon : float
+            Maximum longitude of bounding box.
+        max_lat : float
+            Maximum latitude of bounding box.
+
+        Returns
+        -------
+        List[Dict]
+            List of catchment documents within the bounding box.
+        """
         query = {"location.center.lon": {"$gte": min_lon, "$lte": max_lon},
                  "location.center.lat": {"$gte": min_lat, "$lte": max_lat}}
         return list(self.catchments.find(query, {"_id": 0}))
@@ -140,6 +179,22 @@ class FloodingDatabase:
         return self.simulations.find_one({"simulation_id": simulation_id}, {"_id": 0})
 
     def get_simulations_by_catchment(self, catchment_id: str, limit: int = 10, skip: int = 0) -> List[Dict]:
+        """Get simulation results for a specific catchment.
+
+        Parameters
+        ----------
+        catchment_id : str
+            Unique identifier of the catchment.
+        limit : int, default 10
+            Maximum number of results to return.
+        skip : int, default 0
+            Number of results to skip (for pagination).
+
+        Returns
+        -------
+        List[Dict]
+            List of simulation documents sorted by creation date (newest first).
+        """
         cursor = self.simulations.find({"catchment_id": catchment_id}, {"_id": 0}).sort(
             "created_at", DESCENDING).skip(skip).limit(limit)
         return list(cursor)
@@ -186,6 +241,11 @@ class FloodingDatabase:
         return list(self.rainfall_events.find(query, {"_id": 0}))
 
     def close(self):
+        """Close the MongoDB connection.
+
+        Should be called when the database connection is no longer needed
+        to properly release resources.
+        """
         self.client.close()
 
     # ---------------- Issue Reports -----------------

@@ -1,352 +1,544 @@
-# Urban Flooding Digital Twin (Spatial + Real-time Prototype)
+# Urban Flooding Digital Twin
 
-This repository contains a prototype "digital twin" style workflow for urban flooding risk assessment. It integrates:
+A comprehensive digital twin system for urban flooding risk assessment that combines real-time monitoring, spatial analysis, and predictive modeling. This system integrates drainage infrastructure data, weather observations, and hydraulic modeling to provide actionable flood risk insights.
 
-- Spatial processing of drainage pipe network GeoJSON and hydrographic catchment polygons
-- Direct foreign key (ufi) join of pipe aggregates to catchment polygons (replaces legacy spatial heuristic matching)
-- A lightweight hydrologic + capacity loading + sigmoid risk model (Rational Method inspired)
-- MongoDB persistence with JSON Schema validation and indexes (catchments, rainfall events, simulations)
-- Design storm & historical style rainfall event creation
-- Real‑time weather API ingestion → rainfall event derivation → on‑demand & continuous risk simulation
-- Reporting utilities (risk dashboards, alert summaries, trend analysis)
+## Overview
 
-> Scope: This is a research / prototyping codebase, not a production-grade flood forecasting engine. It focuses on explainability, rapid iteration, and clear data flow.
+The Urban Flooding Digital Twin provides:
+
+- **Real-time Monitoring**: Continuous assessment of flood risk using live weather data
+- **Spatial Intelligence**: Point-in-polygon risk assessment for any geographic location
+- **Hydraulic Modeling**: Rational Method-based runoff calculations with capacity loading analysis
+- **Risk Categorization**: Intelligent risk scoring with categorical levels (Very Low to Very High)
+- **API Integration**: RESTful endpoints for external system integration
+- **Issue Reporting**: Community-driven flood incident reporting system
+
+> **Note**: This is a research and prototyping platform designed for rapid iteration and clear data flow, not a production-grade flood forecasting system.
+
+## Architecture
+
+### Core Components
+
+| Component               | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| **FastAPI Service**     | REST API with authentication and real-time monitoring      |
+| **MongoDB Database**    | Persistent storage for catchments, events, and simulations |
+| **Spatial Engine**      | GeoJSON processing and point-in-polygon operations         |
+| **Risk Algorithm**      | Hydraulic modeling with sigmoid risk transformation        |
+| **Weather Integration** | External API client for real-time weather data             |
+| **Background Monitor**  | Continuous risk assessment across all catchments           |
+
+### Key Concepts
+
+| Concept            | Description                                                                |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Catchment**      | Spatial drainage area with hydraulic properties (`A_km2`, `C`, `Qcap_m3s`) |
+| **Rainfall Event** | Time series of rainfall intensities with metadata                          |
+| **Simulation**     | Runoff calculation and risk assessment for a catchment-event pair          |
+| **Risk Score**     | Sigmoid-transformed loading ratio: `R = 1/(1 + exp(-k(L-1)))`              |
 
 ---
 
-## 1. Core Concepts
-
-| Concept        | Description                                                                                                       |
-| -------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Catchment      | Spatial unit with area `A_km2`, runoff coefficient `C`, drainage capacity `Qcap_m3s`, and derived pipe statistics |
-| Rainfall Event | Time series of intensities (mm/hr) + metadata; can be design, historical, realtime, forecast                      |
-| Simulation     | Result of applying rainfall event to a catchment to compute runoff Q, load factor L=Q/Qcap, and risk R            |
-| Risk Model     | Logistic transform of loading: `R = 1 / (1 + exp(-k (L - 1)))` (k default 8)                                      |
-
----
-
-## 2. Repository Structure (Refactored src/ Layout)
+## Repository Structure
 
 ```
-├─ src/
-│  └─ urban_flooding/
-│     ├─ domain/                     # Pure hydrology + simulation logic
-│     │  ├─ hydrology.py
-│     │  └─ simulation.py
-│     ├─ persistence/                # MongoDB adapter & schemas
-│     │  ├─ database.py
-│     │  └─ schemas.py
-│     ├─ ingestion/                  # External data ingestion
-│     │  ├─ weather_client.py        # Weather API → rainfall events
-│     │  └─ spatial_import.py        # Catchment import & seeding utilities
-│     ├─ services/                   # Higher-level orchestration
-│     │  ├─ integrated_system.py
-│     │  └─ realtime_monitor.py
-│     ├─ spatial/                    # (Future) spatial processing utilities
-│     ├─ cli/                        # Command line interface (argparse based)
-│     │  └─ main.py
-│     └─ __init__.py
-├─ data/                             # GeoJSON inputs & derived JSON
-├─ tests/                            # Pytest unit tests (hydrology & simulation)
-├─ legacy shims *.py                 # Thin wrappers preserving old import paths
-├─ requirements.txt
-└─ README.md
+urban_flooding_digitaltwin/
+├── main.py                          # FastAPI application entry point
+├── docker-compose.yml               # MongoDB containerization
+├── requirements.txt                 # Python dependencies
+├── init_db.py                      # Database initialization script
+├── batch_simulation.py             # Batch risk assessment across catchments
+├── spatial_import.py               # Spatial data processing pipeline
+├── data/                           # Input data files
+│   ├── catchments_spatial_matched.json
+│   ├── PerthMetroCatchments.geojson
+│   ├── PerthMetroStormDrainPipe.geojson
+│   ├── PipeMaterials.json
+│   └── RainfallEvents.json
+├── digital_twin/                   # Core application modules
+│   ├── auth/                      # Authentication & configuration
+│   │   ├── auth.py               # Bearer token authentication
+│   │   └── config.py             # Environment settings management
+│   ├── database/                  # Data persistence layer
+│   │   ├── database_utils.py     # MongoDB operations
+│   │   └── database_schema.py    # Collection schemas & validation
+│   ├── services/                  # Business logic services
+│   │   ├── risk_algorithm.py     # Hydraulic modeling & risk calculation
+│   │   ├── realtime_monitor.py   # Background monitoring service
+│   │   └── realtime_weather_service.py  # Weather API integration
+│   └── spatial/                   # Spatial data processing
+│       ├── spatial_utils.py      # Geometric utilities
+│       └── spatial_data_processing.py  # GeoJSON processing pipeline
+└── api/                           # REST API implementation
+    └── v1/
+        ├── routes.py             # API router configuration
+        └── endpoints/            # API endpoint implementations
+            ├── simulate.py       # Catchment simulation endpoint
+            ├── risk.py          # Point-based risk assessment
+            └── report.py        # Issue reporting endpoint
 ```
 
-Legacy top-level modules (e.g. `domain.py`, `database_v3.py`) remain as shims that re-export the refactored package to avoid breaking existing notebooks or scripts.
+---
+
+## Data Flow Pipeline
+
+### 1. Spatial Data Processing
+
+```
+GeoJSON Files → spatial_data_processing.py → catchments_spatial_matched.json → MongoDB
+```
+
+- **Input**: Perth catchment polygons and storm drain pipe networks (GeoJSON)
+- **Processing**: Pipe aggregation by subcatchment, hydraulic capacity calculations
+- **Output**: Spatially-matched catchments with hydraulic properties
+
+### 2. Database Initialization
+
+```
+python init_db.py → MongoDB Collections + Indexes + Validation
+```
+
+- Creates collections: `catchments`, `rainfall_events`, `simulations`, `issue_reports`
+- Establishes indexes for performance and spatial queries
+- Applies JSON schema validation
+
+### 3. Risk Assessment Workflow
+
+```
+Location (lat/lon) → find_catchment_for_point() → simulate_catchment() → Risk Score
+```
+
+- **Point Query**: Find containing catchment using polygon geometry
+- **Simulation**: Apply Rational Method with rainfall time series
+- **Risk Calculation**: Transform loading ratio to risk score (0-1)
+
+### 4. Real-time Monitoring
+
+```
+Weather API → rainfall_events → Background Simulations → Alerts
+```
+
+- Periodic weather data ingestion from external APIs
+- Automated risk assessment across all catchments
+- Alert generation for high-risk conditions (R ≥ 0.6)
 
 ---
 
-## 3. Data Flow Overview (Geometry‑First)
+## Database Schema
 
-1. Input GeoJSON files (pipes + catchment polygons) are processed by `urban_flooding.spatial.geojson_converter` (run via `python -m urban_flooding.spatial.geojson_converter` or its `main()`):
+### Collections
 
-- Aggregates pipe segments per subcatchment (key = `ufi`) → hydraulic metrics (`Qcap_m3s`, `pipe_count`, `total_length_m`, diameter stats). No centroids / bounds are derived here anymore.
-- Loads catchment polygons preserving full GeoJSON `geometry` and core attributes (area, type, management, names).
-- Performs a direct dictionary join on `ufi` to associate hydraulic summaries with polygon geometry.
-- Writes `data/catchments_spatial_matched.json` containing: `catchment_id`, `ufi`, `name`, `A_km2`, hydraulic stats, heuristic runoff coefficient `C`, and full `geometry`.
+| Collection        | Purpose                                                          | Key Fields                                                   |
+| ----------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| `catchments`      | Drainage catchments with spatial and hydraulic properties        | `catchment_id`, `name`, `A_km2`, `C`, `Qcap_m3s`, `geometry` |
+| `rainfall_events` | Time series rainfall data (design storms, historical, real-time) | `event_id`, `name`, `rain_mmhr[]`, `timestamps_utc[]`        |
+| `simulations`     | Risk assessment results                                          | `simulation_id`, `catchment_id`, `max_risk`, `series[]`      |
+| `issue_reports`   | Community-reported flooding issues                               | `issue_id`, `location`, `issue_type`, `description`          |
 
-2. The CLI command `python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events` loads the JSON and upserts catchments into MongoDB (schema now supports a GeoJSON-like `geometry` field). Legacy helper scripts remain but are deprecated.
-3. Design rainfall events are created (2, 10, 50, 100 year + historical template) via `python -m urban_flooding.cli design-events`.
-4. Simulations use `domain.simulation.simulate_catchment` to generate time series and risk metrics.
-5. Real‑time weather API ingestion (`ingestion.weather_client`) converts observations to rainfall events.
-6. Higher-level orchestration (dashboards, monitoring loop) is provided by `services.integrated_system` and CLI commands (`risk-assess`, `monitor`).
+### Catchment Document Structure
 
-Key Change vs Legacy: Bounding box / centroid heuristics were removed; spatial accuracy now derives from authentic polygon geometries enabling precise point‑in‑polygon operations (already used in the point risk endpoint with a temporary fallback for legacy documents lacking geometry).
-
----
-
-## 4. MongoDB Schema Highlights (Updated)
-
-Collections:
-
-- `catchments`: Hydraulic + spatial attributes with preserved polygon `geometry` (GeoJSON object), pipe stats, heuristic runoff coefficient. Legacy documents may still contain `location.bounds` without full geometry (migration guidance below).
-- `rainfall_events`: Time series rainfall definitions.
-- `simulations`: Simulation outputs (series + max_risk + references).
-- `issues`: Optional crowdsourced field issue reports (point locations) – see Issue Reporting section.
-
-Indexes (see `urban_flooding/persistence/schemas.py`):
-
-- Functional: `catchment_id` (unique), `simulation_id`, `event_id`.
-- Query support: compound indexes for rainfall event lookups and simulation retrieval.
-- Spatial: Attempted `2dsphere` index on `geometry` (if present) prepared for future geospatial queries; legacy bounding box compound index removed.
-
-Geometry Field:
-
-```jsonc
+```json
 {
-  "geometry": { "type": "Polygon" | "MultiPolygon", "coordinates": [...] }
+  "catchment_id": "perth_cbd_c1",
+  "name": "Perth CBD Catchment 1",
+  "A_km2": 1.45,
+  "C": 0.85,
+  "Qcap_m3s": 3.2,
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[...]]
+  },
+  "pipe_count": 12,
+  "total_length_m": 2840,
+  "avg_diameter_mm": 450,
+  "created_at": "2025-10-12T10:30:00Z"
 }
 ```
 
-Validation intentionally keeps the geometry schema permissive (basic shape/type) to allow upstream ingestion of varied polygon complexities. Downstream spatial operations (e.g., point‑in‑polygon) assume valid winding/order; a future enhancement may add optional geometry validation / repair.
+### Rainfall Event Document Structure
+
+```json
+{
+  "event_id": "design_10yr",
+  "name": "10-Year Design Storm",
+  "event_type": "design",
+  "rain_mmhr": [5.2, 12.8, 28.5, 50.1, 35.6, 10.2],
+  "timestamps_utc": ["2025-10-12T00:00:00Z", "2025-10-12T01:00:00Z", ...],
+  "total_rainfall_mm": 142.4,
+  "peak_intensity_mmhr": 50.1,
+  "duration_hours": 6
+}
+```
 
 ---
 
-## 5. Risk & Hydrology Model
+## Risk & Hydraulic Model
 
-Runoff (Rational Method style):
-`Q = 0.278 * C * i * A` (Q m³/s; C dimensionless; i mm/hr; A km²)
+### Runoff Calculation (Rational Method)
 
-Capacity Loading: `L = Q / Qcap_m3s`
+```
+Q = 0.278 × C × i × A
+```
 
-Risk (sigmoid): `R = 1 / (1 + exp(-k (L - 1)))` where `k` controls steepness (~8)
+Where:
 
-Interpretation (suggested thresholds):
+- **Q** = Runoff discharge (m³/s)
+- **C** = Runoff coefficient (dimensionless, 0-1)
+- **i** = Rainfall intensity (mm/hr)
+- **A** = Catchment area (km²)
 
-- R < 0.2 → Very Low
-- 0.2–0.4 → Low
-- 0.4–0.6 → Medium
-- 0.6–0.8 → High
-- ≥ 0.8 → Very High (potential alert)
+### Capacity Loading Analysis
+
+```
+L = Q / Qcap_m3s
+```
+
+- **L** = Loading ratio (dimensionless)
+- **Qcap_m3s** = Drainage system capacity (m³/s)
+
+### Risk Score Transformation
+
+```
+R = 1 / (1 + exp(-k × (L - 1)))
+```
+
+- **R** = Risk score (0-1)
+- **k** = Steepness parameter (~8)
+- **L** = Loading ratio
+
+### Risk Categories
+
+| Risk Score    | Category  | Color     | Action              |
+| ------------- | --------- | --------- | ------------------- |
+| R < 0.2       | Very Low  | 🟢 Green  | Normal operations   |
+| 0.2 ≤ R < 0.4 | Low       | 🟡 Yellow | Monitor conditions  |
+| 0.4 ≤ R < 0.6 | Medium    | 🟠 Orange | Increased vigilance |
+| 0.6 ≤ R < 0.8 | High      | 🔴 Red    | Alert conditions    |
+| R ≥ 0.8       | Very High | 🟣 Purple | Emergency response  |
 
 ---
 
-## 6. Setup & Installation
+## Quick Start
 
-Prerequisites:
+### Prerequisites
 
-- Python 3.10+
-- MongoDB (run via provided `docker-compose.yml` or an existing deployment)
+- **Python 3.10+**
+- **Docker & Docker Compose** (for MongoDB)
+- **Git** (for repository access)
 
-Install dependencies:
+### 1. Clone & Setup Environment
 
 ```powershell
+git clone <repository-url>
+cd Urban-Flooding-DigitalTwin-Model/urban_flooding_digitaltwin
+
+# Create virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-(Optional) Set environment variable for custom Mongo connection:
+### 2. Configure Environment
+
+Copy the example environment file and configure settings:
 
 ```powershell
-$env:MONGODB_URI = "mongodb://user:pass@host:27017/?authSource=admin"
+copy .env.example .env
+```
+
+Edit `.env` with your configuration:
+
+```env
+# Database Configuration
+MONGODB_NAME=urban_flooding_db
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=your_secure_password
+
+# API Configuration
+API_TOKEN=your_api_token_here
+
+# Weather API (optional)
+WEATHER_API_URL=https://api.weather.com/v1
+WEATHER_API_TOKEN=your_weather_token
+```
+
+### 3. Start Database
+
+```powershell
+# Start MongoDB in background
+docker-compose up -d
+
+# Verify container health
+docker-compose ps
+```
+
+### 4. Initialize Database
+
+```powershell
+# Create collections, indexes, and validation rules
+python init_db.py
+```
+
+### 5. Process Spatial Data
+
+```powershell
+# Process GeoJSON files and populate catchments
+python spatial_import.py
+```
+
+### 6. Start API Service
+
+```powershell
+# Start FastAPI server
+python main.py
+
+# Or with custom port
+python main.py --port 8080
+```
+
+## The API will be available at `http://localhost:8008` with interactive documentation at `http://localhost:8008/docs`.
+
+## 🔌 API Endpoints
+
+The FastAPI service provides RESTful endpoints for integration with external systems.
+
+### Authentication
+
+All endpoints require Bearer token authentication:
+
+```http
+Authorization: Bearer your_api_token_here
+```
+
+### Core Endpoints
+
+#### 1. Point Risk Assessment
+
+**POST** `/api/v1/risk/point`
+
+Assess flood risk for a specific geographic location.
+
+```json
+{
+  "lon": 115.8605,
+  "lat": -31.9505,
+  "rainfall_event_id": "design_10yr"
+}
+```
+
+**Response:**
+
+```json
+{
+  "catchment_id": "perth_cbd_c1",
+  "catchment_name": "Perth CBD Catchment 1",
+  "rainfall_event_id": "design_10yr",
+  "max_risk": 0.742,
+  "risk_level": "High",
+  "catchment_area_km2": 1.45,
+  "runoff_coefficient": 0.85,
+  "pipe_capacity_m3s": 3.2,
+  "max_risk_time": "2025-10-12T02:00:00Z"
+}
+```
+
+#### 2. Catchment Simulation
+
+**POST** `/api/v1/simulate`
+
+Run hydraulic simulation for specific catchment parameters.
+
+```json
+{
+  "catchment_id": "test_catchment",
+  "rain_mm_per_hr": [5.2, 12.8, 28.5, 50.1, 35.6, 10.2],
+  "timestamps_utc": ["2025-10-12T00:00:00Z", "2025-10-12T01:00:00Z", ...],
+  "C": 0.85,
+  "A_km2": 1.45,
+  "Qcap_m3s": 3.2
+}
+```
+
+#### 3. Issue Reporting
+
+**POST** `/api/v1/report`
+
+Submit community flood reports.
+
+```json
+{
+  "issue_type": "Flooded road",
+  "description": "Water over road surface, difficult to pass",
+  "location": {
+    "latitude": -31.9505,
+    "longitude": 115.8605
+  },
+  "user": {
+    "uid": "user123",
+    "display_name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
+
+### Interactive Documentation
+
+Visit `http://localhost:8008/docs` for complete API documentation with interactive testing interface.
+
+---
+
+## 📊 Usage Examples
+
+### Python API Usage
+
+```python
+from digital_twin.database.database_utils import FloodingDatabase
+from digital_twin.services.risk_algorithm import simulate_catchment
+from digital_twin.spatial.spatial_utils import find_catchment_for_point
+
+# Initialize database connection
+db = FloodingDatabase()
+
+# Find catchment for a specific point
+catchments = db.list_catchments()
+catchment = find_catchment_for_point(catchments, lon=115.8605, lat=-31.9505)
+
+if catchment:
+    # Get rainfall event
+    rainfall_event = db.get_rainfall_event("design_10yr")
+
+    # Run simulation
+    result = simulate_catchment(
+        rain_mmhr=rainfall_event["rain_mmhr"],
+        timestamps_utc=rainfall_event["timestamps_utc"],
+        C=catchment["C"],
+        A_km2=catchment["A_km2"],
+        Qcap_m3s=catchment["Qcap_m3s"]
+    )
+
+    print(f"Maximum risk: {result['max_risk']:.3f}")
+
+# Clean up
+db.close()
+```
+
+### Batch Risk Assessment
+
+```powershell
+# Run batch simulation across all catchments
+python batch_simulation.py
+```
+
+This generates a comprehensive risk assessment report saved to `simulation_outputs/` with:
+
+- Risk scores for each catchment
+- Time series analysis
+- Peak risk identification
+- Categorical risk assignments
+
+### Real-time Monitoring
+
+The system includes automatic background monitoring when the API service is running. To disable:
+
+```powershell
+$env:DISABLE_MONITORING = "true"
+python main.py
 ```
 
 ---
 
-## 7. Database Deployment & Initialization (New)
+## Configuration
 
-The quickest way to bring up MongoDB with the correct database name and persistent volumes is via Docker Compose (ships with this repo).
+### Environment Variables
 
-Start MongoDB (foreground):
+| Variable                     | Description                         | Required | Default             |
+| ---------------------------- | ----------------------------------- | -------- | ------------------- |
+| `MONGODB_NAME`               | Database name                       | Yes      | `urban_flooding_db` |
+| `MONGO_INITDB_ROOT_USERNAME` | MongoDB username                    | Yes      | -                   |
+| `MONGO_INITDB_ROOT_PASSWORD` | MongoDB password                    | Yes      | -                   |
+| `MONGODB_URL`                | MongoDB connection URL              | No       | `localhost:27017`   |
+| `API_TOKEN`                  | Bearer token for API authentication | Yes      | -                   |
+| `WEATHER_API_URL`            | External weather service URL        | No       | -                   |
+| `WEATHER_API_TOKEN`          | Weather service API key             | No       | -                   |
+| `DISABLE_MONITORING`         | Disable background monitoring       | No       | `false`             |
 
-```powershell
-docker compose up
-```
+### Data Files
 
-Or run detached:
-
-```powershell
-docker compose up -d
-```
-
-Health check waits for the server to respond before marking the container healthy.
-
-Once the container is running, initialize (or re‑initialize) the collections, schema validators, and indexes. This is idempotent and safe to repeat after code updates.
-
-Using the CLI command:
-
-```powershell
-python -m urban_flooding.cli init-db
-```
-
-Or using the standalone helper script (handy inside other automation):
-
-```powershell
-python scripts/init_db.py
-```
-
-If you are using a remote / authenticated Mongo instance set `MONGODB_URI` before running the init command. Example:
-
-```powershell
-$env:MONGODB_URI = "mongodb://user:pass@remote-host:27017/?authSource=admin"
-python -m urban_flooding.cli init-db
-```
-
-You should see a list of initialized collection names. At this point the database layer is ready for spatial ingestion and rainfall event seeding.
-
-> Next Planned Enhancement: After the pending `geojson_converter` fix, the `init-db` command will be extended (or an additional `bootstrap` command added) to automatically process GeoJSON inputs and populate the `catchments` collection in one step.
-
-### 7.1 Standalone Spatial Import Helper (New Script)
-
-If you prefer a single-purpose script (useful in container ENTRYPOINT chains or CI jobs) you can run the new helper located at `scripts/spatial_import.py`.
-
-This wraps the same logic provided by the CLI commands `ingest-spatial`, `design-events`, and the sample risk assessment workflow.
-
-Basic usage (defaults to `data/catchments_spatial_matched.json`, creates design events, runs a 10-catchment risk sample using `design_10yr`):
-
-```powershell
-python scripts/spatial_import.py
-```
-
-Key options:
-
-```text
---file <path>              Path to catchments JSON (default data/catchments_spatial_matched.json)
---no-design-events         Skip design rainfall event seeding
---event <event_id>         Rainfall event id for sample risk sims (default design_10yr)
---top <N>                  Number of lowest-capacity catchments to simulate (default 10)
---skip-risk                Ingest only (no simulations or report)
-```
-
-Examples:
-
-```powershell
-# Ingest only (no events, no simulations)
-python scripts/spatial_import.py --no-design-events --skip-risk
-
-# Use a different rainfall event and more samples
-python scripts/spatial_import.py --event design_50yr --top 25
-
-# Custom spatial JSON path
-python scripts/spatial_import.py --file data/alt_catchments.json
-```
-
-Exit code is non-zero on failure (e.g. missing file or DB connection issue) so it can be chained in automation:
-
-```powershell
-python scripts/init_db.py; if ($LASTEXITCODE -ne 0) { exit 1 }
-python scripts/spatial_import.py --skip-risk; if ($LASTEXITCODE -ne 0) { exit 1 }
-```
-
-The script ensures `src/` is added to `PYTHONPATH` automatically (mirrors `scripts/init_db.py`).
+| File                               | Description                      | Source                           |
+| ---------------------------------- | -------------------------------- | -------------------------------- |
+| `PerthMetroCatchments.geojson`     | Catchment polygon geometries     | Perth Metropolitan Government    |
+| `PerthMetroStormDrainPipe.geojson` | Storm drain pipe network         | Perth Water Corporation          |
+| `PipeMaterials.json`               | Manning coefficients by material | Engineering standards            |
+| `RainfallEvents.json`              | Design storm definitions         | Australian Bureau of Meteorology |
 
 ---
 
-## 8. Typical Workflow (CLI First)
+## Development
 
-The new CLI consolidates common workflows. Run commands from the repository root (ensure `src` is on `PYTHONPATH`, which happens automatically when running from root).
-
-List commands:
+### Running Tests
 
 ```powershell
-python -m urban_flooding.cli -h
+# Install test dependencies
+pip install pytest httpx
+
+# Run test suite
+pytest tests/
 ```
 
-### A. Ingest Spatial Catchments + Seed Design Events
+### Code Quality
 
 ```powershell
-python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events
+# Format code
+black digital_twin/ api/
+
+# Type checking
+mypy digital_twin/
+
+# Linting
+flake8 digital_twin/ api/
 ```
 
-### B. Create / Recreate Only Design Rainfall Events
+### Docker Development
 
 ```powershell
-python -m urban_flooding.cli design-events
-```
+# Build development container
+docker build -t urban-flooding-dt .
 
-### C. Run Comprehensive Risk Assessment (Design Storm)
-
-```powershell
-python -m urban_flooding.cli risk-assess --event design_10yr --top 25
-```
-
-### D. Fetch Real-time Weather & Store Event
-
-```powershell
-python -m urban_flooding.cli realtime-fetch
-```
-
-### E. (Bounded) Continuous Monitoring Loop
-
-```powershell
-python -m urban_flooding.cli monitor --interval 15 --max-iterations 2
-```
-
-### F. Analyze Recent Trends
-
-```powershell
-python -m urban_flooding.cli trends --days 14
-```
-
-### G. Pure Hydrologic Quick Simulation (No DB)
-
-```powershell
-python -m urban_flooding.cli simulate-simple --C 0.8 --i 25 --A 1.2 --capacity 18 --steps 6
-```
-
-Legacy scripts (`import_spatial_to_mongodb.py`, `integrated_flood_system.py`, `geojson_converter_spatial.py`) remain as thin wrappers for backward compatibility but are deprecated. Preferred modern equivalents:
-
-| Legacy Script                  | Replacement CLI Command                                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `geojson_converter_spatial.py` | `python -m urban_flooding.spatial.geojson_converter` (or run via conversion invoked in workflow)          |
-| `import_spatial_to_mongodb.py` | `python -m urban_flooding.cli ingest-spatial --file data/catchments_spatial_matched.json --design-events` |
-| `integrated_flood_system.py`   | `python -m urban_flooding.cli risk-assess` / `monitor` / `realtime-fetch` combinations                    |
-
-Use the CLI variants for consistent logging, argument validation, and future feature support.
-
-### D. Weather API Standalone Demo
-
-```powershell
-python weather_api_client.py
+# Run with mounted code
+docker run -v ${PWD}:/app -p 8008:8008 urban-flooding-dt
 ```
 
 ---
 
-## 9. Continuous Monitoring Mode
+## Contributing
 
-- Periodically fetches weather API
-- Creates rainfall event if data present
-- Runs prioritized risk simulations (capacity + area weighted)
-- Generates alert dashboard with emoji severity markers
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
----
+### Development Guidelines
 
-## 10. Catchment Linking (Deterministic Geometry Join)
-
-Heuristic spatial matching (overlap → nearest → estimated) has been fully retired. Each pipe feature
-includes a stable foreign key `ufi` pointing to its parent catchment polygon. During conversion:
-
-1. Pipe hydraulics are aggregated per `ufi` (capacity, pipe counts, diameter stats).
-2. Catchment polygons are loaded with preserved GeoJSON `geometry` keyed by `ufi`.
-3. A direct dictionary join produces unified catchment records embedding hydraulic metrics and geometry.
-
-Runoff coefficient `C` is heuristically derived from land‑use / management attributes. Catchments lacking
-pipe data are currently omitted (future option: output zero‑capacity records for completeness).
-
-Preserved Fields:
-
-- `ufi` / `catchment_id`: Stable identifier (mirrored for backward compatibility).
-- `geometry`: Full Polygon / MultiPolygon for precise spatial queries (e.g., point‑in‑polygon risk lookups).
-
-Removed Legacy Artifacts: `match_type`, `match_score`, `match_distance_km`, `area_estimated`, and derived
-`location.bounds` / `location.center` fields—these are no longer needed because authoritative geometry is stored.
-
-Benefits: Deterministic joins, improved spatial fidelity, reduced complexity, and consistent reproducibility across reruns.
+- Follow PEP 8 style guidelines
+- Add docstrings to all public functions and classes
+- Include unit tests for new functionality
+- Update README for significant changes
 
 ---
 
-## 11. Extensibility Ideas (Forward Look)
+## License
 
-- Area‑weighted rainfall / runoff distribution for partially intersecting polygons (if sub‑catchment nesting introduced).
-- Geometry QA & repair pipeline (self‑intersection fixing, winding order normalization) pre‑ingestion.
-- Pipe geometry capture (LineString → aggregated MultiLineString per catchment) for map visualization & hydraulic distribution modeling.
-- Temporal resolution refinement (sub‑hour hyetographs) with intensity normalization & convolution against catchment response curves.
-- Ensemble / probabilistic rainfall event ingestion (e.g., blending forecasts) to derive risk bands (P10 / P50 / P90).
-- Machine learning calibration of runoff coefficient `C` and effective capacity scaling using historical event + observation pairs.
-- Incremental geospatial caching layer with spatial index acceleration (R‑tree / Mongo 2dsphere queries) for high request volumes.
-- Streaming ingestion mode (websocket or pub/sub) for near real‑time rainfall updates driving rolling risk nowcasts.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- Western Australian Department of Water and Environmental Regulation
+- Australian Bureau of Meteorology for rainfall statistics
 
 ---
 
@@ -575,15 +767,3 @@ Additional future test targets:
 | No catchments imported  | Missing `catchments_spatial_matched.json` | Run spatial converter first                         |
 | Weather fetch fails     | Network / auth / API down                 | Retry later or mock rainfall event                  |
 | Continuous monitor idle | Zero rainfall intensities                 | Use design event via `import_spatial_to_mongodb.py` |
-
----
-
-## 18. Disclaimer
-
-This code is illustrative and not a replacement for detailed hydrodynamic modeling or regulatory flood studies.
-
----
-
-## 19. License
-
-Specify license here (e.g., MIT) – currently unspecified.

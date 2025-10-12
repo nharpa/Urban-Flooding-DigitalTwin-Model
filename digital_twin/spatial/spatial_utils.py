@@ -1,4 +1,16 @@
-# Utility to calculate centroid from GeoJSON polygon
+"""Spatial utility functions for urban flooding digital twin.
+
+This module provides utility functions for spatial calculations, geometric
+operations, and pipe hydraulic computations used throughout the spatial
+data processing pipeline.
+
+Key functionality includes:
+- Centroid calculation from GeoJSON geometries
+- Pipe grade and capacity calculations
+- Point-in-polygon operations for catchment finding
+- Manning equation hydraulic computations
+"""
+
 import math
 from pathlib import Path
 from shapely.geometry import shape, Point
