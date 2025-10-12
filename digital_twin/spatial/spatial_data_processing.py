@@ -154,7 +154,6 @@ def extract_catchments_with_geometry(catchments_file: str) -> Dict[str, Dict]:
             area_km2 = 0.0
         if area_km2 <= 0:
             continue
-        print(props)
         catchment_dict[key] = {
             'catchment_id': key,
             'ufi': ufi,
