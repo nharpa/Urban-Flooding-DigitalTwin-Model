@@ -767,15 +767,3 @@ Additional future test targets:
 | No catchments imported  | Missing `catchments_spatial_matched.json` | Run spatial converter first                         |
 | Weather fetch fails     | Network / auth / API down                 | Retry later or mock rainfall event                  |
 | Continuous monitor idle | Zero rainfall intensities                 | Use design event via `import_spatial_to_mongodb.py` |
-
----
-
-## 18. Disclaimer
-
-This code is illustrative and not a replacement for detailed hydrodynamic modeling or regulatory flood studies.
-
----
-
-## 19. License
-
-Specify license here (e.g., MIT) – currently unspecified.
