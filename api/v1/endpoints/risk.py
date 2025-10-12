@@ -81,7 +81,30 @@ class PointRiskResponse(BaseModel):
 
 @router.post("/risk/point", response_model=PointRiskResponse)
 def risk_for_point(request: PointRiskRequest, token: str = Depends(verify_token)):
+    """Assess flood risk for a specific geographic point.
 
+    Finds the catchment containing the provided coordinates, retrieves or defaults
+    to a rainfall event, runs flood risk simulation, and returns comprehensive
+    risk assessment results including risk level categorization.
+
+    Parameters
+    ----------
+    request : PointRiskRequest
+        Geographic coordinates and optional rainfall event ID.
+    token : str
+        Bearer authentication token (dependency injected).
+
+    Returns
+    -------
+    PointRiskResponse
+        Comprehensive risk assessment including catchment info, risk metrics,
+        rainfall data, and simulation parameters.
+
+    Raises
+    ------
+    HTTPException
+        404 if no catchment is found containing the specified point.
+    """
     db = FloodingDatabase()
     weather_client = WeatherAPIClient()
     monitor = RealTimeFloodMonitor(db=db)

@@ -1,4 +1,12 @@
 
+"""Batch simulation script for urban flooding risk assessment.
+
+This module provides utilities for running flood risk simulations across
+multiple catchments in batch mode. It retrieves catchment data from the
+database, applies rainfall time series, and generates comprehensive reports
+of risk assessments across all catchments.
+"""
+
 from typing import List, Iterable
 from digital_twin.database.database_utils import FloodingDatabase
 from digital_twin.services import risk_algorithm
@@ -7,6 +15,18 @@ from pathlib import Path
 
 
 def _iter_catchments(db: FloodingDatabase) -> Iterable[dict]:
+    """Yield all catchment documents with business fields only.
+
+    Parameters
+    ----------
+    db : FloodingDatabase
+        Database connection instance.
+
+    Yields
+    ------
+    dict
+        Catchment document containing business fields (excludes MongoDB _id).
+    """
     """Yield all catchment documents (business fields only)."""
     for doc in db.list_catchments():
         yield doc
@@ -98,6 +118,12 @@ def run_batch_simulation(
 
 
 def _demo_run():  # pragma: no cover - helper for manual execution
+    """Run a demonstration batch simulation with sample rainfall data.
+
+    Creates a 6-hour rainfall event with varying intensities and runs
+    the batch simulation across all catchments. This function is used
+    for testing and demonstration purposes.
+    """
     rain_mmhr = [0.1, 0.2, 0.2, 0.1, 0.0, 0.0]
     timestamps_utc = [
         "2025-09-25T00:00:00Z",

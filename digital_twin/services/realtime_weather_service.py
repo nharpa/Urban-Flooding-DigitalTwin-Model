@@ -1,4 +1,11 @@
-"""Weather API client for retrieving rainfall observations and creating events."""
+"""Weather API client for retrieving rainfall observations and creating events.
+
+This module provides integration with external weather APIs to fetch real-time
+rainfall observations and convert them into rainfall events suitable for flood
+risk simulation. It handles API authentication, data extraction, and formatting
+for compatibility with the digital twin's rainfall event schema.
+"""
+
 from datetime import datetime
 from typing import Dict, Optional
 import uuid
@@ -8,11 +15,44 @@ from digital_twin.database.database_utils import FloodingDatabase
 
 
 class WeatherAPIClient:
+    """Client for external weather API integration.
+
+    Provides methods to fetch real-time weather observations, extract rainfall
+    data, and create rainfall events for flood risk assessment. Configured
+    through environment variables for API URL and authentication tokens.
+
+    Attributes
+    ----------
+    api_url : str
+        Base URL for the weather API service.
+    api_token : str
+        Authentication token for weather API access.
+    """
+
     def __init__(self):
+        """Initialize weather API client with configuration from settings."""
         self.api_url = settings.WEATHER_API_URL
         self.api_token = settings.WEATHER_API_TOKEN
 
     def extract_rainfall_series(self, weather_data: Dict) -> Dict:
+        """Extract and process rainfall time series from weather API response.
+
+        Parses raw weather API data to extract rainfall intensities and timestamps,
+        calculates summary statistics, and formats the data for use in flood
+        risk simulations.
+
+        Parameters
+        ----------
+        weather_data : Dict
+            Raw response data from weather API containing historical observations.
+
+        Returns
+        -------
+        Dict
+            Processed rainfall data including time series, statistics, and metadata.
+            Contains keys: total_rainfall_mm, peak_intensity_mmhr, duration_hours,
+            start_time_local, end_time_local, rain_mmhr, timestamps_utc.
+        """
         if not weather_data or "data" not in weather_data:
             return {}
 
@@ -37,6 +77,29 @@ class WeatherAPIClient:
         return rainfall_series
 
     def craft_rainfall_event_from_api(self, weather_data: Dict, event_type: str, lat: Optional[float] = None, lon: Optional[float] = None) -> Dict:
+        """Create a rainfall event from weather API data.
+
+        Processes weather API response data and formats it into a rainfall event
+        document compatible with the digital twin's database schema. Generates
+        unique event identifiers and metadata.
+
+        Parameters
+        ----------
+        weather_data : Dict
+            Raw weather API response containing rainfall observations.
+        event_type : str
+            Type classification for the rainfall event.
+        lat : float, optional
+            Latitude coordinate for event location metadata.
+        lon : float, optional
+            Longitude coordinate for event location metadata.
+
+        Returns
+        -------
+        Dict
+            Complete rainfall event document ready for database storage.
+            Includes event_id, name, rainfall time series, and metadata.
+        """
         stats = self.extract_rainfall_series(weather_data)
         event_id = f"weather_api_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         event_name = f"Real-time observation - {datetime.now().strftime('%Y-%m-%d %H:%M')} at ({lat}, {lon})"
