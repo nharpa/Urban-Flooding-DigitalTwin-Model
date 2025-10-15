@@ -298,6 +298,33 @@ python main.py
 python main.py --port 8080
 ```
 
+## Testing
+
+- Install dev dependencies (pytest is already in `requirements.txt`). Ensure your virtual environment is active.
+
+- Run the full test suite:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+- Run a subset (examples):
+
+```powershell
+# Core risk algorithm tests
+.\.venv\Scripts\python.exe -m pytest -q tests\services\test_risk_algorithm.py
+
+# Spatial utility tests
+.\.venv\Scripts\python.exe -m pytest -q tests\spatial\test_spatial_utils.py
+
+# FastAPI simulate endpoint (auth overridden; DB not required)
+.\.venv\Scripts\python.exe -m pytest -q tests\api\test_simulate_endpoint.py
+```
+
+Notes:
+- Spatial tests auto-skip if `geopandas`/`shapely` are not available.
+- API tests load only the simulate router and override auth so they don’t require a database connection.
+
 ## The API will be available at `http://localhost:8008` with interactive documentation at `http://localhost:8008/docs`.
 
 ## 🔌 API Endpoints

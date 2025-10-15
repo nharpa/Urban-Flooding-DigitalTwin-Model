@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from api.v1.routes import api_router
 import argparse
 import os
+import uvicorn
 
 
 @asynccontextmanager
@@ -70,5 +71,4 @@ if __name__ == "__main__":
     if args.no_monitoring:
         os.environ["DISABLE_MONITORING"] = "true"
 
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8008)
